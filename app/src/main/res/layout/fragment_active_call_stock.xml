@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/ll_dates"
+        android:weightSum="10">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_AsOnDate"
+            android:layout_margin="5dp"
+            android:padding="10dp"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:layout_weight="8"
+            android:text="01-Jan-2021 15:30:00"
+            android:textColor="@color/white"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvExpiryDate"
+            android:layout_margin="5dp"
+            android:padding="10dp"
+            android:layout_weight="2"
+            android:gravity="center|end"
+            android:layout_gravity="end|center"
+            android:visibility="gone"
+            android:text="EX DT: 01-Jan-2021"
+            android:textColor="@color/white"
+            android:textSize="9sp"/>
+
+    </LinearLayout>
+
+
+
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:layout_below="@+id/ll_dates"
+        >
+
+        <LinearLayout
+            android:id="@+id/ll_parent_market"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            />
+
+    </ScrollView>
+
+</RelativeLayout>

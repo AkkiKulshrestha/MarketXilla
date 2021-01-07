@@ -1,0 +1,112 @@
+{
+  "planList":[
+    {
+      "SNo": "1",
+      "PlanName": "SILVER",
+      "PlanAmount": 5000,
+      "PackageId": 1
+    },
+    {
+      "SNo": "2",
+      "PlanName": "GOLD",
+      "PlanAmount": 8000,
+      "PackageId": 1
+    },
+    {
+      "SNo": "3",
+      "PlanName": "PLATINUM",
+      "PlanAmount": 12000,
+      "PackageId": 1
+    },
+    {
+      "SNo": "4",
+      "PlanName": "FUTURE SPECIAL",
+      "PlanAmount": 7000,
+      "PackageId": 1
+    },
+    {
+      "SNo": "5",
+      "PlanName": "OPTION SPECIAL",
+      "PlanAmount": 6000,
+      "PackageId": 1
+    },
+    {
+      "SNo": "6",
+      "PlanName": "COMMODITY SPECIAL",
+      "PlanAmount": 9000,
+      "PackageId": 1
+    },
+    {
+      "SNo": "7",
+      "PlanName": "SILVER",
+      "PlanAmount": 8000,
+      "PackageId": 2
+    },
+    {
+      "SNo": "8",
+      "PlanName": "GOLD",
+      "PlanAmount": 12800,
+      "PackageId": 2
+    },
+    {
+      "SNo": "9",
+      "PlanName": "PLATINUM",
+      "PlanAmount": 19200,
+      "PackageId": 2
+    },
+    {
+      "SNo": "10",
+      "PlanName": "FUTURE SPECIAL",
+      "PlanAmount": 11200,
+      "PackageId": 2
+    },
+    {
+      "SNo": "11",
+      "PlanName": "OPTION SPECIAL",
+      "PlanAmount": 9600,
+      "PackageId": 2
+    },
+    {
+      "SNo": "12",
+      "PlanName": "COMMODITY SPECIAL",
+      "PlanAmount": 14400,
+      "PackageId": 2
+    },
+    {
+      "SNo": "13",
+      "PlanName": "SILVER",
+      "PlanAmount": 10500,
+      "PackageId": 3
+    },
+    {
+      "SNo": "14",
+      "PlanName": "GOLD",
+      "PlanAmount": 16800,
+      "PackageId": 3
+    },
+    {
+      "SNo": "15",
+      "PlanName": "PLATINUM",
+      "PlanAmount": 25200,
+      "PackageId": 3
+    },
+    {
+      "SNo": "16",
+      "PlanName": "FUTURE SPECIAL",
+      "PlanAmount": 14700,
+      "PackageId": 3
+    },
+    {
+      "SNo": "17",
+      "PlanName": "OPTION SPECIAL",
+      "PlanAmount": 12600,
+      "PackageId": 3
+    },
+    {
+      "SNo": "18",
+      "PlanName": "COMMODITY SPECIAL",
+      "PlanAmount": 18900,
+      "PackageId": 3
+    }
+  ]
+}

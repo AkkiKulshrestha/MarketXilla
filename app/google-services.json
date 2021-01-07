@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "742227755301",
+    "project_id": "marketxilla-f5443",
+    "storage_bucket": "marketxilla-f5443.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:742227755301:android:355d2f4548752017eadacc",
+        "android_client_info": {
+          "package_name": "in.techxilla.www.marketxilla"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "742227755301-ue6v29qmm4218qt7prt4qrrs6f9h8q8k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXy0fTPwZQ6Rvi9aRGPmXvrwwbimcwpRE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "742227755301-ue6v29qmm4218qt7prt4qrrs6f9h8q8k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

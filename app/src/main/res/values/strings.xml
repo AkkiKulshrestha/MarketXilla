@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">MarketXilla</string>
+    <string name="every_new_release_is_better_than_the_last">Every new release is better than the last, so why lag behind. Upgrade now and enjoy the best version yet!</string>
+    <string name="help">Help</string>
+    <string name="exit">Exit</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="strExit">Do you want to close the application?</string>
+    <string name="alert">Alert</string>
+    <string name="about_us">ABOUT US</string>
+    <string name="contact_us">CONTACT US</string>
+    <string name="share">Share</string>
+    <string name="menu_logout">LOGOUT</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="facebook_page"><a href="https://www.facebook.com/marketxilla" rel="nofollow">https://www.facebook.com/marketxilla</a></string>
+    <string name="twitter_page"><a href="https://twitter.com/marketxilla" rel="nofollow">https://twitter.com/marketxilla</a></string>
+    <string name="linked_in_page"><a href="https://www.linkedin.com/in/marketxilla/" rel="nofollow">https://www.linkedin.com/in/marketxilla/</a></string>
+    <string name="telegram"><a href="https://telegram.me/marketxilla" rel="nofollow">https://telegram.me/marketxilla</a></string>
+    <string name="menu_rate_us">RATE US</string>
+    <string name="menu_share">SHARE</string>
+    <string name="pcakage1_desc">This pack is valid for one month from the next day of your subscription till the same date of the next month. (Including Saturday, Sunday, and Holidays.)</string>
+    <string name="package2_desc">This pack is valid for two months from the next day of your subscription till the same date of the next two months. (Including Saturday, Sunday, and Holidays.)</string>
+    <string name="package3_desc">This pack is valid for three months from the next day of your subscription till the same date of the next three months. (Including Saturday, Sunday, and Holidays.)</string>
+    <string name="title_home">Home</string>
+    <string name="title_market">Market</string>
+    <string name="title_news">News</string>
+    <string name="title_package">Packages</string>
+    <string name="drawer_open">DRAWER OPEN</string>
+    <string name="drawer_close">DRAWER CLOSED</string>
+    <string name="title_holiday">Holidays</string>
+    <string name="privacy_policy">PRIVACY POLICIES</string>
+    <string name="terms_n_condition"><![CDATA[TERMS & CONDITIONS]]></string>
+    <string name="disclaimer">DISCLAIMER</string>
+
+    <string-array name="spin_item_package">
+        <item>Select Package</item>
+        <item>1 Month</item>
+        <item>2 Month</item>
+        <item>3 Month</item>
+    </string-array>
+
+
+
+</resources>
