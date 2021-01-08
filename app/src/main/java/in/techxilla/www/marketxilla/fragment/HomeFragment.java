@@ -434,12 +434,22 @@ public class HomeFragment extends Fragment {
             }
 
             if(callArrayList.get(position).getIs_buy_sell()!=null && callArrayList.get(position).getIs_buy_sell().equalsIgnoreCase("1")){
-                viewHolder.tv_above_below.setText("ABOVE "+callArrayList.get(position).getBuy_sell_above_below() );
+                if(callArrayList.get(position).getPerformance_for().equalsIgnoreCase("Commodity")){
+                    viewHolder.tv_above_below.setText("BETWEEN \n"+callArrayList.get(position).getBuy_sell_above_below());
+                }else{
+                    viewHolder.tv_above_below.setText("ABOVE "+callArrayList.get(position).getBuy_sell_above_below());
+                }
+
                 viewHolder.tv_sell_buy.setText("INTRADAY BUY");
                 viewHolder.tv_sell_buy.setBackground(mCtx.getDrawable(R.drawable.cw_button_shadow_green));
                 viewHolder.iv_up_down.setImageDrawable(mCtx.getDrawable(R.drawable.up));
             }else if(callArrayList.get(position).getIs_buy_sell()!=null && callArrayList.get(position).getIs_buy_sell().equalsIgnoreCase("2")){
-                viewHolder.tv_above_below.setText("BELOW "+callArrayList.get(position).getBuy_sell_above_below());
+                if(callArrayList.get(position).getPerformance_for().equalsIgnoreCase("Commodity")){
+                    viewHolder.tv_above_below.setText("BETWEEN \n"+callArrayList.get(position).getBuy_sell_above_below());
+                }else{
+                    viewHolder.tv_above_below.setText("BELOW "+callArrayList.get(position).getBuy_sell_above_below());
+                }
+
                 viewHolder.tv_sell_buy.setText("INTRADAY SELL");
                 viewHolder.tv_sell_buy.setBackground(mCtx.getDrawable(R.drawable.cw_button_shadow_red));
                 viewHolder.iv_up_down.setImageDrawable(mCtx.getDrawable(R.drawable.down));

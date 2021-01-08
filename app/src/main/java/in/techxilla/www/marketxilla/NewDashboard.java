@@ -322,13 +322,13 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.nav_terms_n_condition:
                 Intent intent_tnc = new Intent(Intent.ACTION_VIEW );
-                intent_tnc.setData(Uri.parse("https://marketxilla.com/terms-conditions"));
+                intent_tnc.setData(Uri.parse("https://marketxilla.com/terms-and-conditions"));
                 startActivity(intent_tnc);
 
                 break;
             case R.id.nav_privacy_policy:
                 Intent intent_pp = new Intent(Intent.ACTION_VIEW );
-                intent_pp.setData(Uri.parse("https://marketxilla.com/privacy-policy"));
+                intent_pp.setData(Uri.parse("https://marketxilla.com/privacy-policy-2"));
                 startActivity(intent_pp);
 
                 break;
