@@ -59,6 +59,8 @@ import in.techxilla.www.marketxilla.utils.ConnectionDetector;
 import in.techxilla.www.marketxilla.utils.UtilitySharedPreferences;
 
 import static in.techxilla.www.marketxilla.utils.CommonMethods.DisplaySnackBar;
+import static in.techxilla.www.marketxilla.utils.CommonMethods.DisplayToastError;
+import static in.techxilla.www.marketxilla.utils.CommonMethods.DisplayToastWarning;
 import static in.techxilla.www.marketxilla.webservices.RestClient.ROOT_URL;
 
 public class NewDashboard extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,BottomNavigationView.OnNavigationItemSelectedListener {
@@ -288,7 +290,7 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
                 fragment = new HomeFragment();
                 break;
 
-          /*  case R.id.navigation_market:
+             /*case R.id.navigation_market:
                 fragment = new MarketFragment();
                 break;*/
 
@@ -328,7 +330,7 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.nav_privacy_policy:
                 Intent intent_pp = new Intent(Intent.ACTION_VIEW );
-                intent_pp.setData(Uri.parse("https://marketxilla.com/privacy-policy-2"));
+                intent_pp.setData(Uri.parse("https://marketxilla.com/privacy-policy"));
                 startActivity(intent_pp);
 
                 break;
@@ -353,7 +355,11 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
                 Intent sendIntent = new Intent();
                 sendIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, "Download Marketxilla -  https://play.google.com/store/apps/details?id=" + appPackageName);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "Greetings, \n\n"+
+                        "Welcome To Marketxilla, \n" +
+                        "\"An Intraday Research Service Providing App For NSE Future And Options, and Commodity\" \n\n\n\n" +
+                        "Marketxilla App is Specially Designed For Intraday Traders. Our Research is Based On Dynamic Data And Technical Analysis. For Consistent Profit and Hassle-Free Trading, You Can Study Our Live Research Recommendations.\n" +
+                        "Marketxilla App Is Now Available for Andriod On Google Play Store. Download MarketXilla -  https://play.google.com/store/apps/details?id=" + appPackageName);
                 sendIntent.setType("text/plain");
 
                 context.startActivity(sendIntent);
@@ -440,9 +446,7 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
                 public void onErrorResponse(VolleyError volleyError) {
 
                     volleyError.printStackTrace();
-                    DisplaySnackBar(viewGroup,"Something goes wrong. Please try again","WARNING");
-
-                    //Toast.makeText(getApplicationContext(), volleyError.toString(), Toast.LENGTH_LONG).show();
+                    DisplayToastError(getApplicationContext(),"Something goes wrong. Please try again");
                 }
             }) ;
             RequestQueue requestQueue = Volley.newRequestQueue(this);
@@ -450,7 +454,7 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
             requestQueue.add(postrequest);
 
         }else {
-            DisplaySnackBar(viewGroup,"No Internet Connection","WARNING");
+            DisplayToastWarning(getApplicationContext(),"No Internet Connection");
 
         }
 

@@ -217,11 +217,17 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 try{
+                    final String appPackageName = mContext.getPackageName();
+
                     Intent intent=new Intent(Intent.ACTION_SEND);
                     String[] recipients={"marketxilla@gmail.com"};
                     intent.putExtra(Intent.EXTRA_EMAIL, recipients);
-                    intent.putExtra(Intent.EXTRA_SUBJECT,"ENQUIRY");
-                    intent.putExtra(Intent.EXTRA_TEXT,"Body of the content here...");
+                    intent.putExtra(Intent.EXTRA_SUBJECT,"Welcome To Marketxilla");
+                    intent.putExtra(Intent.EXTRA_TEXT, "Greetings, \n\n"+
+                            "Welcome To Marketxilla, \n" +
+                            "\"An Intraday Research Service Providing App For NSE Future And Options, and Commodity\" \n\n\n\n" +
+                            "Marketxilla App is Specially Designed For Intraday Traders. Our Research is Based On Dynamic Data And Technical Analysis. For Consistent Profit and Hassle-Free Trading, You Can Study Our Live Research Recommendations.\n" +
+                            "Marketxilla App Is Now Available for Andriod On Google Play Store. Download MarketXilla -  https://play.google.com/store/apps/details?id=" + appPackageName);
                     intent.putExtra(Intent.EXTRA_CC,"info@marketxilla.com");
                     intent.setType("text/html");
                     intent.setPackage("com.google.android.gm");
@@ -239,7 +245,7 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
 
                 String phone = "+919022409928";
-                String message = "ENQUIRY. \nHello MarketXilla Team, I need your support. Kindly arrange a call back.";
+                String message = "ENQUIRY. \nHello MarketXilla Team, Kindly arrange a call back.";
                 Uri sms_uri = Uri.parse("smsto:"+phone);
                 Intent sms_intent = new Intent(Intent.ACTION_SENDTO, sms_uri);
                 sms_intent.putExtra("sms_body", message);
@@ -253,7 +259,7 @@ public class HomeFragment extends Fragment {
             public void onClick(View view) {
 
                 String phone = "+919022409928";
-                String message = "ENQUIRY. \nHello MarketXilla Team, I need your support. Kindly arrange a call back.";
+                String message = "ENQUIRY. \nHello MarketXilla Team, Kindly arrange a call back.";
                 PackageManager packageManager = mContext.getPackageManager();
                 Intent i = new Intent(Intent.ACTION_VIEW);
 
