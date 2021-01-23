@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <TableLayout
+        android:id="@+id/tabla_cuerpo"
+        android:layout_width="match_parent"
+        android:layout_marginTop="20sp"
+        android:padding="5dp"
+        android:layout_height="match_parent">
+
+    <TableRow
+        android:id="@+id/tableRow1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+
+        android:weightSum="12">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/cell_shape"
+            android:padding="5dp"
+            android:text="Plans"
+            android:textStyle="bold"
+            android:layout_weight="3"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:minLines="3"
+            android:textAppearance="?android:attr/textAppearanceSmall"></TextView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/cell_shape"
+            android:padding="5dp"
+            android:text="1 Month"
+            android:textStyle="bold"
+            android:layout_weight="3"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:minLines="3"
+            android:textAppearance="?android:attr/textAppearanceSmall"></TextView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/cell_shape"
+            android:padding="5dp"
+            android:text="2 Month"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:minLines="3"
+            android:textAppearance="?android:attr/textAppearanceSmall"></TextView>
+
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/cell_shape"
+            android:padding="5dp"
+            android:text="3 Month"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:minLines="3"
+            android:textAppearance="?android:attr/textAppearanceSmall"></TextView>
+
+    </TableRow>
+
+    </TableLayout>
+</LinearLayout>

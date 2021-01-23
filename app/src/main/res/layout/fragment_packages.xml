@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorAccent">
 
     <ScrollView
@@ -22,6 +22,7 @@
         android:padding="5dp"
         >
         <TextView
+            android:id="@+id/tv_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Packages"
@@ -38,8 +39,15 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerSmartPlan"
             android:layout_width="match_parent"
+            android:visibility="visible"
             android:layout_height="wrap_content"/>
 
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/pager"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
 
 
     </LinearLayout>

@@ -23,6 +23,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -49,21 +50,21 @@ public class SubscriptionActivity extends AppCompatActivity {
     ProgressDialog myDialog;
     TextView tv_title;
     ImageView iv_back;
-    TextView tv_silver_1,tv_silver_2,tv_silver_3;
-    TextView tv_gold_1,tv_gold_2,tv_gold_3;
-    TextView tv_platinum_1,tv_platinum_2,tv_platinum_3;
-    TextView tv_fs_1,tv_fs_2,tv_fs_3;
-    TextView tv_os_1,tv_os_2,tv_os_3;
-    TextView tv_cs_1,tv_cs_2,tv_cs_3;
+    TextView tv_silver_1, tv_silver_2, tv_silver_3;
+    TextView tv_gold_1, tv_gold_2, tv_gold_3;
+    TextView tv_platinum_1, tv_platinum_2, tv_platinum_3;
+    TextView tv_fs_1, tv_fs_2, tv_fs_3;
+    TextView tv_os_1, tv_os_2, tv_os_3;
+    TextView tv_cs_1, tv_cs_2, tv_cs_3;
 
-    Spinner Spn_Package,Spn_Plan;
+    Spinner Spn_Package, Spn_Plan;
 
     ArrayList<String> planList = new ArrayList<String>();
     ArrayList<Double> planAmountList = new ArrayList<Double>();
 
-    String StrPackage="",StrPlanSelected = "";
+    String StrPackage = "", StrPlanSelected = "";
     Double StrPlanAmount = 0.0;
-    String StrUpiAccountId="",StrUPI_MerchantName="",StrSubscrptionAmount="";
+    String StrUpiAccountId = "", StrUPI_MerchantName = "", StrSubscrptionAmount = "";
     final int UPI_PAYMENT = 0;
 
     Button btnSubscribe;
@@ -85,8 +86,8 @@ public class SubscriptionActivity extends AppCompatActivity {
         myDialog.setCancelable(false);
         myDialog.setCanceledOnTouchOutside(false);
 
-        tv_title = (TextView)findViewById(R.id.tv_title);
-        iv_back = (ImageView)findViewById(R.id.back_btn_toolbar);
+        tv_title = (TextView) findViewById(R.id.tv_title);
+        iv_back = (ImageView) findViewById(R.id.back_btn_toolbar);
 
         tv_title.setText("PACKAGES");
         iv_back.setOnClickListener(new View.OnClickListener() {
@@ -97,43 +98,43 @@ public class SubscriptionActivity extends AppCompatActivity {
         });
 
         getBankDetail();
-        tv_silver_1 = (TextView) findViewById(R.id.tv_silver_1) ;
-        tv_silver_2 = (TextView) findViewById(R.id.tv_silver_2) ;
-        tv_silver_3 = (TextView) findViewById(R.id.tv_silver_3) ;
-        tv_gold_1 = (TextView) findViewById(R.id.tv_gold_1) ;
-        tv_gold_2 = (TextView) findViewById(R.id.tv_gold_2) ;
-        tv_gold_3 = (TextView) findViewById(R.id.tv_gold_3) ;
+        tv_silver_1 = (TextView) findViewById(R.id.tv_silver_1);
+        tv_silver_2 = (TextView) findViewById(R.id.tv_silver_2);
+        tv_silver_3 = (TextView) findViewById(R.id.tv_silver_3);
+        tv_gold_1 = (TextView) findViewById(R.id.tv_gold_1);
+        tv_gold_2 = (TextView) findViewById(R.id.tv_gold_2);
+        tv_gold_3 = (TextView) findViewById(R.id.tv_gold_3);
 
-        tv_platinum_1= (TextView) findViewById(R.id.tv_platinum_1) ;
-        tv_platinum_2= (TextView) findViewById(R.id.tv_platinum_2) ;
-        tv_platinum_3= (TextView) findViewById(R.id.tv_platinum_3) ;
+        tv_platinum_1 = (TextView) findViewById(R.id.tv_platinum_1);
+        tv_platinum_2 = (TextView) findViewById(R.id.tv_platinum_2);
+        tv_platinum_3 = (TextView) findViewById(R.id.tv_platinum_3);
 
-        tv_fs_1= (TextView) findViewById(R.id.tv_fs_1) ;
-        tv_fs_2= (TextView) findViewById(R.id.tv_fs_2) ;
-        tv_fs_3= (TextView) findViewById(R.id.tv_fs_3) ;
+        tv_fs_1 = (TextView) findViewById(R.id.tv_fs_1);
+        tv_fs_2 = (TextView) findViewById(R.id.tv_fs_2);
+        tv_fs_3 = (TextView) findViewById(R.id.tv_fs_3);
 
-        tv_os_1= (TextView) findViewById(R.id.tv_os_1) ;
-        tv_os_2= (TextView) findViewById(R.id.tv_os_2) ;
-        tv_os_3= (TextView) findViewById(R.id.tv_os_3) ;
+        tv_os_1 = (TextView) findViewById(R.id.tv_os_1);
+        tv_os_2 = (TextView) findViewById(R.id.tv_os_2);
+        tv_os_3 = (TextView) findViewById(R.id.tv_os_3);
 
-        tv_cs_1= (TextView) findViewById(R.id.tv_cs_1) ;
-        tv_cs_2= (TextView) findViewById(R.id.tv_cs_2) ;
-        tv_cs_3= (TextView) findViewById(R.id.tv_cs_3) ;
+        tv_cs_1 = (TextView) findViewById(R.id.tv_cs_1);
+        tv_cs_2 = (TextView) findViewById(R.id.tv_cs_2);
+        tv_cs_3 = (TextView) findViewById(R.id.tv_cs_3);
 
-        Spn_Package = (Spinner)findViewById(R.id.Spn_Package) ;
-        Spn_Plan = (Spinner)findViewById(R.id.Spn_Plan);
+        Spn_Package = (Spinner) findViewById(R.id.Spn_Package);
+        Spn_Plan = (Spinner) findViewById(R.id.Spn_Plan);
 
 
         Spn_Package.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(position>0){
+                if (position > 0) {
                     StrPackage = Spn_Package.getSelectedItem().toString();
-                    if(StrPackage.equalsIgnoreCase("1 Month")){
+                    if (StrPackage.equalsIgnoreCase("1 Month")) {
                         fetchPlans(1);
-                    }else  if(StrPackage.equalsIgnoreCase("2 Month")){
+                    } else if (StrPackage.equalsIgnoreCase("2 Month")) {
                         fetchPlans(2);
-                    }else  if(StrPackage.equalsIgnoreCase("3 Month")){
+                    } else if (StrPackage.equalsIgnoreCase("3 Month")) {
                         fetchPlans(3);
                     }
                 }
@@ -148,7 +149,7 @@ public class SubscriptionActivity extends AppCompatActivity {
         Spn_Plan.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(position>0){
+                if (position > 0) {
                     StrPlanSelected = Spn_Plan.getSelectedItem().toString();
 
                     StrPlanAmount = planAmountList.get(position);
@@ -163,16 +164,17 @@ public class SubscriptionActivity extends AppCompatActivity {
             }
         });
 
-        btnSubscribe = (Button)findViewById(R.id.btnSubscribe);
+        btnSubscribe = (Button) findViewById(R.id.btnSubscribe);
         btnSubscribe.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("DefaultLocale")
             @Override
             public void onClick(View v) {
 
-                if(isValidSubcription()) {
+               // if (isValidSubcription())
+                {
                     //CommonMethods.DisplayToastInfo(getApplicationContext(), ""+StrPackage + "-->"+StrPlanSelected + "-->" +StrPlanAmount);
 
-                    StrSubscrptionAmount = String.format ("%.2f", StrPlanAmount);
+                    StrSubscrptionAmount ="1.00"; //String.format("%.2f", StrPlanAmount);
 
 
                     Uri uri =
@@ -185,24 +187,23 @@ public class SubscriptionActivity extends AppCompatActivity {
                                     .appendQueryParameter("cu", "INR")                         // currency
                                     .build();
 
-        /*String GOOGLE_PAY_PACKAGE_NAME = "com.google.android.apps.nbu.paisa.user";
+        String GOOGLE_PAY_PACKAGE_NAME = "com.google.android.apps.nbu.paisa.user";
         int GOOGLE_PAY_REQUEST_CODE = 123;
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(uri);
         intent.setPackage(GOOGLE_PAY_PACKAGE_NAME);
         startActivityForResult(intent, GOOGLE_PAY_REQUEST_CODE);
-        */
 
-                    Intent upiPayIntent = new Intent(Intent.ACTION_VIEW);
+                   /* Intent upiPayIntent = new Intent(Intent.ACTION_VIEW);
                     upiPayIntent.setData(uri);
                     Intent chooser = Intent.createChooser(upiPayIntent, "Pay with");
-                    if(null != chooser.resolveActivity(getPackageManager())) {
+                    if (null != chooser.resolveActivity(getPackageManager())) {
                         startActivityForResult(chooser, UPI_PAYMENT);
                     } else {
                         //CommonMethods.DisplayToastWarning(getApplicationContext(),"No UPI app found, please install one to continue");
-                        DisplaySnackBar(viewGroup,"No UPI app found, please install one to continue","WARNING");
+                        DisplaySnackBar(viewGroup, "No UPI app found, please install one to continue", "WARNING");
 
-                    }
+                    }*/
                 }
             }
         });
@@ -214,7 +215,7 @@ public class SubscriptionActivity extends AppCompatActivity {
 
     private void getBankDetail() {
         String Uiid_id = UUID.randomUUID().toString();
-        final String get_bank_details_info = ROOT_URL +"get_bank_details.php?_"+Uiid_id;
+        final String get_bank_details_info = ROOT_URL + "get_bank_details.php?_" + Uiid_id;
         Log.d("URL --->", get_bank_details_info);
         try {
             ConnectionDetector cd = new ConnectionDetector(this);
@@ -224,13 +225,13 @@ public class SubscriptionActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            Log.d("Response",""+response);
+                            Log.d("Response", "" + response);
 
                             JSONObject Jobj = new JSONObject(response);
 
                             boolean status = Jobj.getBoolean("status");
 
-                            if(status) {
+                            if (status) {
 
                                 String data = Jobj.getString("data");
                                 JSONObject jobject = new JSONObject(data);
@@ -245,12 +246,10 @@ public class SubscriptionActivity extends AppCompatActivity {
                                 String branch = jobject.getString("branch");
 
 
-
-
                             }
 
                         } catch (Exception e) {
-                            Log.d("Exception",e.toString());
+                            Log.d("Exception", e.toString());
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -258,20 +257,19 @@ public class SubscriptionActivity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError volleyError) {
                         volleyError.printStackTrace();
                         //Log.d("Vollley Err", volleyError.toString());
-                        DisplaySnackBar(viewGroup,"Something goes wrong. Please try again","WARNING");
+                        DisplaySnackBar(viewGroup, "Something goes wrong. Please try again", "WARNING");
 
                     }
                 });
                 RequestQueue requestQueue = Volley.newRequestQueue(this);
                 int socketTimeout = 50000;//30 seconds - change to what you want
-                RetryPolicy policy = new DefaultRetryPolicy((int) TimeUnit.SECONDS.toMillis(20),0,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+                RetryPolicy policy = new DefaultRetryPolicy((int) TimeUnit.SECONDS.toMillis(20), 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
                 stringRequest.setRetryPolicy(policy);
                 requestQueue.add(stringRequest);
-            }else {
-                DisplaySnackBar(viewGroup,"No Internet Connection","WARNING");
+            } else {
+                DisplaySnackBar(viewGroup, "No Internet Connection", "WARNING");
             }
-        }catch (Exception ex)
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
@@ -287,7 +285,7 @@ public class SubscriptionActivity extends AppCompatActivity {
             result = false;
         }
 
-        if (!MyValidator.isValidSpinner(Spn_Plan) ) {
+        if (!MyValidator.isValidSpinner(Spn_Plan)) {
             Spn_Plan.requestFocus();
             result = false;
         }
@@ -300,111 +298,157 @@ public class SubscriptionActivity extends AppCompatActivity {
         planAmountList = new ArrayList<>();
         planList.add("Select Plan");
         planAmountList.add(0.0);
+        String Uiid_id = UUID.randomUUID().toString();
+        String URL_GetSubscriptions = ROOT_URL + "get_subscriptions.php"; //+ Uiid_id;;
+
 
         try {
-            JSONObject obj = new JSONObject(loadJSONFromAssetPlans());
-            JSONArray m_jArry = obj.getJSONArray("planList");
+            Log.d("URL", URL_GetSubscriptions);
+
+            ConnectionDetector cd = new ConnectionDetector(getApplicationContext());
+            boolean isInternetPresent = cd.isConnectingToInternet();
+            if (isInternetPresent) {
+
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, URL_GetSubscriptions,
+                        new Response.Listener<String>() {
+                            @SuppressLint("UseCompatLoadingForDrawables")
+                            @Override
+                            public void onResponse(String response) {
+                                Log.d("Response", response);
+                                if (myDialog != null && myDialog.isShowing()) {
+                                    myDialog.dismiss();
+                                }
+                                try {
+                                    JSONObject obj = new JSONObject(response);
+                                    JSONArray m_jArry = obj.getJSONArray("planList");
 
 
-            for (int i = 0; i < m_jArry.length(); i++) {
+                                    for (int i = 0; i < m_jArry.length(); i++) {
 
-                JSONObject jo_inside = m_jArry.getJSONObject(i);
+                                        JSONObject jo_inside = m_jArry.getJSONObject(i);
 
-                //Silver
-                if(jo_inside.getInt("PackageId")==1 && jo_inside.getString("PlanName").equalsIgnoreCase("SILVER")){
-                    tv_silver_1.setText("\u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
-                }
+                                        //Silver
+                                        if (jo_inside.getInt("PackageId") == 1 && jo_inside.getString("PlanName").equalsIgnoreCase("SILVER")) {
+                                            tv_silver_1.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        }
 
-                if(jo_inside.getInt("PackageId")==2 && jo_inside.getString("PlanName").equalsIgnoreCase("SILVER")){
-                    tv_silver_2.setText("\u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
-                }
+                                        if (jo_inside.getInt("PackageId") == 2 && jo_inside.getString("PlanName").equalsIgnoreCase("SILVER")) {
+                                            tv_silver_2.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        }
 
-                if(jo_inside.getInt("PackageId")==3 && jo_inside.getString("PlanName").equalsIgnoreCase("SILVER")){
-                    tv_silver_3.setText("\u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
-                }
+                                        if (jo_inside.getInt("PackageId") == 3 && jo_inside.getString("PlanName").equalsIgnoreCase("SILVER")) {
+                                            tv_silver_3.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        }
 
-                //GOLD
-                if(jo_inside.getInt("PackageId")==1 && jo_inside.getString("PlanName").equalsIgnoreCase("GOLD")){
-                    tv_gold_1.setText("\u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
-                }
+                                        //GOLD
+                                        if (jo_inside.getInt("PackageId") == 1 && jo_inside.getString("PlanName").equalsIgnoreCase("GOLD")) {
+                                            tv_gold_1.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        }
 
-                if(jo_inside.getInt("PackageId")==2 && jo_inside.getString("PlanName").equalsIgnoreCase("GOLD")){
-                    tv_gold_2.setText("\u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
-                }
+                                        if (jo_inside.getInt("PackageId") == 2 && jo_inside.getString("PlanName").equalsIgnoreCase("GOLD")) {
+                                            tv_gold_2.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        }
 
-                if(jo_inside.getInt("PackageId")==3 && jo_inside.getString("PlanName").equalsIgnoreCase("GOLD")){
-                    tv_gold_3.setText("\u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
-                }
+                                        if (jo_inside.getInt("PackageId") == 3 && jo_inside.getString("PlanName").equalsIgnoreCase("GOLD")) {
+                                            tv_gold_3.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        }
 
-                //Platinum
-                if(jo_inside.getInt("PackageId")==1 && jo_inside.getString("PlanName").equalsIgnoreCase("PLATINUM")){
-                    tv_platinum_1.setText("\u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
-                }
+                                        //Platinum
+                                        if (jo_inside.getInt("PackageId") == 1 && jo_inside.getString("PlanName").equalsIgnoreCase("PLATINUM")) {
+                                            tv_platinum_1.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        }
 
-                if(jo_inside.getInt("PackageId")==2 && jo_inside.getString("PlanName").equalsIgnoreCase("PLATINUM")){
-                    tv_platinum_2.setText("\u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
-                }
+                                        if (jo_inside.getInt("PackageId") == 2 && jo_inside.getString("PlanName").equalsIgnoreCase("PLATINUM")) {
+                                            tv_platinum_2.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        }
 
-                if(jo_inside.getInt("PackageId")==3 && jo_inside.getString("PlanName").equalsIgnoreCase("PLATINUM")){
-                    tv_platinum_3.setText("\u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
-                }
+                                        if (jo_inside.getInt("PackageId") == 3 && jo_inside.getString("PlanName").equalsIgnoreCase("PLATINUM")) {
+                                            tv_platinum_3.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        }
 
-                //Future Special
-                if(jo_inside.getInt("PackageId")==1 && jo_inside.getString("PlanName").equalsIgnoreCase("FUTURE SPECIAL")){
-                    tv_fs_1.setText("\u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
-                }
+                                        //Future Special
+                                        if (jo_inside.getInt("PackageId") == 1 && jo_inside.getString("PlanName").equalsIgnoreCase("FUTURE SPECIAL")) {
+                                            tv_fs_1.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        }
 
-                if(jo_inside.getInt("PackageId")==2 && jo_inside.getString("PlanName").equalsIgnoreCase("FUTURE SPECIAL")){
-                    tv_fs_2.setText("\u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
-                }
+                                        if (jo_inside.getInt("PackageId") == 2 && jo_inside.getString("PlanName").equalsIgnoreCase("FUTURE SPECIAL")) {
+                                            tv_fs_2.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        }
 
-                if(jo_inside.getInt("PackageId")==3 && jo_inside.getString("PlanName").equalsIgnoreCase("FUTURE SPECIAL")){
-                    tv_fs_3.setText("\u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
-                }
+                                        if (jo_inside.getInt("PackageId") == 3 && jo_inside.getString("PlanName").equalsIgnoreCase("FUTURE SPECIAL")) {
+                                            tv_fs_3.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        }
 
-                //Option Special
-                if(jo_inside.getInt("PackageId")==1 && jo_inside.getString("PlanName").equalsIgnoreCase("OPTION SPECIAL")){
-                    tv_os_1.setText("\u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
-                }
+                                        //Option Special
+                                        if (jo_inside.getInt("PackageId") == 1 && jo_inside.getString("PlanName").equalsIgnoreCase("OPTION SPECIAL")) {
+                                            tv_os_1.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        }
 
-                if(jo_inside.getInt("PackageId")==2 && jo_inside.getString("PlanName").equalsIgnoreCase("OPTION SPECIAL")){
-                    tv_os_2.setText("\u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
-                }
+                                        if (jo_inside.getInt("PackageId") == 2 && jo_inside.getString("PlanName").equalsIgnoreCase("OPTION SPECIAL")) {
+                                            tv_os_2.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        }
 
-                if(jo_inside.getInt("PackageId")==3 && jo_inside.getString("PlanName").equalsIgnoreCase("OPTION SPECIAL")){
-                    tv_os_3.setText("\u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
-                }
+                                        if (jo_inside.getInt("PackageId") == 3 && jo_inside.getString("PlanName").equalsIgnoreCase("OPTION SPECIAL")) {
+                                            tv_os_3.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        }
 
-                //Comodity Special
-                if(jo_inside.getInt("PackageId")==1 && jo_inside.getString("PlanName").equalsIgnoreCase("COMMODITY SPECIAL")){
-                    tv_cs_1.setText("\u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
-                }
+                                        //Comodity Special
+                                        if (jo_inside.getInt("PackageId") == 1 && jo_inside.getString("PlanName").equalsIgnoreCase("COMMODITY SPECIAL")) {
+                                            tv_cs_1.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        }
 
-                if(jo_inside.getInt("PackageId")==2 && jo_inside.getString("PlanName").equalsIgnoreCase("COMMODITY SPECIAL")){
-                    tv_cs_2.setText("\u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
-                }
+                                        if (jo_inside.getInt("PackageId") == 2 && jo_inside.getString("PlanName").equalsIgnoreCase("COMMODITY SPECIAL")) {
+                                            tv_cs_2.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        }
 
-                if(jo_inside.getInt("PackageId")==3 && jo_inside.getString("PlanName").equalsIgnoreCase("COMMODITY SPECIAL")){
-                    tv_cs_3.setText("\u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
-                }
+                                        if (jo_inside.getInt("PackageId") == 3 && jo_inside.getString("PlanName").equalsIgnoreCase("COMMODITY SPECIAL")) {
+                                            tv_cs_3.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        }
 
-                if(jo_inside.getInt("PackageId")== package_id) {
-                    String PlanName = jo_inside.getString("PlanName");
-                    double PlanAmount = jo_inside.getDouble("PlanAmount");
+                                        if (jo_inside.getInt("PackageId") == package_id) {
+                                            String PlanName = jo_inside.getString("PlanName");
+                                            double PlanAmount = jo_inside.getDouble("PlanAmount");
 
-                    planList.add(PlanName);
-                    planAmountList.add(PlanAmount);
-                }
+                                            planList.add(PlanName);
+                                            planAmountList.add(PlanAmount);
+                                        }
+                                    }
+
+                                    ArrayAdapter<String> countryAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, planList);
+                                    Spn_Plan.setAdapter(countryAdapter);
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        VolleyLog.d("volley", "Error: " + error.getMessage());
+                        error.printStackTrace();
+                        if (myDialog != null && myDialog.isShowing()) {
+                            myDialog.dismiss();
+                        }
+
+                    }
+                });
+
+                RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+                stringRequest.setRetryPolicy(new DefaultRetryPolicy(0, -1, 0));
+                requestQueue.add(stringRequest);
+
+
+            } else {
+                CommonMethods.DisplayToastInfo(getApplicationContext(), "No Internet Connection");
+
             }
+        } catch (Exception e) {
 
-            ArrayAdapter<String> countryAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, planList);
-            Spn_Plan.setAdapter(countryAdapter);
-
-        } catch (JSONException e) {
             e.printStackTrace();
+
         }
-
-
     }
 
     private String loadJSONFromAssetPlans() {
@@ -425,9 +469,9 @@ public class SubscriptionActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Intent i = new Intent(getApplicationContext(),NewDashboard.class);
+        Intent i = new Intent(getApplicationContext(), NewDashboard.class);
         startActivity(i);
-        overridePendingTransition(R.animator.left_right,R.animator.right_left);
+        overridePendingTransition(R.animator.left_right, R.animator.right_left);
         finish();
     }
 

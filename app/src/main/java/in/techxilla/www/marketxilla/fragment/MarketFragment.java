@@ -102,7 +102,7 @@ public class MarketFragment extends Fragment {
         tabLayout.addTab(tabLayout.newTab().setText("Active Puts \nIndex"));
         tabLayout.addTab(tabLayout.newTab().setText("Active by \nValue"));
         tabLayout.addTab(tabLayout.newTab().setText("Active by \nVolume"));
-        tabLayout.addTab(tabLayout.newTab().setText("Active \nFuture"));
+       // tabLayout.addTab(tabLayout.newTab().setText("Active \nFuture"));
         tabLayout.setTabTextColors(mContext.getResources().getColor(R.color.white),mContext.getResources().getColor(R.color.colorPrimary));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         final ViewPager viewPager = (ViewPager) rootView.findViewById(R.id.pager);

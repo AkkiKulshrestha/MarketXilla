@@ -52,6 +52,7 @@ import in.techxilla.www.marketxilla.adaptor.ImageSliderAdapter;
 import in.techxilla.www.marketxilla.adaptor.SmartPlanAdapter;
 import in.techxilla.www.marketxilla.fragment.HomeFragment;
 import in.techxilla.www.marketxilla.fragment.HolidayFragment;
+import in.techxilla.www.marketxilla.fragment.MarketFragment;
 import in.techxilla.www.marketxilla.fragment.PackageFragment;
 import in.techxilla.www.marketxilla.model.CallModel;
 import in.techxilla.www.marketxilla.model.SmartPlanModel;
@@ -290,9 +291,9 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
                 fragment = new HomeFragment();
                 break;
 
-             /*case R.id.navigation_market:
+             case R.id.navigation_market:
                 fragment = new MarketFragment();
-                break;*/
+                break;
 
             case R.id.navigation_holiday:
                 fragment = new HolidayFragment();
@@ -302,7 +303,10 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
                 fragment = new PackageFragment();
                 break;
 
-
+            case R.id.nav_my_subscription:
+                Intent intent_subscription = new Intent(NewDashboard.this,SubscriptionPlanActivity.class);
+                startActivity(intent_subscription);
+                break;
 
             case R.id.nav_about_us:
                 Intent intent_about_us = new Intent(Intent.ACTION_VIEW );

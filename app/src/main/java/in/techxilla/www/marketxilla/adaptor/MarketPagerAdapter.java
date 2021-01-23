@@ -51,9 +51,9 @@ public class MarketPagerAdapter extends FragmentStatePagerAdapter {
             case 7:
                 ActiveByVolumeFragment active_by_volume = new ActiveByVolumeFragment();
                 return active_by_volume;
-            case 8:
+          /*  case 8:
                 ActiveFutureFragment activeFutureFragment = new ActiveFutureFragment();
-                return activeFutureFragment;
+                return activeFutureFragment;*/
 
             default:
                 return null;

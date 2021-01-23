@@ -32,6 +32,35 @@
     <string name="privacy_policy">PRIVACY POLICIES</string>
     <string name="terms_n_condition"><![CDATA[TERMS & CONDITIONS]]></string>
     <string name="disclaimer">DISCLAIMER</string>
+    <string name="subscription">SUBSCRIPTION</string>
+    <string name="my_subscription">MY SUBSCRIPTION</string>
+    <string name="sliver">SILVER</string>
+    <string name="plan_msg1">Sliver plan includes daily 2 to 3 \n recommendations of Stock Future and options.</string>
+    <string name="plan_msg2">Glod plan includes daily recommendations of 2 to 3 Stock Future \n and Options,1 and 2 of Index Future and \n options.(Notes - Index recommendation is depend upon the market conditions).</string>
+    <string name="plan_msg3">Platinum plan includes daily recommendations of 2 to 3 Stock Future \n and Options,1 and 2 of Index Future and \n options and 3 to 4 in commodity segment.(Notes - Index recommendation is depend upon the market conditions).</string>
+    <string name="plan_msg4">Future Special plan includes daily 4 to 5 \n recommendations of Stock Future and Index Future.</string>
+    <string name="plan_msg5">Options Special plan includes daily 4 to 5 \n recommendations of Stock Option and Index Option.</string>
+    <string name="plan_msg6">Commodity Special plan includes daily 4 to 6 \n recommendations of Bullion,Energy, and Base Metal in the Commodity \n segament.</string>
+    <string name="basic">BASIC</string>
+    <string name="standered">STANDERED</string>
+    <string name="gold">GOLD</string>
+
+    <string name="platinum">PLATINUM</string>
+    <string name="future_special">FUTURE SPECIAL</string>
+    <string name="optionsspecial">OPTIONS SPECIAL</string>
+    <string name="commodityspecial">COMMODITY SPECIAL</string>
+
+
+    <string name="stock_future">STOCK (Future)</string>
+    <string name="stock_options">STOCK (Options)</string>
+    <string name="index_future">INDEX (Future)</string>
+    <string name="index_options">INDEX (Options)</string>
+    <string name="commodity">COMMODITY</string>
+    <string name="telegram_updates">TELEGRAM UPDATES</string>
+    <string name="month">1 month</string>
+    <string name="special">SPECIAL</string>
+    <string name="premium">PREMIUM</string>
+
 
     <string-array name="spin_item_package">
         <item>Select Package</item>
@@ -39,7 +68,6 @@
         <item>2 Month</item>
         <item>3 Month</item>
     </string-array>
-
 
 
 </resources>

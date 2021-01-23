@@ -2,21 +2,21 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="in.techxilla.www.marketxilla"
     android:installLocation="auto">
-
     <!-- Include required permissions for Google Mobile Ads to run. -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
+        android:name=".AppController"
         android:allowBackup="true"
+        android:alwaysRetainTaskState="true"
+        android:hardwareAccelerated="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:largeHeap="true"
-        android:alwaysRetainTaskState="true"
-        android:hardwareAccelerated="true"
         android:theme="@style/AppTheme.NoActionBar">
         <activity android:name=".SplashActivity">
             <intent-filter>
@@ -25,28 +25,54 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".SignIn_SignUpActivity"
+        <activity
+            android:name=".SignIn_SignUpActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar" /> <!-- Firebase Cloud Message -->
+        <!--
+<meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/new_notification" />
+        -->
+        <!--
+ Set color used with incoming notification messages.
+        This is used when no color is set for the incoming notification message. See README
+        (https://github.com/firebase/quickstart-android/tree/master/messaging#custom-default-color) for more.
+        -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/black" />
 
-        <activity android:name=".NewDashboard"
+        <service
+            android:name=".fcm.CloudMessagingService"
+            android:permission="true"
+            android:stopWithTask="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <activity
+            android:name=".NewDashboard"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan"/>
-
-        <activity android:name=".SubscriptionActivity"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".SubscriptionActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".NotificationActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <activity android:name=".NotificationActivity"
+        <activity android:name=".SubscriptionPlanActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
-
     </application>
 
 </manifest>

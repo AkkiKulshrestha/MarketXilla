@@ -95,7 +95,10 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_main" />
+    <include
+        layout="@layout/content_main"
+        tools:layout_editor_absoluteX="-73dp"
+        tools:layout_editor_absoluteY="-119dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

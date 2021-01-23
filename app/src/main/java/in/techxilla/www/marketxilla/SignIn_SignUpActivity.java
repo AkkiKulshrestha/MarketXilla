@@ -272,6 +272,7 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
                         Map<String, String> params = new HashMap<String, String>();
                         params.put("username", StrUserName.toUpperCase());
                         params.put("password", md5(StrPassword));
+                        params.put("token",UtilitySharedPreferences.getPrefs(getApplicationContext(),"token"));
                         Log.d("ParrasLogin",params.toString() );
 
                         return params;
@@ -420,6 +421,7 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
                         params.put("email_id", StrEmail);
                         params.put("mobile_no", StrMobile);
                         params.put("password", md5(StrPassword));
+                        params.put("token",UtilitySharedPreferences.getPrefs(getApplicationContext(),"token"));
                         Log.d("ParrasRegister",params.toString() );
 
                         return params;

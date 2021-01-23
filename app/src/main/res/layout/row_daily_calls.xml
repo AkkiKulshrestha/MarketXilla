@@ -393,7 +393,199 @@
         </LinearLayout>
 
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            android:orientation="vertical">
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorAccent"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"/>
+
+            <LinearLayout
+                android:id="@+id/row_linear_closinglayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="3dp"
+                android:weightSum="6">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="3dp"
+                    android:layout_weight="3">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:textStyle="bold"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:textSize="12sp"
+                        android:text="Closing Price"
+                        android:textColor="@color/black"/>
+
+                    <TextView
+                        android:id="@+id/tv_closingprice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorPrimary"
+                        android:textStyle="bold"
+                        android:layout_gravity="center"
+                        android:paddingStart="5dp"
+                        android:gravity="center"
+                        android:textSize="14sp"
+                        />
+
+
+
+                </LinearLayout>
+
+
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorAccent"
+                    android:layout_marginTop="7dp"
+                    />
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="3">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:textStyle="bold"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:textSize="12sp"
+                        android:text="Profit/Loss"
+                        android:textColor="@color/black"/>
+                    <TextView
+                        android:id="@+id/tv_profit_loss"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorPrimary"
+                        android:paddingStart="5dp"
+                        android:textStyle="bold"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:textSize="14sp"
+                        />
+
+
+
+
+                </LinearLayout>
+
+
+
+                <!--  <View
+                      android:layout_width="1dp"
+                      android:layout_height="match_parent"
+                      android:background="@color/colorAccent"
+                      android:layout_marginTop="7dp"
+                      />
+                  <LinearLayout
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:orientation="vertical"
+                      android:layout_gravity="center"
+                      android:layout_marginTop="3dp"
+                      android:layout_weight="3">
+
+
+
+
+                      <TextView
+                          android:layout_width="wrap_content"
+                          android:layout_height="match_parent"
+                          android:padding="5dp"
+                          android:textStyle="bold"
+                          android:layout_gravity="center"
+                          android:gravity="center"
+                          android:textSize="12sp"
+                          android:text="TARGET 3"
+                          android:textColor="@color/black"/>
+
+                      <TextView
+                          android:id="@+id/tv_target3"
+
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:textColor="@color/colorPrimary"
+                          android:textStyle="bold"
+                          android:layout_gravity="center"
+                          android:gravity="center"
+                          android:textSize="14sp"
+                          />
+                  </LinearLayout>
+
+
+
+                  <View
+                      android:layout_width="1dp"
+                      android:layout_height="match_parent"
+                      android:background="@color/colorAccent"
+                      android:layout_marginTop="7dp"
+                      />
+                  <LinearLayout
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:orientation="vertical"
+                      android:layout_gravity="center"
+                      android:layout_marginTop="3dp"
+                      android:background="@color/bg_screen1"
+                      android:padding="5dp"
+                      android:layout_weight="3">
+
+
+
+                      <TextView
+                          android:layout_width="wrap_content"
+                          android:layout_height="match_parent"
+                          android:padding="5dp"
+                          android:textStyle="bold"
+                          android:layout_gravity="center"
+                          android:gravity="center"
+                          android:textSize="12sp"
+                          android:text="Stop Loss"
+                          android:textColor="@color/white"/>
+                      <TextView
+                          android:id="@+id/tv_stop_loss"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:textColor="@color/white"
+                          android:textStyle="bold"
+                          android:layout_gravity="center"
+                          android:gravity="center"
+                          android:textSize="14sp"
+                          />
+
+                  </LinearLayout>
+
+  -->
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
 
 
 

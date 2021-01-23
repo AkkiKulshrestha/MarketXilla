@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="false">
+        <layer-list>
+            <!-- SHADOW -->
+            <item>
+                <shape>
+                    <solid android:color="#CCCACA" />
+                    <!-- alttan gölge -->
+                    <corners android:radius="10dp" />
+                </shape>
+            </item>
+            <!-- BUTTON alttan gölge
+              android:right="5px" to make it round-->
+            <item android:bottom="1px" android:left="1px" android:right="1px" android:top="1px">
+                <shape>
+                    <padding android:bottom="2dp" />
+                    <gradient android:angle="270" android:endColor="@color/white"
+
+                        android:startColor="@color/white" />
+                    <corners android:radius="10dp" />
+                    <padding android:bottom="5dp" android:left="5dp" android:right="5dp" android:top="5dp" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+    <item android:state_pressed="true">
+        <layer-list>
+            <!-- SHADOW -->
+            <item>
+                <shape>
+                    <solid android:color="#BBBCBD" />
+                    <corners android:radius="1dp" />
+
+                </shape>
+            </item>
+            <!-- BUTTON -->
+            <item android:bottom="2px">
+                <shape>
+                    <padding android:bottom="2dp" />
+                    <gradient android:angle="270" android:endColor="@color/wetland_logo_color" android:startColor="@color/wetland_logo_color" />
+                    <corners android:radius="1dp" />
+                    <padding android:bottom="2dp" android:left="2dp" android:right="2dp" android:top="2dp" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+</selector>

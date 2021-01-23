@@ -2,7 +2,39 @@ package in.techxilla.www.marketxilla.model;
 
 public class CallModel {
 
-    String id,stock_name,date,is_buy_sell,buy_sell_above_below,stop_loss,target1,target2,target3,ce_pe,strike,performance_for,performance_for_id;
+    String id;
+    String stock_name;
+    String date;
+    String is_buy_sell;
+    String buy_sell_above_below;
+    String stop_loss;
+    String target1;
+    String target2;
+    String target3;
+    String ce_pe;
+    String strike;
+    String performance_for;
+    String performance_for_id;
+    String profit_loss;
+    String buy_sell_closing_price;
+
+    public String getProfit_loss() {
+        return profit_loss;
+    }
+
+    public void setProfit_loss(String profit_loss) {
+        this.profit_loss = profit_loss;
+    }
+
+    public String getBuy_sell_closing_price() {
+        return buy_sell_closing_price;
+    }
+
+    public void setBuy_sell_closing_price(String buy_sell_closing_price) {
+        this.buy_sell_closing_price = buy_sell_closing_price;
+    }
+
+
 
     public CallModel() {
     }

@@ -50,6 +50,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.net.URLEncoder;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -75,15 +76,15 @@ import static in.techxilla.www.marketxilla.webservices.RestClient.ROOT_URL;
 public class HomeFragment extends Fragment {
 
 
-    String StrMemberId,StrMemberName,StrMemberEmailId,StrMemberMobile,StrMemberUserName;
+    String StrMemberId, StrMemberName, StrMemberEmailId, StrMemberMobile, StrMemberUserName;
     ProgressDialog myDialog;
-    TextView TV_NameTxt,TV_Day_TimeDisplayingTxt;
+    TextView TV_NameTxt, TV_Day_TimeDisplayingTxt;
     String greeting;
     private static ViewPager mPager;
     private static int currentPage = 0;
     private static int NUM_PAGES = 0;
-    private static final Integer[] IMAGES= {R.drawable.slider1,R.drawable.slider2,R.drawable.slider3,
-            R.drawable.slider4,R.drawable.slider5,R.drawable.slider6};
+    private static final Integer[] IMAGES = {R.drawable.slider1, R.drawable.slider2, R.drawable.slider3,
+            R.drawable.slider4, R.drawable.slider5, R.drawable.slider6};
     private ArrayList<Integer> ImagesArray = new ArrayList<Integer>();
     TextView Tv_DisplayGolu;
     SliderView sliderView;
@@ -121,7 +122,7 @@ public class HomeFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootView =inflater.inflate(R.layout.fragment_home, null);
+        rootView = inflater.inflate(R.layout.fragment_home, null);
 
         initUI();
         return rootView;
@@ -133,7 +134,7 @@ public class HomeFragment extends Fragment {
 
         mContext = getContext();
         NewDashboard activity = (NewDashboard) getActivity();
-         toolbar = activity.findViewById(R.id.toolbar);
+        toolbar = activity.findViewById(R.id.toolbar);
         activity.setSupportActionBar(toolbar);
 
         ImageView iv_refresh = (ImageView) toolbar.findViewById(R.id.iv_refresh);
@@ -144,8 +145,8 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        mPager = (ViewPager)rootView.findViewById(R.id.image_pager);
-        sliderView = (SliderView)rootView.findViewById(R.id.imageSlider);
+        mPager = (ViewPager) rootView.findViewById(R.id.image_pager);
+        sliderView = (SliderView) rootView.findViewById(R.id.imageSlider);
 
         sliderView.setIndicatorAnimation(IndicatorAnimations.THIN_WORM); //set indicator animation by using SliderLayout.IndicatorAnimations. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
         sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
@@ -191,14 +192,12 @@ public class HomeFragment extends Fragment {
         recycler_list.setLayoutManager(layoutManager);
 
 
-
-
         fetchCallData();
 
     }
 
 
-    public void RefreshPage(){
+    public void RefreshPage() {
 
 
         fetchCallData();
@@ -207,37 +206,35 @@ public class HomeFragment extends Fragment {
 
     private void SocialNetworkingLinks() {
 
-        ImageView iv_gmail = (ImageView)rootView.findViewById(R.id.iv_gmail);
-        ImageView iv_sms = (ImageView)rootView.findViewById(R.id.iv_sms);
-        ImageView iv_whatsapp = (ImageView)rootView.findViewById(R.id.iv_whatsapp);
-
+        ImageView iv_gmail = (ImageView) rootView.findViewById(R.id.iv_gmail);
+        ImageView iv_sms = (ImageView) rootView.findViewById(R.id.iv_sms);
+        ImageView iv_whatsapp = (ImageView) rootView.findViewById(R.id.iv_whatsapp);
 
 
         iv_gmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try{
+                try {
                     final String appPackageName = mContext.getPackageName();
 
-                    Intent intent=new Intent(Intent.ACTION_SEND);
-                    String[] recipients={"marketxilla@gmail.com"};
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    String[] recipients = {"marketxilla@gmail.com"};
                     intent.putExtra(Intent.EXTRA_EMAIL, recipients);
-                    intent.putExtra(Intent.EXTRA_SUBJECT,"Welcome To Marketxilla");
-                    intent.putExtra(Intent.EXTRA_TEXT, "Greetings, \n\n"+
+                    intent.putExtra(Intent.EXTRA_SUBJECT, "Welcome To Marketxilla");
+                    intent.putExtra(Intent.EXTRA_TEXT, "Greetings, \n\n" +
                             "Welcome To Marketxilla, \n" +
                             "\"An Intraday Research Service Providing App For NSE Future And Options, and Commodity\" \n\n\n\n" +
                             "Marketxilla App is Specially Designed For Intraday Traders. Our Research is Based On Dynamic Data And Technical Analysis. For Consistent Profit and Hassle-Free Trading, You Can Study Our Live Research Recommendations.\n" +
                             "Marketxilla App Is Now Available for Andriod On Google Play Store. Download MarketXilla -  https://play.google.com/store/apps/details?id=" + appPackageName);
-                    intent.putExtra(Intent.EXTRA_CC,"info@marketxilla.com");
+                    intent.putExtra(Intent.EXTRA_CC, "info@marketxilla.com");
                     intent.setType("text/html");
                     intent.setPackage("com.google.android.gm");
                     mContext.startActivity(Intent.createChooser(intent, "Send mail"));
-                }catch(ActivityNotFoundException e){
+                } catch (ActivityNotFoundException e) {
                     //TODO smth
                 }
             }
         });
-
 
 
         iv_sms.setOnClickListener(new View.OnClickListener() {
@@ -245,8 +242,8 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
 
                 String phone = "+919022409928";
-                String message = "ENQUIRY. \nHello MarketXilla Team, Kindly arrange a call back.";
-                Uri sms_uri = Uri.parse("smsto:"+phone);
+                String message = "ENQUIRY. \nHello MarketXilla,\nWant To Know More About Your Services, Kindly Revert Back.";
+                Uri sms_uri = Uri.parse("smsto:" + phone);
                 Intent sms_intent = new Intent(Intent.ACTION_SENDTO, sms_uri);
                 sms_intent.putExtra("sms_body", message);
                 mContext.startActivity(sms_intent);
@@ -259,18 +256,18 @@ public class HomeFragment extends Fragment {
             public void onClick(View view) {
 
                 String phone = "+919022409928";
-                String message = "ENQUIRY. \nHello MarketXilla Team, Kindly arrange a call back.";
+                String message = "ENQUIRY. \nHello MarketXilla,\nWant To Know More About Your Services, Kindly Revert Back.";
                 PackageManager packageManager = mContext.getPackageManager();
                 Intent i = new Intent(Intent.ACTION_VIEW);
 
                 try {
-                    String url = "https://api.whatsapp.com/send?phone="+ phone +"&text=" + URLEncoder.encode(message, "UTF-8");
+                    String url = "https://api.whatsapp.com/send?phone=" + phone + "&text=" + URLEncoder.encode(message, "UTF-8");
                     i.setPackage("com.whatsapp");
                     i.setData(Uri.parse(url));
                     if (i.resolveActivity(packageManager) != null) {
                         mContext.startActivity(i);
                     }
-                } catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -279,7 +276,7 @@ public class HomeFragment extends Fragment {
 
     private void fetchCallData() {
 
-        if(callModel_list!=null){
+        if (callModel_list != null) {
             callModel_list = new ArrayList<>();
         }
 
@@ -289,11 +286,11 @@ public class HomeFragment extends Fragment {
         myDialog.setCanceledOnTouchOutside(false);
         myDialog.show();*/
         String Uiid_id = UUID.randomUUID().toString();
-        String URL_GetCallList = ROOT_URL+"fetchPerformanceData.php?_"+Uiid_id+"&per_for=all";
+        String URL_GetCallList = ROOT_URL + "fetchPerformanceData.php?_" + Uiid_id + "&per_for=all";
 
 
         try {
-            Log.d("URL",URL_GetCallList);
+            Log.d("URL", URL_GetCallList);
 
             ConnectionDetector cd = new ConnectionDetector(mContext);
             boolean isInternetPresent = cd.isConnectingToInternet();
@@ -304,8 +301,8 @@ public class HomeFragment extends Fragment {
                             @SuppressLint("UseCompatLoadingForDrawables")
                             @Override
                             public void onResponse(String response) {
-                                Log.d("Response",response);
-                                if(myDialog!=null && myDialog.isShowing()){
+                                Log.d("Response", response);
+                                if (myDialog != null && myDialog.isShowing()) {
                                     myDialog.dismiss();
                                 }
                                 try {
@@ -315,9 +312,9 @@ public class HomeFragment extends Fragment {
                                     //StatusCodeKYCComplaint = jobj.getInt("status");
                                     JSONArray data = jobj.getJSONArray("data");
                                     mStackCount = data.length();
-                                    for(int k = 0; k< data.length();k++) {
+                                    for (int k = 0; k < data.length(); k++) {
                                         JSONObject jsonObject = data.getJSONObject(k);
-                                        Log.d("jobj",""+jsonObject);
+                                        Log.d("jobj", "" + jsonObject);
                                         String id = jsonObject.getString("id");
                                         String stock_name = jsonObject.getString("stock_name");
                                         String date = jsonObject.getString("date");
@@ -331,6 +328,9 @@ public class HomeFragment extends Fragment {
                                         String target3 = jsonObject.getString("target3");
                                         String ce_pe = jsonObject.getString("ce_pe");
                                         String strike = jsonObject.getString("strike");
+                                        String buy_sell_closing_price = jsonObject.getString("buy_sell_closing_price");
+                                        String profit_loss = jsonObject.getString("profit_loss");
+
 
                                         callListModel = new CallModel();
                                         callListModel.setId(id);
@@ -346,20 +346,19 @@ public class HomeFragment extends Fragment {
                                         callListModel.setTarget3(target3);
                                         callListModel.setCe_pe(ce_pe);
                                         callListModel.setStrike(strike);
+                                        callListModel.setBuy_sell_closing_price(buy_sell_closing_price);
+                                        callListModel.setProfit_loss(profit_loss);
 
                                         callModel_list.add(callListModel);
 
 
-
                                     }
 
-                                    stackLayoutAdapter= new StackLayoutAdapter(mContext, callModel_list);
+                                    stackLayoutAdapter = new StackLayoutAdapter(mContext, callModel_list);
                                     /*recyclerSmartCalls.setAdapter(stackLayoutAdapter);
                                     stackLayoutAdapter.notifyDataSetChanged();*/
                                     recycler_list.setAdapter(stackLayoutAdapter);
                                     stackLayoutAdapter.notifyDataSetChanged();
-
-
 
 
                                 } catch (Exception e) {
@@ -375,7 +374,7 @@ public class HomeFragment extends Fragment {
                     public void onErrorResponse(VolleyError error) {
                         VolleyLog.d("volley", "Error: " + error.getMessage());
                         error.printStackTrace();
-                        if(myDialog!=null && myDialog.isShowing()){
+                        if (myDialog != null && myDialog.isShowing()) {
                             myDialog.dismiss();
                         }
 
@@ -388,7 +387,7 @@ public class HomeFragment extends Fragment {
 
 
             } else {
-                CommonMethods.DisplayToastInfo(mContext,"No Internet Connection");
+                CommonMethods.DisplayToastInfo(mContext, "No Internet Connection");
 
             }
         } catch (Exception e) {
@@ -413,7 +412,7 @@ public class HomeFragment extends Fragment {
             return new StackLayoutAdapter.StackHolder(view);
         }
 
-        public  StackLayoutAdapter(Context mCtx, ArrayList<CallModel> callArrayList) {
+        public StackLayoutAdapter(Context mCtx, ArrayList<CallModel> callArrayList) {
             this.mCtx = mCtx;
             this.callArrayList = callArrayList;
 
@@ -425,10 +424,9 @@ public class HomeFragment extends Fragment {
             int res;
 
 
-
             viewHolder.TvStockName.setText(callArrayList.get(position).getStock_name());
 
-            Date date= null;
+            Date date = null;
             try {
                 date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(callArrayList.get(position).getDate());
                 String convertDate = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss").format(date);
@@ -439,21 +437,21 @@ public class HomeFragment extends Fragment {
                 e.printStackTrace();
             }
 
-            if(callArrayList.get(position).getIs_buy_sell()!=null && callArrayList.get(position).getIs_buy_sell().equalsIgnoreCase("1")){
-                if(callArrayList.get(position).getPerformance_for().equalsIgnoreCase("Commodity")){
-                    viewHolder.tv_above_below.setText("BETWEEN \n"+callArrayList.get(position).getBuy_sell_above_below());
-                }else{
-                    viewHolder.tv_above_below.setText("ABOVE "+callArrayList.get(position).getBuy_sell_above_below());
+            if (callArrayList.get(position).getIs_buy_sell() != null && callArrayList.get(position).getIs_buy_sell().equalsIgnoreCase("1")) {
+                if (callArrayList.get(position).getPerformance_for().equalsIgnoreCase("Commodity")) {
+                    viewHolder.tv_above_below.setText("BETWEEN \n" + callArrayList.get(position).getBuy_sell_above_below());
+                } else {
+                    viewHolder.tv_above_below.setText("ABOVE " + callArrayList.get(position).getBuy_sell_above_below());
                 }
 
                 viewHolder.tv_sell_buy.setText("INTRADAY BUY");
                 viewHolder.tv_sell_buy.setBackground(mCtx.getDrawable(R.drawable.cw_button_shadow_green));
                 viewHolder.iv_up_down.setImageDrawable(mCtx.getDrawable(R.drawable.up));
-            }else if(callArrayList.get(position).getIs_buy_sell()!=null && callArrayList.get(position).getIs_buy_sell().equalsIgnoreCase("2")){
-                if(callArrayList.get(position).getPerformance_for().equalsIgnoreCase("Commodity")){
-                    viewHolder.tv_above_below.setText("BETWEEN \n"+callArrayList.get(position).getBuy_sell_above_below());
-                }else{
-                    viewHolder.tv_above_below.setText("BELOW "+callArrayList.get(position).getBuy_sell_above_below());
+            } else if (callArrayList.get(position).getIs_buy_sell() != null && callArrayList.get(position).getIs_buy_sell().equalsIgnoreCase("2")) {
+                if (callArrayList.get(position).getPerformance_for().equalsIgnoreCase("Commodity")) {
+                    viewHolder.tv_above_below.setText("BETWEEN \n" + callArrayList.get(position).getBuy_sell_above_below());
+                } else {
+                    viewHolder.tv_above_below.setText("BELOW " + callArrayList.get(position).getBuy_sell_above_below());
                 }
 
                 viewHolder.tv_sell_buy.setText("INTRADAY SELL");
@@ -463,26 +461,68 @@ public class HomeFragment extends Fragment {
             }
 
 
-
-            if(callArrayList.get(position).getCe_pe()!=null && callArrayList.get(position).getCe_pe().equalsIgnoreCase("1")){
-                viewHolder.tv_strike_ce.setText("STRIKE "+ CommonMethods.DecimalNumberDisplayFormattingWithComma(callArrayList.get(position).getStrike())+" CE" );
+            if (callArrayList.get(position).getCe_pe() != null && callArrayList.get(position).getCe_pe().equalsIgnoreCase("1")) {
+                viewHolder.tv_strike_ce.setText("STRIKE " + CommonMethods.DecimalNumberDisplayFormattingWithComma(callArrayList.get(position).getStrike()) + " CE");
                 viewHolder.tv_strike_ce.setVisibility(View.VISIBLE);
 
-            }else if(callArrayList.get(position).getCe_pe()!=null && callArrayList.get(position).getCe_pe().equalsIgnoreCase("2")){
-                viewHolder.tv_strike_ce.setText("STRIKE "+CommonMethods.DecimalNumberDisplayFormattingWithComma(callArrayList.get(position).getStrike())+" PE" );
+            } else if (callArrayList.get(position).getCe_pe() != null && callArrayList.get(position).getCe_pe().equalsIgnoreCase("2")) {
+                viewHolder.tv_strike_ce.setText("STRIKE " + CommonMethods.DecimalNumberDisplayFormattingWithComma(callArrayList.get(position).getStrike()) + " PE");
                 viewHolder.tv_strike_ce.setVisibility(View.VISIBLE);
 
-            }else {
+            } else {
                 viewHolder.tv_strike_ce.setVisibility(View.INVISIBLE);
             }
 
+            try {
+                if (callArrayList.get(position).getBuy_sell_closing_price() != null && !callArrayList.get(position).getBuy_sell_closing_price().equalsIgnoreCase("")) {
+                    if ((Double.parseDouble(callArrayList.get(position).getBuy_sell_closing_price())) > 0) {
+                        viewHolder.linear_closinglayout.setVisibility(View.VISIBLE);
+                    } else {
+                        viewHolder.linear_closinglayout.setVisibility(View.GONE);
+                    }
+                } else {
+                    viewHolder.linear_closinglayout.setVisibility(View.GONE);
+                }
+            } catch (NumberFormatException nfe) {
+                nfe.printStackTrace();
+            }
+            try
+            {
+                String mProfit_loss;
+                mProfit_loss = String.format("%2.7s", callArrayList.get(position).getProfit_loss());
 
+                System.out.println(mProfit_loss);
+                if (callArrayList.get(position).getProfit_loss() != null && !callArrayList.get(position).getProfit_loss().equalsIgnoreCase("")) {
+                    if ((Double.parseDouble(String.valueOf(callArrayList.get(position).getProfit_loss()))) > 0) {
+                        viewHolder.tv_profit_loss.setTextColor(mContext.getResources().getColor(R.color.result_points));
+                        viewHolder.tv_profit_loss.setText("\u20B9 " + mProfit_loss);
+                    } else {
+                        viewHolder.tv_profit_loss.setTextColor(mContext.getResources().getColor(R.color.md_red_a400));
+                        viewHolder.tv_profit_loss.setText("\u20B9 " + mProfit_loss);
+                    }
+                } else {
+                    viewHolder.tv_profit_loss.setTextColor(mContext.getResources().getColor(R.color.md_red_a400));
+                    viewHolder.tv_profit_loss.setText("\u20B9 0");
+                }
+            } catch (IllegalArgumentException iae) {
+                iae.printStackTrace();
+            }
 
+            viewHolder.tv_target1.setText("\u20B9 " + callArrayList.get(position).
 
-            viewHolder.tv_target1.setText("\u20B9 "+callArrayList.get(position).getTarget1());
-            viewHolder.tv_target2.setText("\u20B9 "+callArrayList.get(position).getTarget2());
-            viewHolder.tv_target3.setText("\u20B9 "+callArrayList.get(position).getTarget3());
-            viewHolder.tv_stop_loss.setText("\u20B9 "+callArrayList.get(position).getStop_loss());
+                    getTarget1());
+            viewHolder.tv_target2.setText("\u20B9 " + callArrayList.get(position).
+
+                    getTarget2());
+            viewHolder.tv_target3.setText("\u20B9 " + callArrayList.get(position).
+
+                    getTarget3());
+            viewHolder.tv_stop_loss.setText("\u20B9 " + callArrayList.get(position).
+
+                    getStop_loss());
+            viewHolder.tv_closingprice.setText("\u20B9 " + callArrayList.get(position).
+
+                    getBuy_sell_closing_price());
 
         }
 
@@ -494,25 +534,26 @@ public class HomeFragment extends Fragment {
         class StackHolder extends RecyclerView.ViewHolder {
             View itemView;
             ImageView iv_up_down;
-            TextView TvStockName,tv_date_time,tv_above_below,tv_sell_buy,tv_strike_ce,tv_target1,tv_target2,tv_target3,tv_stop_loss;
+            TextView TvStockName, tv_date_time, tv_above_below, tv_sell_buy, tv_strike_ce, tv_target1, tv_target2, tv_target3, tv_stop_loss, tv_closingprice, tv_profit_loss;
+            LinearLayout linear_closinglayout;
 
             StackHolder(@NonNull View itemView) {
                 super(itemView);
                 this.itemView = itemView;
 
+                linear_closinglayout = (LinearLayout) itemView.findViewById(R.id.row_linear_closinglayout);
                 TvStockName = (TextView) itemView.findViewById(R.id.TvStockName);
                 tv_date_time = (TextView) itemView.findViewById(R.id.tv_date_time);
                 tv_above_below = (TextView) itemView.findViewById(R.id.tv_above_below);
                 tv_strike_ce = (TextView) itemView.findViewById(R.id.tv_strike_ce);
                 tv_sell_buy = (TextView) itemView.findViewById(R.id.tv_sell_buy);
-                iv_up_down = (ImageView)itemView.findViewById(R.id.iv_up_down);
+                iv_up_down = (ImageView) itemView.findViewById(R.id.iv_up_down);
                 tv_target1 = (TextView) itemView.findViewById(R.id.tv_target1);
                 tv_target2 = (TextView) itemView.findViewById(R.id.tv_target2);
                 tv_target3 = (TextView) itemView.findViewById(R.id.tv_target3);
                 tv_stop_loss = (TextView) itemView.findViewById(R.id.tv_stop_loss);
-
-
-
+                tv_profit_loss = (TextView) itemView.findViewById(R.id.tv_profit_loss);
+                tv_closingprice = (TextView) itemView.findViewById(R.id.tv_closingprice);
 
 
             }
