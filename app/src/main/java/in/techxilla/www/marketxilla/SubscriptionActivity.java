@@ -70,10 +70,14 @@ public class SubscriptionActivity extends AppCompatActivity {
     Button btnSubscribe;
     ViewGroup viewGroup;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subscriptions);
+
+
+
         viewGroup = (ViewGroup) ((ViewGroup) this
                 .findViewById(android.R.id.content)).getChildAt(0);
         init();

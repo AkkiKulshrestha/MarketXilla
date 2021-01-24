@@ -13,11 +13,11 @@ public class SubscritPlanModel {
     String Amount1Month;
     String Amount2Months;
     String Amount3Months;
-    String package_id;
+    String Id;
 
     public SubscritPlanModel(String sPlan, String sPlanName, String sDetails,
                              boolean sStock_Future, boolean sStock_Options, boolean sIndex_Future, boolean sIndex_Options, boolean sCommodity, boolean sTelegram_Updates,
-                             String Amount1Month,  String Amount2Months,String Amount3Months,String package_id ) {
+                             String Amount1Month,  String Amount2Months,String Amount3Months,String Id ) {
         this.sPlan = sPlan;
         this.sPlanName = sPlanName;
         this.sDetails = sDetails;
@@ -30,13 +30,14 @@ public class SubscritPlanModel {
         this.Amount1Month = Amount1Month;
         this.Amount2Months = Amount2Months;
         this.Amount3Months = Amount3Months;
-        this.package_id = package_id;
+        this.Id = Id;
 
     }
 
     public  SubscritPlanModel(){
 
     }
+
 
     int image_green;
 
@@ -64,12 +65,12 @@ public class SubscritPlanModel {
         Amount3Months = amount3Months;
     }
 
-    public String getPackage_id() {
-        return package_id;
+    public String getId() {
+        return Id;
     }
 
-    public void setPackage_id(String package_id) {
-        this.package_id = package_id;
+    public void setId(String Id) {
+        this.Id = Id;
     }
 
 

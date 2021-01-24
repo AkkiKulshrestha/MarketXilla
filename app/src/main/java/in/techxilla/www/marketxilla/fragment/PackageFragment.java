@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.SnapHelper;
 import androidx.viewpager.widget.ViewPager;
@@ -24,6 +25,7 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
@@ -33,16 +35,21 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import in.techxilla.www.marketxilla.R;
 import in.techxilla.www.marketxilla.adaptor.SubscriptionPlanAdapter;
 import in.techxilla.www.marketxilla.model.SubscritPlanModel;
+import in.techxilla.www.marketxilla.utils.CirclePagerIndicatorDecoration;
 import in.techxilla.www.marketxilla.utils.CommonMethods;
 import in.techxilla.www.marketxilla.utils.ConnectionDetector;
 import in.techxilla.www.marketxilla.utils.ScreenSlidePageFragment;
+import in.techxilla.www.marketxilla.utils.UtilitySharedPreferences;
 
+import static in.techxilla.www.marketxilla.utils.CommonMethods.DisplaySnackBar;
 import static in.techxilla.www.marketxilla.webservices.RestClient.ROOT_URL;
 
 public class PackageFragment extends Fragment {
@@ -85,8 +92,12 @@ public class PackageFragment extends Fragment {
         SnapHelper snapHelper = new PagerSnapHelper();
         recyclerSmartPlan.setLayoutManager(layoutManager);
         snapHelper.attachToRecyclerView(recyclerSmartPlan);
+        recyclerSmartPlan.setHasFixedSize(true);
+        final int color = ContextCompat.getColor(mContext, R.color.blue_light);
+        recyclerSmartPlan.addItemDecoration(new CirclePagerIndicatorDecoration(color, color));
 
         fetchPlans();
+        getBankDetail();
 
     }
 
@@ -124,184 +135,40 @@ public class PackageFragment extends Fragment {
                                         JSONObject jo_inside = m_jArry.getJSONObject(i);
 
                                         //Silver
-                                        String PlanName = jo_inside.getString("PlanName");
-                                        String PackageId = jo_inside.getString("PackageId");
-                                        String PlanDescription = jo_inside.getString("PlanDescription");
-                                        String PlanAmount = jo_inside.getString("PlanAmount");
-                                        String SNo = jo_inside.getString("SNo");
+                                        String id = jo_inside.getString("id");
+                                        String plan_name = jo_inside.getString("plan_name");
+                                        String plan_type = jo_inside.getString("plan_type");
+                                        String plan_description = jo_inside.getString("plan_description");
+                                        String stock_future = jo_inside.getString("stock_future");
+                                        String stock_option = jo_inside.getString("stock_option");
+                                        String index_future = jo_inside.getString("index_future");
+                                        String index_option = jo_inside.getString("index_option");
 
-                                        if(PlanName!=null && PlanName.equalsIgnoreCase("SILVER")){
-                                            SubscritPlanModel subscritPlanModel = new SubscritPlanModel();
-                                            subscritPlanModel.setsPlanName(PlanName);
-                                            subscritPlanModel.setsPlan(getContext().getResources().getString(R.string.basic));
-                                            subscritPlanModel.setsDetails(PlanDescription);
-                                            subscritPlanModel.setsStock_Future(true);
-                                            subscritPlanModel.setsStock_Options(false);
-                                            subscritPlanModel.setsIndex_Future(false);
-                                            subscritPlanModel.setsIndex_Options(false);
-                                            subscritPlanModel.setsCommodity(false);
-                                            subscritPlanModel.setsTelegram_Updates(true);
-                                            subscritPlanModel.setPackage_id(PackageId);
+                                        String commodities = jo_inside.getString("commodities");
 
-                                            if(PackageId!=null && PackageId.equalsIgnoreCase("1")) {
-                                                subscritPlanModel.setAmount1Month("1 Month \n \u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(PlanAmount));
-                                            }
+                                        String telegram_messages = jo_inside.getString("telegram_messages");
+                                        String plan_amount1_month = jo_inside.getString("plan_amount1_month");
+                                        String plan_amount2_month = jo_inside.getString("plan_amount2_month");
+                                        String plan_amount3_month = jo_inside.getString("plan_amount3_month");
 
-                                            if(PackageId!=null && PackageId.equalsIgnoreCase("2")) {
-                                                subscritPlanModel.setAmount2Months("2 Month \n \u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(PlanAmount));
-                                            }
 
-                                            if(PackageId!=null && PackageId.equalsIgnoreCase("3")) {
-                                                subscritPlanModel.setAmount3Months("3 Month \n \u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(PlanAmount));
-                                            }
+                                        SubscritPlanModel subscritPlanModel = new SubscritPlanModel();
+                                        subscritPlanModel.setsPlanName(plan_name);
+                                        subscritPlanModel.setsPlan(plan_type);
+                                        subscritPlanModel.setsDetails(plan_description);
+                                        subscritPlanModel.setsStock_Future(Boolean.valueOf(stock_future));
+                                        subscritPlanModel.setsStock_Options(Boolean.valueOf(stock_option));
+                                        subscritPlanModel.setsIndex_Future(Boolean.valueOf(index_future));
+                                        subscritPlanModel.setsIndex_Options(Boolean.valueOf(index_option));
+                                        subscritPlanModel.setsCommodity(Boolean.valueOf(commodities));
+                                        subscritPlanModel.setsTelegram_Updates(Boolean.valueOf(telegram_messages));
+                                        subscritPlanModel.setId(id);
+                                        subscritPlanModel.setAmount1Month((plan_amount1_month));
+                                        subscritPlanModel.setAmount2Months((plan_amount2_month));
+                                        subscritPlanModel.setAmount3Months((plan_amount3_month));
 
-                                            smartPlanModelArrayList.add(subscritPlanModel);
+                                        smartPlanModelArrayList.add(subscritPlanModel);
 
-                                        }
-
-                                        if(PlanName!=null && PlanName.equalsIgnoreCase("GOLD")){
-                                            SubscritPlanModel subscritPlanModel = new SubscritPlanModel();
-                                            subscritPlanModel.setsPlanName(PlanName);
-                                            subscritPlanModel.setsPlan(getContext().getResources().getString(R.string.standered));
-                                            subscritPlanModel.setsDetails(PlanDescription);
-                                            subscritPlanModel.setsStock_Future(true);
-                                            subscritPlanModel.setsStock_Options(false);
-                                            subscritPlanModel.setsIndex_Future(false);
-                                            subscritPlanModel.setsIndex_Options(false);
-                                            subscritPlanModel.setsCommodity(false);
-                                            subscritPlanModel.setsTelegram_Updates(true);
-                                            subscritPlanModel.setPackage_id(PackageId);
-
-                                            if(PackageId!=null && PackageId.equalsIgnoreCase("1")) {
-                                                subscritPlanModel.setAmount1Month("1 Month \n \u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(PlanAmount));
-                                            }
-
-                                            if(PackageId!=null && PackageId.equalsIgnoreCase("2")) {
-                                                subscritPlanModel.setAmount2Months("2 Month \n \u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(PlanAmount));
-                                            }
-
-                                            if(PackageId!=null && PackageId.equalsIgnoreCase("3")) {
-                                                subscritPlanModel.setAmount3Months("3 Month \n \u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(PlanAmount));
-                                            }
-
-                                            smartPlanModelArrayList.add(subscritPlanModel);
-
-                                        }
-
-                                        if(PlanName!=null && PlanName.equalsIgnoreCase("PLATINUM")){
-                                            SubscritPlanModel subscritPlanModel = new SubscritPlanModel();
-                                            subscritPlanModel.setsPlanName(PlanName);
-                                            subscritPlanModel.setsPlan(getContext().getResources().getString(R.string.premium));
-                                            subscritPlanModel.setsDetails(PlanDescription);
-                                            subscritPlanModel.setsStock_Future(true);
-                                            subscritPlanModel.setsStock_Options(true);
-                                            subscritPlanModel.setsIndex_Future(true);
-                                            subscritPlanModel.setsIndex_Options(true);
-                                            subscritPlanModel.setsCommodity(true);
-                                            subscritPlanModel.setsTelegram_Updates(true);
-                                            subscritPlanModel.setPackage_id(PackageId);
-
-                                            if(PackageId!=null && PackageId.equalsIgnoreCase("1")) {
-                                                subscritPlanModel.setAmount1Month("1 Month \n \u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(PlanAmount));
-                                            }
-
-                                            if(PackageId!=null && PackageId.equalsIgnoreCase("2")) {
-                                                subscritPlanModel.setAmount2Months("2 Month \n \u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(PlanAmount));
-                                            }
-
-                                            if(PackageId!=null && PackageId.equalsIgnoreCase("3")) {
-                                                subscritPlanModel.setAmount3Months("3 Month \n \u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(PlanAmount));
-                                            }
-
-                                            smartPlanModelArrayList.add(subscritPlanModel);
-
-                                        }
-
-                                        if(PlanName!=null && PlanName.equalsIgnoreCase("FUTURE SPECIAL")){
-                                            SubscritPlanModel subscritPlanModel = new SubscritPlanModel();
-                                            subscritPlanModel.setsPlanName(PlanName);
-                                            subscritPlanModel.setsPlan(getContext().getResources().getString(R.string.special));
-                                            subscritPlanModel.setsDetails(PlanDescription);
-                                            subscritPlanModel.setsStock_Future(true);
-                                            subscritPlanModel.setsStock_Options(false);
-                                            subscritPlanModel.setsIndex_Future(true);
-                                            subscritPlanModel.setsIndex_Options(false);
-                                            subscritPlanModel.setsCommodity(false);
-                                            subscritPlanModel.setsTelegram_Updates(true);
-                                            subscritPlanModel.setPackage_id(PackageId);
-                                            if(PackageId!=null && PackageId.equalsIgnoreCase("1")) {
-                                                subscritPlanModel.setAmount1Month("1 Month \n \u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(PlanAmount));
-                                            }
-
-                                            if(PackageId!=null && PackageId.equalsIgnoreCase("2")) {
-                                                subscritPlanModel.setAmount2Months("2 Month \n \u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(PlanAmount));
-                                            }
-
-                                            if(PackageId!=null && PackageId.equalsIgnoreCase("3")) {
-                                                subscritPlanModel.setAmount3Months("3 Month \n \u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(PlanAmount));
-                                            }
-
-                                            smartPlanModelArrayList.add(subscritPlanModel);
-
-                                        }
-
-                                        if(PlanName!=null && PlanName.equalsIgnoreCase("OPTION SPECIAL")){
-                                            SubscritPlanModel subscritPlanModel = new SubscritPlanModel();
-                                            subscritPlanModel.setsPlanName(PlanName);
-                                            subscritPlanModel.setsPlan(getContext().getResources().getString(R.string.special));
-                                            subscritPlanModel.setsDetails(PlanDescription);
-                                            subscritPlanModel.setsStock_Future(false);
-                                            subscritPlanModel.setsStock_Options(true);
-                                            subscritPlanModel.setsIndex_Future(false);
-                                            subscritPlanModel.setsIndex_Options(true);
-                                            subscritPlanModel.setsCommodity(false);
-                                            subscritPlanModel.setsTelegram_Updates(true);
-                                            subscritPlanModel.setPackage_id(PackageId);
-
-                                            if(PackageId!=null && PackageId.equalsIgnoreCase("1")) {
-                                                subscritPlanModel.setAmount1Month("1 Month \n \u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(PlanAmount));
-                                            }
-
-                                            if(PackageId!=null && PackageId.equalsIgnoreCase("2")) {
-                                                subscritPlanModel.setAmount2Months("2 Month \n \u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(PlanAmount));
-                                            }
-
-                                            if(PackageId!=null && PackageId.equalsIgnoreCase("3")) {
-                                                subscritPlanModel.setAmount3Months("3 Month \n \u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(PlanAmount));
-                                            }
-
-                                            smartPlanModelArrayList.add(subscritPlanModel);
-
-                                        }
-
-                                        if(PlanName!=null && PlanName.equalsIgnoreCase("COMMODITY SPECIAL")){
-                                            SubscritPlanModel subscritPlanModel = new SubscritPlanModel();
-                                            subscritPlanModel.setsPlanName(PlanName);
-                                            subscritPlanModel.setsPlan(getContext().getResources().getString(R.string.special));
-                                            subscritPlanModel.setsDetails(PlanDescription);
-                                            subscritPlanModel.setsStock_Future(false);
-                                            subscritPlanModel.setsStock_Options(false);
-                                            subscritPlanModel.setsIndex_Future(false);
-                                            subscritPlanModel.setsIndex_Options(false);
-                                            subscritPlanModel.setsCommodity(true);
-                                            subscritPlanModel.setsTelegram_Updates(true);
-                                            subscritPlanModel.setPackage_id(PackageId);
-
-                                            if(PackageId!=null && PackageId.equalsIgnoreCase("1")) {
-                                                subscritPlanModel.setAmount1Month("1 Month \n \u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(PlanAmount));
-                                            }
-
-                                            if(PackageId!=null && PackageId.equalsIgnoreCase("2")) {
-                                                subscritPlanModel.setAmount2Months("2 Month \n \u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(PlanAmount));
-                                            }
-
-                                            if(PackageId!=null && PackageId.equalsIgnoreCase("3")) {
-                                                subscritPlanModel.setAmount3Months("3 Month \n \u20B9 "+CommonMethods.NumberDisplayFormattingWithComma(PlanAmount));
-                                            }
-
-                                            smartPlanModelArrayList.add(subscritPlanModel);
-
-                                        }
 
 
                                         smartPlanAdapter = new SubscriptionPlanAdapter(smartPlanModelArrayList,mContext);
@@ -339,6 +206,71 @@ public class PackageFragment extends Fragment {
             e.printStackTrace();
 
         }
+    }
+
+    private void getBankDetail() {
+        String Uiid_id = UUID.randomUUID().toString();
+        final String get_bank_details_info = ROOT_URL + "get_bank_details.php?_" + Uiid_id;
+        Log.d("URL --->", get_bank_details_info);
+        try {
+            ConnectionDetector cd = new ConnectionDetector(mContext);
+            boolean isInternetPresent = cd.isConnectingToInternet();
+            if (isInternetPresent) {
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, get_bank_details_info, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            Log.d("Response", "" + response);
+
+                            JSONObject Jobj = new JSONObject(response);
+
+                            boolean status = Jobj.getBoolean("status");
+
+                            if (status) {
+
+                                String data = Jobj.getString("data");
+                                JSONObject jobject = new JSONObject(data);
+
+                                String Id = jobject.getString("id");
+                                String beneficiary_name = jobject.getString("beneficiary_name");
+                                String bank_name = jobject.getString("bank_name");
+                                String account_no = jobject.getString("account_no");
+                                String ifsc_code = jobject.getString("ifsc_code");
+                                String StrUpiAccountId = jobject.getString("upi_id");
+                                String StrUPI_MerchantName = jobject.getString("upi_merchant_name");
+                                String branch = jobject.getString("branch");
+
+                                UtilitySharedPreferences.setPrefs(mContext,"UpiAccountId",StrUpiAccountId);
+                                UtilitySharedPreferences.setPrefs(mContext,"UpiMerchantName",StrUPI_MerchantName);
+
+                            }
+
+                        } catch (Exception e) {
+                            Log.d("Exception", e.toString());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        volleyError.printStackTrace();
+                        //Log.d("Vollley Err", volleyError.toString());
+                        DisplaySnackBar(viewGroup, "Something goes wrong. Please try again", "WARNING");
+
+                    }
+                });
+                RequestQueue requestQueue = Volley.newRequestQueue(mContext);
+                int socketTimeout = 50000;//30 seconds - change to what you want
+                RetryPolicy policy = new DefaultRetryPolicy((int) TimeUnit.SECONDS.toMillis(20), 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+                stringRequest.setRetryPolicy(policy);
+                requestQueue.add(stringRequest);
+            } else {
+                DisplaySnackBar(viewGroup, "No Internet Connection", "WARNING");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+
     }
 
 

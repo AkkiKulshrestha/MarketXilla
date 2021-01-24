@@ -5,7 +5,7 @@
             <!-- SHADOW -->
             <item>
                 <shape>
-                    <solid android:color="@color/black"/>
+                    <solid android:color="@color/grey"/>
                     <!-- alttan gölge -->
                     <corners android:radius="10dp"/>
                 </shape>
@@ -21,8 +21,8 @@
                 <shape>
                     <padding android:bottom="5dp"/>
                     <gradient
-                        android:startColor="@color/colorAccent"
-                        android:endColor="@color/colorAccent"
+                        android:startColor="@color/black"
+                        android:endColor="@color/black"
 
                         android:angle="270" />
                     <corners
@@ -56,7 +56,7 @@
                         android:endColor="@color/wetland_logo_color"
                         android:angle="270" />
                     <corners
-                        android:radius="19dp"/>
+                        android:radius="4dp"/>
                     <padding
                         android:left="10dp"
                         android:top="10dp"

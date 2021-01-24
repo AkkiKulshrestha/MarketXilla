@@ -30,6 +30,7 @@
             android:textSize="16sp"
             android:layout_gravity="center"
             android:gravity="center"
+            android:visibility="gone"
             android:layout_marginStart="5sp"
             android:layout_marginEnd="10sp"
             android:layout_marginBottom="5dp"
@@ -40,6 +41,7 @@
             android:id="@+id/recyclerSmartPlan"
             android:layout_width="match_parent"
             android:visibility="visible"
+
             android:layout_height="wrap_content"/>
 
 
