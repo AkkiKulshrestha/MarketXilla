@@ -4,15 +4,20 @@ public class SubscritPlanModel {
      String sPlan;
     String sPlanName;
     String sDetails;
-    String sStock_Future;
-    String sStock_Options;
-    String sIndex_Future;
-    String sIndex_Options;
-    String sCommodity;
-    String sTelegram_Updates;
-    String sDuration;
+    boolean sStock_Future;
+    boolean sStock_Options;
+    boolean sIndex_Future;
+    boolean sIndex_Options;
+    boolean sCommodity;
+    boolean sTelegram_Updates;
+    String Amount1Month;
+    String Amount2Months;
+    String Amount3Months;
+    String package_id;
 
-    public SubscritPlanModel(String sPlan, String sPlanName, String sDetails, String sStock_Future, int image_green,String sStock_Options, String sIndex_Future, String sIndex_Options, String sCommodity, String sTelegram_Updates, String sDuration,  int image_red) {
+    public SubscritPlanModel(String sPlan, String sPlanName, String sDetails,
+                             boolean sStock_Future, boolean sStock_Options, boolean sIndex_Future, boolean sIndex_Options, boolean sCommodity, boolean sTelegram_Updates,
+                             String Amount1Month,  String Amount2Months,String Amount3Months,String package_id ) {
         this.sPlan = sPlan;
         this.sPlanName = sPlanName;
         this.sDetails = sDetails;
@@ -22,31 +27,52 @@ public class SubscritPlanModel {
         this.sIndex_Options = sIndex_Options;
         this.sCommodity = sCommodity;
         this.sTelegram_Updates = sTelegram_Updates;
-        this.sDuration = sDuration;
-        this.image_green = image_green;
-        this.image_red = image_red;
+        this.Amount1Month = Amount1Month;
+        this.Amount2Months = Amount2Months;
+        this.Amount3Months = Amount3Months;
+        this.package_id = package_id;
+
+    }
+
+    public  SubscritPlanModel(){
+
     }
 
     int image_green;
 
-
-    public int getImage_green() {
-        return image_green;
+    public String getAmount1Month() {
+        return Amount1Month;
     }
 
-    public void setImage_green(int image_green) {
-        this.image_green = image_green;
+    public void setAmount1Month(String amount1Month) {
+        Amount1Month = amount1Month;
     }
 
-    public int getImage_red() {
-        return image_red;
+    public String getAmount2Months() {
+        return Amount2Months;
     }
 
-    public void setImage_red(int image_red) {
-        this.image_red = image_red;
+    public void setAmount2Months(String amount2Months) {
+        Amount2Months = amount2Months;
     }
 
-    int image_red;
+    public String getAmount3Months() {
+        return Amount3Months;
+    }
+
+    public void setAmount3Months(String amount3Months) {
+        Amount3Months = amount3Months;
+    }
+
+    public String getPackage_id() {
+        return package_id;
+    }
+
+    public void setPackage_id(String package_id) {
+        this.package_id = package_id;
+    }
+
+
     public String getsPlan() {
         return sPlan;
     }
@@ -71,63 +97,51 @@ public class SubscritPlanModel {
         this.sDetails = sDetails;
     }
 
-    public String getsStock_Future() {
+    public boolean issStock_Future() {
         return sStock_Future;
     }
 
-    public void setsStock_Future(String sStock_Future) {
+    public void setsStock_Future(boolean sStock_Future) {
         this.sStock_Future = sStock_Future;
     }
 
-    public String getsStock_Options() {
+    public boolean issStock_Options() {
         return sStock_Options;
     }
 
-    public void setsStock_Options(String sStock_Options) {
+    public void setsStock_Options(boolean sStock_Options) {
         this.sStock_Options = sStock_Options;
     }
 
-    public String getsIndex_Future() {
+    public boolean issIndex_Future() {
         return sIndex_Future;
     }
 
-    public void setsIndex_Future(String sIndex_Future) {
+    public void setsIndex_Future(boolean sIndex_Future) {
         this.sIndex_Future = sIndex_Future;
     }
 
-    public String getsIndex_Options() {
+    public boolean issIndex_Options() {
         return sIndex_Options;
     }
 
-    public void setsIndex_Options(String sIndex_Options) {
+    public void setsIndex_Options(boolean sIndex_Options) {
         this.sIndex_Options = sIndex_Options;
     }
 
-    public String getsCommodity() {
+    public boolean issCommodity() {
         return sCommodity;
     }
 
-    public void setsCommodity(String sCommodity) {
+    public void setsCommodity(boolean sCommodity) {
         this.sCommodity = sCommodity;
     }
 
-    public String getsTelegram_Updates() {
+    public boolean issTelegram_Updates() {
         return sTelegram_Updates;
     }
 
-    public void setsTelegram_Updates(String sTelegram_Updates) {
+    public void setsTelegram_Updates(boolean sTelegram_Updates) {
         this.sTelegram_Updates = sTelegram_Updates;
     }
-
-    public String getsDuration() {
-        return sDuration;
-    }
-
-    public void setsDuration(String sDuration) {
-        this.sDuration = sDuration;
-    }
-
-
-
-
 }

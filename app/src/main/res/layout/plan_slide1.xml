@@ -13,6 +13,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="6dp"
             android:orientation="vertical">
 
 
@@ -23,17 +24,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:background="@color/blue_light">
+            android:background="@color/blue_light"
+            android:minHeight="60dp">
 
             <TextView
                 android:id="@+id/img"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/cw_shadow_black"
+                android:layout_width="80sp"
+                android:layout_height="30sp"
+                android:layout_alignParentStart="true"
+                android:layout_centerInParent="true"
+                android:background="@color/black"
                 android:gravity="center"
                 android:text="@string/basic"
-                android:rotation="-33"
-                android:layout_margin="10dp"
                 android:textColor="@color/white"
                 android:textSize="10sp" />
 
@@ -41,12 +43,14 @@
                 android:id="@+id/tv_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
+                android:layout_toRightOf="@+id/img"
                 android:gravity="center"
-                android:padding="5dp"
-                android:textAllCaps="false"
+                android:padding="8dp"
+                android:layout_marginStart="50dp"
+                android:textAllCaps="true"
                 android:textColor="@color/white"
-                android:textSize="15sp"
+                android:textSize="16sp"
+                android:layout_centerInParent="true"
                 android:textStyle="bold" />
 
         </RelativeLayout>
@@ -65,9 +69,9 @@
                 android:gravity="center"
                 android:minLines="8"
                 android:padding="8dp"
-               android:background="@color/bg_grey_light"
-                android:text=""
-                android:textColor="@color/blue_light"
+                android:background="@color/bg_grey_light"
+                android:textAlignment="center"
+                android:textColor="@color/colorAccent"
                 android:textSize="13sp"
                 android:textStyle="normal" />
 
@@ -78,26 +82,40 @@
                 android:layout_below="@+id/tv_msg1"
                 android:background="@color/blue_light" />
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
+                android:orientation="vertical"
                 android:layout_below="@+id/view">
 
-                <TextView
+                <RelativeLayout
                     android:id="@+id/tv_type1"
                     android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                     <TextView
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
                     android:gravity="start"
-                    android:padding="5dp"
-                    android:text="STOCK(Future)"
+                    android:padding="16dp"
+                    android:text="STOCK (Future)"
                     android:textColor="@color/black"
-                    android:textSize="13sp"
+                    android:textSize="14sp"
                     android:textStyle="normal" />
 
+
+                    <ImageView
+                        android:id="@+id/iv_stk_ftr"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerInParent="true"
+                        android:layout_marginEnd="16dp"/>
+
+                </RelativeLayout>
+
                 <View
-                    android:id="@+id/view1"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_below="@+id/tv_type1"
@@ -105,106 +123,172 @@
                     android:layout_marginEnd="8dp"
                     android:background="@color/grey" />
 
-                <TextView
+                <RelativeLayout
                     android:id="@+id/tv_type2"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/view1"
-                    android:layout_marginStart="15dp"
-                    android:gravity="start"
-                    android:padding="5dp"
-                    android:text=""
-                    android:textColor="@color/black"
-                    android:textSize="13sp"
-                    android:textStyle="normal" />
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:padding="16dp"
+                        android:text="@string/stock_options"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:textStyle="normal" />
+
+
+                    <ImageView
+                        android:id="@+id/iv_stk_opt"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerInParent="true"
+                        android:layout_marginEnd="16dp"/>
+
+                </RelativeLayout>
 
                 <View
-                    android:id="@+id/view2"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_below="@+id/tv_type2"
+                    android:layout_below="@+id/tv_type1"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
                     android:background="@color/grey" />
-
-                <TextView
+                <RelativeLayout
                     android:id="@+id/tv_type3"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/view2"
-                    android:layout_marginStart="15dp"
-                    android:gravity="start"
-                    android:padding="5dp"
-                    android:text=""
-                    android:textColor="@color/black"
-                    android:textSize="13sp"
-                    android:textStyle="normal" />
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:padding="16dp"
+                       android:text="@string/index_future"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:textStyle="normal" />
+
+
+                    <ImageView
+                        android:id="@+id/iv_index_ftr"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerInParent="true"
+                        android:layout_marginEnd="16dp"/>
+
+                </RelativeLayout>
 
                 <View
-                    android:id="@+id/view3"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_below="@+id/tv_type3"
+                    android:layout_below="@+id/tv_type1"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
                     android:background="@color/grey" />
-
-                <TextView
+                <RelativeLayout
                     android:id="@+id/tv_type4"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/view3"
-                    android:layout_marginStart="15dp"
-                    android:gravity="start"
-                    android:padding="5dp"
-                    android:text=""
-                    android:textColor="@color/black"
-                    android:textSize="13sp"
-                    android:textStyle="normal" />
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:padding="16dp"
+                        android:text="@string/index_options"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:textStyle="normal" />
+
+
+                    <ImageView
+                        android:id="@+id/iv_index_opt"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerInParent="true"
+                        android:layout_marginEnd="16dp"/>
+
+                </RelativeLayout>
 
                 <View
-                    android:id="@+id/view4"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_below="@+id/tv_type4"
+                    android:layout_below="@+id/tv_type1"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
                     android:background="@color/grey" />
-
-                <TextView
+                <RelativeLayout
                     android:id="@+id/tv_type5"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:gravity="start"
-                    android:padding="5dp"
-                    android:text=""
-                    android:layout_below="@+id/view4"
-                    android:textColor="@color/black"
-                    android:textSize="13sp"
-                    android:textStyle="normal" />
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:padding="16dp"
+                        android:text="@string/commodity"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:textStyle="normal" />
+
+
+                    <ImageView
+                        android:id="@+id/iv_commodity"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerInParent="true"
+                        android:layout_marginEnd="16dp"/>
+
+                </RelativeLayout>
 
                 <View
-                    android:id="@+id/view5"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_below="@+id/tv_type5"
+                    android:layout_below="@+id/tv_type1"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@color/grey" />
+                <RelativeLayout
+                    android:id="@+id/tv_type6"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:padding="16dp"
+                        android:text="@string/telegram_updates"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:textStyle="normal" />
+
+
+                    <ImageView
+                        android:id="@+id/iv_telegram_update"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerInParent="true"
+                        android:layout_marginEnd="16dp"/>
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/tv_type1"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
                     android:background="@color/grey" />
 
-                <TextView
-                    android:id="@+id/tv_type6"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:gravity="start"
-                    android:padding="5dp"
-                    android:layout_below="@+id/view5"
-                    android:text=""
-                    android:textColor="@color/black"
-                    android:textSize="13sp"
-                    android:textStyle="normal" />
 
                 <View
                     android:id="@+id/view6"
@@ -214,7 +298,7 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
                     android:background="@color/grey" />
-            </RelativeLayout>
+            </LinearLayout>
         </RelativeLayout>
 
 
@@ -233,11 +317,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
+                android:orientation="vertical"
                 android:layout_gravity="center"
                 android:gravity="center">
 
                 <TextView
-                    android:id="@+id/tv_duration"
+                    android:id="@+id/tv_one_month"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -245,6 +330,33 @@
                     android:background="@drawable/cw_shadow_black"
                     android:padding="10dp"
                     android:text=""
+                    android:visibility="gone"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:textStyle="normal" />
+                <TextView
+                    android:id="@+id/tv_two_month"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    android:background="@drawable/cw_shadow_black"
+                    android:padding="10dp"
+                    android:text=""
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:textStyle="normal" />
+                <TextView
+                    android:id="@+id/tv_three_month"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:background="@drawable/cw_shadow_black"
+                    android:padding="10dp"
+                    android:text=""
+                    android:visibility="gone"
                     android:textColor="@color/white"
                     android:textSize="14sp"
                     android:textStyle="normal" />

@@ -53,34 +53,199 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
         final SubscritPlanModel smartPlanModel = smartPlanModelsList.get(position);
 
 
-        /*if(position==0){
-            holder.linear_bg.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
-            holder.txt_smartplan_name.setTextColor(Color.WHITE);
-            holder.txt_smartplan_description.setTextColor(Color.WHITE);
-        }else if(position==1){
-            holder.linear_bg.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
-            holder.txt_smartplan_name.setTextColor(Color.WHITE);
-            holder.txt_smartplan_description.setTextColor(Color.WHITE);
-        }else if(position==2){
-            holder.linear_bg.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
-            holder.txt_smartplan_name.setTextColor(Color.WHITE);
-            holder.txt_smartplan_description.setTextColor(Color.WHITE);
-        }*/
-
         holder.img_green.setText(smartPlanModel.getsPlan());
         holder.tv_title.setText(smartPlanModel.getsPlanName());
         holder.tv_msg1.setText(smartPlanModel.getsDetails());
 
-        //Picasso.with(context).load(smartPlanModel.getImage()).into(holder.planicons);
 
-        holder.tv_type1.setText(smartPlanModel.getsStock_Future());
-        holder.tv_type1.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.mipmap.ic_check_green, 0);
-        holder.tv_type2.setText(smartPlanModel.getsStock_Options());
-        holder.tv_type3.setText(smartPlanModel.getsIndex_Future());
-        holder.tv_type4.setText(smartPlanModel.getsIndex_Options());
-        holder.tv_type5.setText(smartPlanModel.getsCommodity());
-        holder.tv_type6.setText(smartPlanModel.getsTelegram_Updates());
-        holder.tv_duration.setText(smartPlanModel.getsDuration());
+        if(smartPlanModel.getsPlanName().equalsIgnoreCase("SILVER")) {
+            Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_stk_ftr);
+            Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_stk_opt);
+            Picasso.with(context).load(R.mipmap.ic_red_close).into(holder.iv_index_ftr);
+            Picasso.with(context).load(R.mipmap.ic_red_close).into(holder.iv_index_opt);
+            Picasso.with(context).load(R.mipmap.ic_red_close).into(holder.iv_commodity);
+            Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_telegram_update);
+
+            if(smartPlanModel.getPackage_id().equalsIgnoreCase("1")) {
+                holder.tv_one_month.setVisibility(View.VISIBLE);
+                holder.tv_two_month.setVisibility(View.GONE);
+                holder.tv_three_month.setVisibility(View.GONE);
+                holder.tv_one_month.setText(smartPlanModel.getAmount1Month());
+            }
+
+            if(smartPlanModel.getPackage_id().equalsIgnoreCase("2")) {
+                holder.tv_one_month.setVisibility(View.GONE);
+                holder.tv_two_month.setVisibility(View.VISIBLE);
+                holder.tv_three_month.setVisibility(View.GONE);
+                holder.tv_two_month.setText(smartPlanModel.getAmount2Months());
+            }
+
+            if(smartPlanModel.getPackage_id().equalsIgnoreCase("3")) {
+                holder.tv_one_month.setVisibility(View.GONE);
+                holder.tv_two_month.setVisibility(View.GONE);
+                holder.tv_three_month.setVisibility(View.VISIBLE);
+                holder.tv_three_month.setText(smartPlanModel.getAmount3Months());
+            }
+        }
+
+
+        if(smartPlanModel.getsPlanName().equalsIgnoreCase("GOLD"))
+        {
+            Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_stk_ftr);
+            Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_stk_opt);
+            Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_index_ftr);
+            Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_index_opt);
+            Picasso.with(context).load(R.mipmap.ic_red_close).into(holder.iv_commodity);
+            Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_telegram_update);
+            if(smartPlanModel.getPackage_id()!=null && smartPlanModel.getPackage_id().equalsIgnoreCase("1")) {
+                holder.tv_one_month.setVisibility(View.VISIBLE);
+                holder.tv_two_month.setVisibility(View.GONE);
+                holder.tv_three_month.setVisibility(View.GONE);
+                holder.tv_one_month.setText(smartPlanModel.getAmount1Month());
+            }
+
+            if(smartPlanModel.getPackage_id()!=null &&  smartPlanModel.getPackage_id().equalsIgnoreCase("2")) {
+                holder.tv_one_month.setVisibility(View.GONE);
+                holder.tv_two_month.setVisibility(View.VISIBLE);
+                holder.tv_three_month.setVisibility(View.GONE);
+                holder.tv_two_month.setText(smartPlanModel.getAmount2Months());
+            }
+
+            if(smartPlanModel.getPackage_id()!=null && smartPlanModel.getPackage_id().equalsIgnoreCase("3")) {
+                holder.tv_one_month.setVisibility(View.GONE);
+                holder.tv_two_month.setVisibility(View.GONE);
+                holder.tv_three_month.setVisibility(View.VISIBLE);
+                holder.tv_three_month.setText(smartPlanModel.getAmount3Months());
+            }
+        }
+
+        if(smartPlanModel.getsPlanName().equalsIgnoreCase("PLATINUM"))
+        {
+            Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_stk_ftr);
+            Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_stk_opt);
+            Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_index_ftr);
+            Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_index_opt);
+            Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_commodity);
+            Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_telegram_update);
+
+            if(smartPlanModel.getPackage_id()!=null && smartPlanModel.getPackage_id().equalsIgnoreCase("1")) {
+                holder.tv_one_month.setVisibility(View.VISIBLE);
+                holder.tv_two_month.setVisibility(View.GONE);
+                holder.tv_three_month.setVisibility(View.GONE);
+                holder.tv_one_month.setText(smartPlanModel.getAmount1Month());
+            }
+
+            if(smartPlanModel.getPackage_id()!=null && smartPlanModel.getPackage_id().equalsIgnoreCase("2")) {
+                holder.tv_one_month.setVisibility(View.GONE);
+                holder.tv_two_month.setVisibility(View.VISIBLE);
+                holder.tv_three_month.setVisibility(View.GONE);
+                holder.tv_two_month.setText(smartPlanModel.getAmount2Months());
+            }
+
+            if(smartPlanModel.getPackage_id()!=null && smartPlanModel.getPackage_id().equalsIgnoreCase("3")) {
+                holder.tv_one_month.setVisibility(View.GONE);
+                holder.tv_two_month.setVisibility(View.GONE);
+                holder.tv_three_month.setVisibility(View.VISIBLE);
+                holder.tv_three_month.setText(smartPlanModel.getAmount3Months());
+            }
+        }
+
+        if(smartPlanModel.getsPlanName().equalsIgnoreCase("FUTURE SPECIAL"))
+        {
+            Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_stk_ftr);
+            Picasso.with(context).load(R.mipmap.ic_red_close).into(holder.iv_stk_opt);
+            Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_index_ftr);
+            Picasso.with(context).load(R.mipmap.ic_red_close).into(holder.iv_index_opt);
+            Picasso.with(context).load(R.mipmap.ic_red_close).into(holder.iv_commodity);
+            Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_telegram_update);
+
+            if(smartPlanModel.getPackage_id()!=null && smartPlanModel.getPackage_id().equalsIgnoreCase("1")) {
+                holder.tv_one_month.setVisibility(View.VISIBLE);
+                holder.tv_two_month.setVisibility(View.GONE);
+                holder.tv_three_month.setVisibility(View.GONE);
+                holder.tv_one_month.setText(smartPlanModel.getAmount1Month());
+            }
+
+            if(smartPlanModel.getPackage_id()!=null && smartPlanModel.getPackage_id().equalsIgnoreCase("2")) {
+                holder.tv_one_month.setVisibility(View.GONE);
+                holder.tv_two_month.setVisibility(View.VISIBLE);
+                holder.tv_three_month.setVisibility(View.GONE);
+                holder.tv_two_month.setText(smartPlanModel.getAmount2Months());
+            }
+
+            if(smartPlanModel.getPackage_id()!=null && smartPlanModel.getPackage_id().equalsIgnoreCase("3")) {
+                holder.tv_one_month.setVisibility(View.GONE);
+                holder.tv_two_month.setVisibility(View.GONE);
+                holder.tv_three_month.setVisibility(View.VISIBLE);
+                holder.tv_three_month.setText(smartPlanModel.getAmount3Months());
+            }
+        }
+
+        if(smartPlanModel.getsPlanName().equalsIgnoreCase("OPTION SPECIAL"))
+        {
+            Picasso.with(context).load(R.mipmap.ic_red_close).into(holder.iv_stk_ftr);
+            Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_stk_opt);
+            Picasso.with(context).load(R.mipmap.ic_red_close).into(holder.iv_index_ftr);
+            Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_index_opt);
+            Picasso.with(context).load(R.mipmap.ic_red_close).into(holder.iv_commodity);
+            Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_telegram_update);
+
+            if(smartPlanModel.getPackage_id()!=null && smartPlanModel.getPackage_id().equalsIgnoreCase("1")) {
+                holder.tv_one_month.setVisibility(View.VISIBLE);
+                holder.tv_two_month.setVisibility(View.GONE);
+                holder.tv_three_month.setVisibility(View.GONE);
+                holder.tv_one_month.setText(smartPlanModel.getAmount1Month());
+            }
+
+            if(smartPlanModel.getPackage_id()!=null && smartPlanModel.getPackage_id().equalsIgnoreCase("2")) {
+                holder.tv_one_month.setVisibility(View.GONE);
+                holder.tv_two_month.setVisibility(View.VISIBLE);
+                holder.tv_three_month.setVisibility(View.GONE);
+                holder.tv_two_month.setText(smartPlanModel.getAmount2Months());
+            }
+
+            if(smartPlanModel.getPackage_id()!=null && smartPlanModel.getPackage_id().equalsIgnoreCase("3")) {
+                holder.tv_one_month.setVisibility(View.GONE);
+                holder.tv_two_month.setVisibility(View.GONE);
+                holder.tv_three_month.setVisibility(View.VISIBLE);
+                holder.tv_three_month.setText(smartPlanModel.getAmount3Months());
+            }
+        }
+
+        if(smartPlanModel.getsPlanName().equalsIgnoreCase("COMMODITY SPECIAL"))
+        {
+            Picasso.with(context).load(R.mipmap.ic_red_close).into(holder.iv_stk_ftr);
+            Picasso.with(context).load(R.mipmap.ic_red_close).into(holder.iv_stk_opt);
+            Picasso.with(context).load(R.mipmap.ic_red_close).into(holder.iv_index_ftr);
+            Picasso.with(context).load(R.mipmap.ic_red_close).into(holder.iv_index_opt);
+            Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_commodity);
+            Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_telegram_update);
+            if(smartPlanModel.getPackage_id()!=null && smartPlanModel.getPackage_id().equalsIgnoreCase("1")) {
+                holder.tv_one_month.setVisibility(View.VISIBLE);
+                holder.tv_two_month.setVisibility(View.GONE);
+                holder.tv_three_month.setVisibility(View.GONE);
+                holder.tv_one_month.setText(smartPlanModel.getAmount1Month());
+            }
+
+            if(smartPlanModel.getPackage_id()!=null && smartPlanModel.getPackage_id().equalsIgnoreCase("2")) {
+                holder.tv_one_month.setVisibility(View.GONE);
+                holder.tv_two_month.setVisibility(View.VISIBLE);
+                holder.tv_three_month.setVisibility(View.GONE);
+                holder.tv_two_month.setText(smartPlanModel.getAmount2Months());
+            }
+
+            if(smartPlanModel.getPackage_id()!=null && smartPlanModel.getPackage_id().equalsIgnoreCase("3")) {
+                holder.tv_one_month.setVisibility(View.GONE);
+                holder.tv_two_month.setVisibility(View.GONE);
+                holder.tv_three_month.setVisibility(View.VISIBLE);
+                holder.tv_three_month.setText(smartPlanModel.getAmount3Months());
+            }
+        }
+
+
+
+
+
 
     }
 
@@ -92,22 +257,24 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
 
     public class PlanViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tv_title,tv_msg1,tv_type1,tv_type2,tv_type3,tv_type4,tv_type5,tv_type6,tv_duration;
+        TextView tv_title,tv_msg1,tv_one_month,tv_two_month,tv_three_month;
         TextView img_green;
-
+        ImageView iv_stk_ftr,iv_stk_opt,iv_index_ftr,iv_index_opt,iv_commodity,iv_telegram_update;
 
         public PlanViewHolder(View view) {
             super(view);
             img_green = (TextView) view.findViewById(R.id.img);
             tv_title = (TextView) view.findViewById(R.id.tv_title);
             tv_msg1 = (TextView) view.findViewById(R.id.tv_msg1);
-            tv_type1 = (TextView) view.findViewById(R.id.tv_type1);
-            tv_type2 = (TextView) view.findViewById(R.id.tv_type2);
-            tv_type3= (TextView) view.findViewById(R.id.tv_type3);
-            tv_type4= (TextView) view.findViewById(R.id.tv_type4);
-            tv_type5= (TextView) view.findViewById(R.id.tv_type5);
-            tv_type6= (TextView) view.findViewById(R.id.tv_type6);
-            tv_duration =(TextView) view.findViewById(R.id.tv_duration);
+            iv_stk_ftr = (ImageView) view.findViewById(R.id.iv_stk_ftr);
+            iv_stk_opt = (ImageView) view.findViewById(R.id.iv_stk_opt);
+            iv_index_ftr= (ImageView) view.findViewById(R.id.iv_index_ftr);
+            iv_index_opt= (ImageView) view.findViewById(R.id.iv_index_opt);
+            iv_commodity= (ImageView) view.findViewById(R.id.iv_commodity);
+            iv_telegram_update= (ImageView) view.findViewById(R.id.iv_telegram_update);
+            tv_one_month= (TextView) view.findViewById(R.id.tv_one_month);
+            tv_two_month= (TextView) view.findViewById(R.id.tv_two_month);
+            tv_three_month =(TextView) view.findViewById(R.id.tv_three_month);
         }
     }
 
