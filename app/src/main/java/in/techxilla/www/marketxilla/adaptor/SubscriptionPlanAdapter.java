@@ -83,9 +83,9 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
         holder.img_green.setText(smartPlanModel.getsPlan());
         holder.tv_title.setText(smartPlanModel.getsPlanName());
         holder.tv_msg1.setText(smartPlanModel.getsDetails());
-        holder.tv_one_month.setText("1 Month \n \u20B9 "+ CommonMethods.NumberDisplayFormattingWithComma(smartPlanModel.getAmount1Month()));
-        holder.tv_two_month.setText("2 Month \n \u20B9 "+ CommonMethods.NumberDisplayFormattingWithComma(smartPlanModel.getAmount2Months()));
-        holder.tv_three_month.setText("3 Month \n \u20B9 "+ CommonMethods.NumberDisplayFormattingWithComma(smartPlanModel.getAmount3Months()));
+        holder.tv_one_month.setText("1 Month\n\u20B9 "+ CommonMethods.NumberDisplayFormattingWithComma(smartPlanModel.getAmount1Month()));
+        holder.tv_two_month.setText("2 Months\n\u20B9 "+ CommonMethods.NumberDisplayFormattingWithComma(smartPlanModel.getAmount2Months()));
+        holder.tv_three_month.setText("3 Months\n\u20B9 "+ CommonMethods.NumberDisplayFormattingWithComma(smartPlanModel.getAmount3Months()));
 
 
         if(smartPlanModel.issStock_Future()){
