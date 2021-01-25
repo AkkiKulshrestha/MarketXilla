@@ -1,8 +1,11 @@
 package in.techxilla.www.marketxilla;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +17,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -64,12 +68,14 @@ public class SubscriptionActivity extends AppCompatActivity {
 
     String StrPackage = "", StrPlanSelected = "";
     Double StrPlanAmount = 0.0;
-    String StrUpiAccountId = "", StrUPI_MerchantName = "", StrSubscrptionAmount = "";
+    String StrUpiAccountId = "", StrUPI_MerchantName = "", StrSubscrptionAmount = "",status;
     final int UPI_PAYMENT = 0;
 
     Button btnSubscribe;
     ViewGroup viewGroup;
-
+    String GOOGLE_PAY_PACKAGE_NAME = "com.google.android.apps.nbu.paisa.user";
+    int GOOGLE_PAY_REQUEST_CODE = 123;
+    Uri uri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -181,8 +187,7 @@ public class SubscriptionActivity extends AppCompatActivity {
                     StrSubscrptionAmount ="1.00"; //String.format("%.2f", StrPlanAmount);
 
 
-                    Uri uri =
-                            new Uri.Builder()
+                    uri = new Uri.Builder()
                                     .scheme("upi")
                                     .authority("pay")
                                     .appendQueryParameter("pa", StrUpiAccountId)       // virtual ID
@@ -191,13 +196,7 @@ public class SubscriptionActivity extends AppCompatActivity {
                                     .appendQueryParameter("cu", "INR")                         // currency
                                     .build();
 
-        String GOOGLE_PAY_PACKAGE_NAME = "com.google.android.apps.nbu.paisa.user";
-        int GOOGLE_PAY_REQUEST_CODE = 123;
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(uri);
-        intent.setPackage(GOOGLE_PAY_PACKAGE_NAME);
-        startActivityForResult(intent, GOOGLE_PAY_REQUEST_CODE);
-
+                    payWithGPay();
                    /* Intent upiPayIntent = new Intent(Intent.ACTION_VIEW);
                     upiPayIntent.setData(uri);
                     Intent chooser = Intent.createChooser(upiPayIntent, "Pay with");
@@ -216,6 +215,41 @@ public class SubscriptionActivity extends AppCompatActivity {
 
     }
 
+
+
+    private static boolean isAppInstalled(Context context, String packageName) {
+        try {
+            context.getPackageManager().getApplicationInfo(packageName, 0);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+    }
+
+
+    private void payWithGPay() {
+        if (isAppInstalled(SubscriptionActivity.this, GOOGLE_PAY_PACKAGE_NAME)) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(uri);
+            intent.setPackage(GOOGLE_PAY_PACKAGE_NAME);
+            startActivityForResult(intent, GOOGLE_PAY_REQUEST_CODE);
+        } else {
+            Toast.makeText(SubscriptionActivity.this, "Please Install GPay", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data != null) {
+            status = data.getStringExtra("Status").toLowerCase();
+        }
+
+        if ((RESULT_OK == resultCode) && status.equals("success")) {
+            Toast.makeText(SubscriptionActivity.this, "Transaction Successful", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(SubscriptionActivity.this, "Transaction Failed", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     private void getBankDetail() {
         String Uiid_id = UUID.randomUUID().toString();
@@ -332,86 +366,86 @@ public class SubscriptionActivity extends AppCompatActivity {
                                         JSONObject jo_inside = m_jArry.getJSONObject(i);
 
                                         //Silver
-                                        if (jo_inside.getInt("PackageId") == 1 && jo_inside.getString("PlanName").equalsIgnoreCase("SILVER")) {
-                                            tv_silver_1.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        if (jo_inside.getInt("id") == 1 && jo_inside.getString("plan_name").equalsIgnoreCase("SILVER")) {
+                                            tv_silver_1.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("plan_amount1_month")));
                                         }
 
-                                        if (jo_inside.getInt("PackageId") == 2 && jo_inside.getString("PlanName").equalsIgnoreCase("SILVER")) {
-                                            tv_silver_2.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        if (jo_inside.getInt("id") == 2 && jo_inside.getString("plan_name").equalsIgnoreCase("SILVER")) {
+                                            tv_silver_2.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("plan_amount2_month")));
                                         }
 
-                                        if (jo_inside.getInt("PackageId") == 3 && jo_inside.getString("PlanName").equalsIgnoreCase("SILVER")) {
-                                            tv_silver_3.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        if (jo_inside.getInt("id") == 3 && jo_inside.getString("plan_name").equalsIgnoreCase("SILVER")) {
+                                            tv_silver_3.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("plan_amount3_month")));
                                         }
 
                                         //GOLD
-                                        if (jo_inside.getInt("PackageId") == 1 && jo_inside.getString("PlanName").equalsIgnoreCase("GOLD")) {
-                                            tv_gold_1.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        if (jo_inside.getInt("id") == 1 && jo_inside.getString("plan_name").equalsIgnoreCase("GOLD")) {
+                                            tv_gold_1.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("plan_amount1_month")));
                                         }
 
-                                        if (jo_inside.getInt("PackageId") == 2 && jo_inside.getString("PlanName").equalsIgnoreCase("GOLD")) {
-                                            tv_gold_2.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        if (jo_inside.getInt("id") == 2 && jo_inside.getString("plan_name").equalsIgnoreCase("GOLD")) {
+                                            tv_gold_2.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("plan_amount2_month")));
                                         }
 
-                                        if (jo_inside.getInt("PackageId") == 3 && jo_inside.getString("PlanName").equalsIgnoreCase("GOLD")) {
-                                            tv_gold_3.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        if (jo_inside.getInt("id") == 3 && jo_inside.getString("plan_name").equalsIgnoreCase("GOLD")) {
+                                            tv_gold_3.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("plan_amount3_month")));
                                         }
 
                                         //Platinum
-                                        if (jo_inside.getInt("PackageId") == 1 && jo_inside.getString("PlanName").equalsIgnoreCase("PLATINUM")) {
-                                            tv_platinum_1.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        if (jo_inside.getInt("id") == 1 && jo_inside.getString("plan_name").equalsIgnoreCase("PLATINUM")) {
+                                            tv_platinum_1.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("plan_amount1_month")));
                                         }
 
-                                        if (jo_inside.getInt("PackageId") == 2 && jo_inside.getString("PlanName").equalsIgnoreCase("PLATINUM")) {
-                                            tv_platinum_2.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        if (jo_inside.getInt("id") == 2 && jo_inside.getString("plan_name").equalsIgnoreCase("PLATINUM")) {
+                                            tv_platinum_2.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("plan_amount2_month")));
                                         }
 
-                                        if (jo_inside.getInt("PackageId") == 3 && jo_inside.getString("PlanName").equalsIgnoreCase("PLATINUM")) {
-                                            tv_platinum_3.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        if (jo_inside.getInt("id") == 3 && jo_inside.getString("plan_name").equalsIgnoreCase("PLATINUM")) {
+                                            tv_platinum_3.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("plan_amount3_month")));
                                         }
 
                                         //Future Special
-                                        if (jo_inside.getInt("PackageId") == 1 && jo_inside.getString("PlanName").equalsIgnoreCase("FUTURE SPECIAL")) {
-                                            tv_fs_1.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        if (jo_inside.getInt("id") == 1 && jo_inside.getString("plan_name").equalsIgnoreCase("FUTURE SPECIAL")) {
+                                            tv_fs_1.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("plan_amount1_month")));
                                         }
 
-                                        if (jo_inside.getInt("PackageId") == 2 && jo_inside.getString("PlanName").equalsIgnoreCase("FUTURE SPECIAL")) {
-                                            tv_fs_2.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        if (jo_inside.getInt("id") == 2 && jo_inside.getString("plan_name").equalsIgnoreCase("FUTURE SPECIAL")) {
+                                            tv_fs_2.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("plan_amount2_month")));
                                         }
 
-                                        if (jo_inside.getInt("PackageId") == 3 && jo_inside.getString("PlanName").equalsIgnoreCase("FUTURE SPECIAL")) {
-                                            tv_fs_3.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        if (jo_inside.getInt("id") == 3 && jo_inside.getString("plan_name").equalsIgnoreCase("FUTURE SPECIAL")) {
+                                            tv_fs_3.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("plan_amount3_month")));
                                         }
 
                                         //Option Special
-                                        if (jo_inside.getInt("PackageId") == 1 && jo_inside.getString("PlanName").equalsIgnoreCase("OPTION SPECIAL")) {
-                                            tv_os_1.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        if (jo_inside.getInt("id") == 1 && jo_inside.getString("plan_name").equalsIgnoreCase("OPTION SPECIAL")) {
+                                            tv_os_1.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("plan_amount1_month")));
                                         }
 
-                                        if (jo_inside.getInt("PackageId") == 2 && jo_inside.getString("PlanName").equalsIgnoreCase("OPTION SPECIAL")) {
-                                            tv_os_2.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        if (jo_inside.getInt("id") == 2 && jo_inside.getString("plan_name").equalsIgnoreCase("OPTION SPECIAL")) {
+                                            tv_os_2.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("plan_amount2_month")));
                                         }
 
-                                        if (jo_inside.getInt("PackageId") == 3 && jo_inside.getString("PlanName").equalsIgnoreCase("OPTION SPECIAL")) {
-                                            tv_os_3.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        if (jo_inside.getInt("id") == 3 && jo_inside.getString("plan_name").equalsIgnoreCase("OPTION SPECIAL")) {
+                                            tv_os_3.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("plan_amount3_month")));
                                         }
 
                                         //Comodity Special
-                                        if (jo_inside.getInt("PackageId") == 1 && jo_inside.getString("PlanName").equalsIgnoreCase("COMMODITY SPECIAL")) {
-                                            tv_cs_1.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        if (jo_inside.getInt("id") == 1 && jo_inside.getString("plan_name").equalsIgnoreCase("COMMODITY SPECIAL")) {
+                                            tv_cs_1.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("plan_amount1_month")));
                                         }
 
-                                        if (jo_inside.getInt("PackageId") == 2 && jo_inside.getString("PlanName").equalsIgnoreCase("COMMODITY SPECIAL")) {
-                                            tv_cs_2.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        if (jo_inside.getInt("id") == 2 && jo_inside.getString("plan_name").equalsIgnoreCase("COMMODITY SPECIAL")) {
+                                            tv_cs_2.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("plan_amount2_month")));
                                         }
 
-                                        if (jo_inside.getInt("PackageId") == 3 && jo_inside.getString("PlanName").equalsIgnoreCase("COMMODITY SPECIAL")) {
-                                            tv_cs_3.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("PlanAmount")));
+                                        if (jo_inside.getInt("id") == 3 && jo_inside.getString("plan_name").equalsIgnoreCase("COMMODITY SPECIAL")) {
+                                            tv_cs_3.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(jo_inside.getString("plan_amount2_month")));
                                         }
 
-                                        if (jo_inside.getInt("PackageId") == package_id) {
-                                            String PlanName = jo_inside.getString("PlanName");
-                                            double PlanAmount = jo_inside.getDouble("PlanAmount");
+                                        if (jo_inside.getInt("id") == package_id) {
+                                            String PlanName = jo_inside.getString("plan_name");
+                                            double PlanAmount = jo_inside.getDouble("plan_amount1_month");
 
                                             planList.add(PlanName);
                                             planAmountList.add(PlanAmount);

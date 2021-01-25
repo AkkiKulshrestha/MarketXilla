@@ -3,6 +3,7 @@ package in.techxilla.www.marketxilla.adaptor;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.util.Log;
@@ -36,6 +37,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import in.techxilla.www.marketxilla.MainActivity;
 import in.techxilla.www.marketxilla.R;
 import in.techxilla.www.marketxilla.SubscriptionActivity;
 import in.techxilla.www.marketxilla.model.SmartPlanModel;
@@ -50,7 +52,9 @@ import static in.techxilla.www.marketxilla.webservices.RestClient.ROOT_URL;
 
 public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPlanAdapter.PlanViewHolder> {
 
-
+    String GOOGLE_PAY_PACKAGE_NAME = "com.google.android.apps.nbu.paisa.user";
+    int GOOGLE_PAY_REQUEST_CODE = 123;
+    Uri uri;
     public List<SubscritPlanModel> smartPlanModelsList;
     private Context context;
 
@@ -124,7 +128,7 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
             @Override
             public void onClick(View view) {
                 PayUsing_googlepay(smartPlanModel.getId(),smartPlanModel.getAmount1Month());
-
+                payWithGPay();
                 ((Activity)  context).overridePendingTransition(R.animator.move_left,R.animator.move_right);
             }
         });
@@ -133,6 +137,7 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
             @Override
             public void onClick(View view) {
                 PayUsing_googlepay(smartPlanModel.getId(),smartPlanModel.getAmount2Months());
+                payWithGPay();
                 ((Activity)  context).overridePendingTransition(R.animator.move_left,R.animator.move_right);
             }
         });
@@ -141,7 +146,7 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
             @Override
             public void onClick(View view) {
                 PayUsing_googlepay(smartPlanModel.getId(),smartPlanModel.getAmount3Months());
-
+                payWithGPay();
                 ((Activity)  context).overridePendingTransition(R.animator.move_left,R.animator.move_right);
             }
         });
@@ -153,8 +158,7 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
         String StrUpiAccountId= UtilitySharedPreferences.getPrefs(context,"UpiAccountId");
         String StrUPI_MerchantName =  UtilitySharedPreferences.getPrefs(context,"UpiMerchantName");
 
-        Uri uri =
-                new Uri.Builder()
+        uri = new Uri.Builder()
                         .scheme("upi")
                         .authority("pay")
                         .appendQueryParameter("pa", StrUpiAccountId)       // virtual ID
@@ -163,20 +167,9 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
                         .appendQueryParameter("cu", "INR")                         // currency
                         .build();
 
-        String GOOGLE_PAY_PACKAGE_NAME = "com.google.android.apps.nbu.paisa.user";
-        int GOOGLE_PAY_REQUEST_CODE = 123;
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(uri);
-        intent.setPackage(GOOGLE_PAY_PACKAGE_NAME);
-        ((Activity)  context).startActivityForResult(intent, GOOGLE_PAY_REQUEST_CODE);
 
     }
-    
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-      //  ((Activity)  context).onActivityResult(requestCode, resultCode, data);
-        Log.e("main ", "response "+resultCode );
 
-    }
 
     @Override
     public int getItemCount() {
@@ -208,5 +201,38 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
         }
     }
 
+    private static boolean isAppInstalled(Context context, String packageName) {
+        try {
+            context.getPackageManager().getApplicationInfo(packageName, 0);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+    }
+
+
+    private void payWithGPay() {
+        if (isAppInstalled(context, GOOGLE_PAY_PACKAGE_NAME)) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(uri);
+            intent.setPackage(GOOGLE_PAY_PACKAGE_NAME);
+            ((Activity)  context).startActivityForResult(intent, GOOGLE_PAY_REQUEST_CODE);
+        } else {
+            Toast.makeText(context, "Please Install GPay", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /*public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data != null) {
+            status = data.getStringExtra("Status").toLowerCase();
+        }
+
+        if ((RESULT_OK == resultCode) && status.equals("success")) {
+            Toast.makeText(context, "Transaction Successful", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Transaction Failed", Toast.LENGTH_SHORT).show();
+        }
+    }*/
 
 }

@@ -1126,4 +1126,5 @@ public class CommonMethods
 		return Bitmap.createScaledBitmap(image, width, height, true);
 	}
 
+
 }

@@ -60,6 +60,7 @@
     <string name="month">1 month</string>
     <string name="special">SPECIAL</string>
     <string name="premium">PREMIUM</string>
+    <string name="str_loading">Loading</string>
 
 
     <string-array name="spin_item_package">
