@@ -6,6 +6,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -447,6 +448,7 @@ public class HomeFragment extends Fragment {
                 viewHolder.tv_sell_buy.setText("INTRADAY BUY");
                 viewHolder.tv_sell_buy.setBackground(mCtx.getDrawable(R.drawable.cw_button_shadow_green));
                 viewHolder.iv_up_down.setImageDrawable(mCtx.getDrawable(R.drawable.up));
+                viewHolder.iv_up_down.setImageTintList(ColorStateList.valueOf(mCtx.getResources().getColor(R.color.mpn_green)));
             } else if (callArrayList.get(position).getIs_buy_sell() != null && callArrayList.get(position).getIs_buy_sell().equalsIgnoreCase("2")) {
                 if (callArrayList.get(position).getPerformance_for().equalsIgnoreCase("Commodity")) {
                     viewHolder.tv_above_below.setText("BETWEEN \n" + callArrayList.get(position).getBuy_sell_above_below());
@@ -457,6 +459,7 @@ public class HomeFragment extends Fragment {
                 viewHolder.tv_sell_buy.setText("INTRADAY SELL");
                 viewHolder.tv_sell_buy.setBackground(mCtx.getDrawable(R.drawable.cw_button_shadow_red));
                 viewHolder.iv_up_down.setImageDrawable(mCtx.getDrawable(R.drawable.down));
+                viewHolder.iv_up_down.setImageTintList(ColorStateList.valueOf(mCtx.getResources().getColor(R.color.mpn_red)));
 
             }
 
@@ -494,14 +497,14 @@ public class HomeFragment extends Fragment {
                 System.out.println(mProfit_loss);
                 if (callArrayList.get(position).getProfit_loss() != null && !callArrayList.get(position).getProfit_loss().equalsIgnoreCase("")) {
                     if ((Double.parseDouble(String.valueOf(callArrayList.get(position).getProfit_loss()))) > 0) {
-                        viewHolder.tv_profit_loss.setTextColor(mContext.getResources().getColor(R.color.result_points));
+                        viewHolder.tv_profit_loss.setTextColor(mContext.getResources().getColor(R.color.mpn_green));
                         viewHolder.tv_profit_loss.setText("\u20B9 " + mProfit_loss);
                     } else {
-                        viewHolder.tv_profit_loss.setTextColor(mContext.getResources().getColor(R.color.md_red_a400));
+                        viewHolder.tv_profit_loss.setTextColor(mContext.getResources().getColor(R.color.mpn_red));
                         viewHolder.tv_profit_loss.setText("\u20B9 " + mProfit_loss);
                     }
                 } else {
-                    viewHolder.tv_profit_loss.setTextColor(mContext.getResources().getColor(R.color.md_red_a400));
+                    viewHolder.tv_profit_loss.setTextColor(mContext.getResources().getColor(R.color.black));
                     viewHolder.tv_profit_loss.setText("\u20B9 0");
                 }
             } catch (IllegalArgumentException iae) {

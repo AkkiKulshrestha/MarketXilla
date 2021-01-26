@@ -68,6 +68,9 @@ public class PackageFragment extends Fragment {
     String mDuration;
     ArrayList<String> planList = new ArrayList<String>();
     ArrayList<Double> planAmountList = new ArrayList<Double>();
+
+    String StrUpiAccountId,StrUPI_MerchantName;
+
     @SuppressLint("InflateParams")
     @Nullable
     @Override
@@ -143,9 +146,7 @@ public class PackageFragment extends Fragment {
                                         String stock_option = jo_inside.getString("stock_option");
                                         String index_future = jo_inside.getString("index_future");
                                         String index_option = jo_inside.getString("index_option");
-
                                         String commodities = jo_inside.getString("commodities");
-
                                         String telegram_messages = jo_inside.getString("telegram_messages");
                                         String plan_amount1_month = jo_inside.getString("plan_amount1_month");
                                         String plan_amount2_month = jo_inside.getString("plan_amount2_month");
@@ -156,12 +157,12 @@ public class PackageFragment extends Fragment {
                                         subscritPlanModel.setsPlanName(plan_name);
                                         subscritPlanModel.setsPlan(plan_type);
                                         subscritPlanModel.setsDetails(plan_description);
-                                        subscritPlanModel.setsStock_Future(Boolean.valueOf(stock_future));
-                                        subscritPlanModel.setsStock_Options(Boolean.valueOf(stock_option));
-                                        subscritPlanModel.setsIndex_Future(Boolean.valueOf(index_future));
-                                        subscritPlanModel.setsIndex_Options(Boolean.valueOf(index_option));
-                                        subscritPlanModel.setsCommodity(Boolean.valueOf(commodities));
-                                        subscritPlanModel.setsTelegram_Updates(Boolean.valueOf(telegram_messages));
+                                        subscritPlanModel.setsStock_Future(Boolean.parseBoolean(stock_future));
+                                        subscritPlanModel.setsStock_Options(Boolean.parseBoolean(stock_option));
+                                        subscritPlanModel.setsIndex_Future(Boolean.parseBoolean(index_future));
+                                        subscritPlanModel.setsIndex_Options(Boolean.parseBoolean(index_option));
+                                        subscritPlanModel.setsCommodity(Boolean.parseBoolean(commodities));
+                                        subscritPlanModel.setsTelegram_Updates(Boolean.parseBoolean(telegram_messages));
                                         subscritPlanModel.setId(id);
                                         subscritPlanModel.setAmount1Month((plan_amount1_month));
                                         subscritPlanModel.setAmount2Months((plan_amount2_month));
@@ -236,8 +237,8 @@ public class PackageFragment extends Fragment {
                                 String bank_name = jobject.getString("bank_name");
                                 String account_no = jobject.getString("account_no");
                                 String ifsc_code = jobject.getString("ifsc_code");
-                                String StrUpiAccountId = jobject.getString("upi_id");
-                                String StrUPI_MerchantName = jobject.getString("upi_merchant_name");
+                                StrUpiAccountId = jobject.getString("upi_id");
+                                StrUPI_MerchantName = jobject.getString("upi_merchant_name");
                                 String branch = jobject.getString("branch");
 
                                 UtilitySharedPreferences.setPrefs(mContext,"UpiAccountId",StrUpiAccountId);
