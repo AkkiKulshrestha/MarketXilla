@@ -19,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -27,17 +28,23 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.material.button.MaterialButton;
+
 import com.squareup.picasso.Picasso;
 
+
+
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
+import java.util.Map;
 
-import in.techxilla.www.marketxilla.MainActivity;
 import in.techxilla.www.marketxilla.R;
 import in.techxilla.www.marketxilla.SubscriptionActivity;
 import in.techxilla.www.marketxilla.model.SmartPlanModel;
@@ -48,16 +55,19 @@ import in.techxilla.www.marketxilla.utils.UtilitySharedPreferences;
 
 import static android.app.Activity.RESULT_OK;
 import static in.techxilla.www.marketxilla.utils.CommonMethods.DisplaySnackBar;
+import static in.techxilla.www.marketxilla.utils.CommonMethods.md5;
 import static in.techxilla.www.marketxilla.webservices.RestClient.ROOT_URL;
 
-public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPlanAdapter.PlanViewHolder> {
+public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPlanAdapter.PlanViewHolder>  {
 
     String GOOGLE_PAY_PACKAGE_NAME = "com.google.android.apps.nbu.paisa.user";
     int GOOGLE_PAY_REQUEST_CODE = 123;
     Uri uri;
     public List<SubscritPlanModel> smartPlanModelsList;
     private Context context;
-
+    String mUserId, mPlan_id, mSubscripbed_on, mPayment_detail, mPackage_id, msubscribed_till;
+   // PaymentDetail payment;
+    TextView tv_title;
 
     public SubscriptionPlanAdapter(List<SubscritPlanModel> smartPlanModelsList, Context context) {
         this.smartPlanModelsList = smartPlanModelsList;
@@ -79,107 +89,195 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
 
         final SubscritPlanModel smartPlanModel = smartPlanModelsList.get(position);
 
+        mUserId = smartPlanModel.getId();
 
         holder.img_green.setText(smartPlanModel.getsPlan());
-        holder.tv_title.setText(smartPlanModel.getsPlanName());
+        tv_title.setText(smartPlanModel.getsPlanName());
         holder.tv_msg1.setText(smartPlanModel.getsDetails());
-        holder.tv_one_month.setText("1 Month\n\u20B9 "+ CommonMethods.NumberDisplayFormattingWithComma(smartPlanModel.getAmount1Month()));
-        holder.tv_two_month.setText("2 Months\n\u20B9 "+ CommonMethods.NumberDisplayFormattingWithComma(smartPlanModel.getAmount2Months()));
-        holder.tv_three_month.setText("3 Months\n\u20B9 "+ CommonMethods.NumberDisplayFormattingWithComma(smartPlanModel.getAmount3Months()));
+        holder.tv_one_month.setText("1 Month\n\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(smartPlanModel.getAmount1Month()));
+        holder.tv_two_month.setText("2 Months\n\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(smartPlanModel.getAmount2Months()));
+        holder.tv_three_month.setText("3 Months\n\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(smartPlanModel.getAmount3Months()));
 
 
-        if(smartPlanModel.issStock_Future()){
+        if (smartPlanModel.issStock_Future()) {
             Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_stk_ftr);
-        }else {
+        } else {
             Picasso.with(context).load(R.mipmap.ic_red_close).into(holder.iv_stk_ftr);
         }
 
-        if(smartPlanModel.issStock_Options()){
+        if (smartPlanModel.issStock_Options()) {
             Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_stk_opt);
-        }else {
+        } else {
             Picasso.with(context).load(R.mipmap.ic_red_close).into(holder.iv_stk_opt);
         }
 
-        if(smartPlanModel.issIndex_Future()){
+        if (smartPlanModel.issIndex_Future()) {
             Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_index_ftr);
-        }else {
+        } else {
             Picasso.with(context).load(R.mipmap.ic_red_close).into(holder.iv_index_ftr);
         }
 
-        if(smartPlanModel.issStock_Options()){
+        if (smartPlanModel.issStock_Options()) {
             Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_index_opt);
-        }else {
+        } else {
             Picasso.with(context).load(R.mipmap.ic_red_close).into(holder.iv_index_opt);
         }
 
-        if(smartPlanModel.issCommodity()){
+        if (smartPlanModel.issCommodity()) {
             Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_commodity);
-        }else {
+        } else {
             Picasso.with(context).load(R.mipmap.ic_red_close).into(holder.iv_commodity);
         }
 
-        if(smartPlanModel.issTelegram_Updates()){
+        if (smartPlanModel.issTelegram_Updates()) {
             Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_telegram_update);
-        }else {
+        } else {
             Picasso.with(context).load(R.mipmap.ic_red_close).into(holder.iv_telegram_update);
         }
 
         holder.tv_one_month.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PayUsing_googlepay(smartPlanModel.getId(),smartPlanModel.getAmount1Month());
-                payWithGPay();
-                ((Activity)  context).overridePendingTransition(R.animator.move_left,R.animator.move_right);
+                PayUsing_googlepay(smartPlanModel.getId(), smartPlanModel.getAmount1Month(), "1");
+             //   payWithGPay();
+                ((Activity) context).overridePendingTransition(R.animator.move_left, R.animator.move_right);
             }
         });
 
         holder.tv_two_month.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PayUsing_googlepay(smartPlanModel.getId(),smartPlanModel.getAmount2Months());
-                payWithGPay();
-                ((Activity)  context).overridePendingTransition(R.animator.move_left,R.animator.move_right);
+                PayUsing_googlepay(smartPlanModel.getId(), smartPlanModel.getAmount2Months(), "2");
+               // payWithGPay();
+                ((Activity) context).overridePendingTransition(R.animator.move_left, R.animator.move_right);
             }
         });
 
         holder.tv_three_month.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PayUsing_googlepay(smartPlanModel.getId(),smartPlanModel.getAmount3Months());
-                payWithGPay();
-                ((Activity)  context).overridePendingTransition(R.animator.move_left,R.animator.move_right);
+
+                PayUsing_googlepay(smartPlanModel.getId(), smartPlanModel.getAmount3Months(), "3");
+               // payWithGPay();
+                ((Activity) context).overridePendingTransition(R.animator.move_left, R.animator.move_right);
             }
         });
 
     }
 
-    private void PayUsing_googlepay(String PlanId,String Amount) {
-        String StrSubscrptionAmount = Amount;
-        String StrUpiAccountId= UtilitySharedPreferences.getPrefs(context,"UpiAccountId");
-        String StrUPI_MerchantName =  UtilitySharedPreferences.getPrefs(context,"UpiMerchantName");
+    private void PayUsing_googlepay(String PlanId, String Amount, String Package_id) {
+        mPlan_id = PlanId;
+        mPackage_id = Package_id;
 
-        uri = new Uri.Builder()
-                        .scheme("upi")
-                        .authority("pay")
-                        .appendQueryParameter("pa", StrUpiAccountId)       // virtual ID
-                        .appendQueryParameter("pn", StrUPI_MerchantName)          // name
-                        .appendQueryParameter("am", StrSubscrptionAmount)           // amount
-                        .appendQueryParameter("cu", "INR")                         // currency
-                        .build();
+        mSubscripbed_on = CommonMethods.DisplayCurrentDate();
+
+        Calendar calendar = Calendar.getInstance();
+
+        // Add 8 months to current date
+
+
+        if (mPackage_id == "1") {
+            calendar.add(Calendar.MONTH, 1);
+            System.out.println("Current Date = " + calendar.getTime());
+
+        } else if (mPackage_id == "2") {
+            calendar.add(Calendar.MONTH, 2);
+            System.out.println("Current Date = " + calendar.getTime());
+
+        } else if (mPackage_id == "3") {
+            calendar.add(Calendar.MONTH, 3);
+            System.out.println("Current Date = " + calendar.getTime());
+
+        }
+        SimpleDateFormat formDate = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+
+
+        msubscribed_till = formDate.format(new Date(calendar.getTimeInMillis())); //
+        System.out.println("msubscribed_till Date = " + msubscribed_till);
+
+        String StrSubscrptionAmount= String.format("%.2f",Double.parseDouble(Amount));
+        String transactionId = "TID" + System.currentTimeMillis();
+        String StrUpiAccountId = UtilitySharedPreferences.getPrefs(context, "UpiAccountId");
+        String StrUPI_MerchantName = UtilitySharedPreferences.getPrefs(context, "UpiMerchantName");
+
+        /*uri = new Uri.Builder()
+                .scheme("upi")
+                .authority("pay")
+                .appendQueryParameter("pa", StrUpiAccountId)       // virtual ID
+                .appendQueryParameter("pn", StrUPI_MerchantName)          // name
+                .appendQueryParameter("am", StrSubscrptionAmount)           // amount
+                .appendQueryParameter("cu", "INR")                         // currency
+                .build();*/
+
+
+        /*PaymentApp paymentApp;
+        paymentApp = PaymentApp.GOOGLE_PAY;
+*/
+
+        //payment = new PaymentDetail(StrUpiAccountId,StrUPI_MerchantName, "",
+          //      transactionId,tv_title.getText().toString().trim(),"1.00");
+       // startUpiPayment();
 
 
     }
 
 
+
+   /* private void startUpiPayment() {
+
+        ArrayList<String> existingApps = UpiPayment.getExistingUpiApps(context);
+
+
+        new UpiPayment((Activity)context)
+                .setPaymentDetail(payment)
+                .setUpiApps(UpiPayment.getUPI_APPS())
+                .setCallBackListener(new UpiPayment.OnUpiPaymentListener() {
+
+
+                    @Override
+                    public void onSubmitted(@NotNull TransactionDetails data) {
+                        Toast.makeText(context, "transaction pending: " + data, Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onError(@NotNull String message) {
+                        Toast.makeText(context, "transaction failed: " + message, Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onSuccess(@NotNull TransactionDetails data) {
+                        Toast.makeText(context, "transaction success: " + data.toString(), Toast.LENGTH_LONG).show();
+                        onTransactionSuccess(data.toString());
+                    }
+                }).pay();
+    }*/
+
+    private void onTransactionSuccess(String TransactionDetails) {
+        // Payment Success
+        System.out.println("Success");
+        AddUserSubscriptionDetailApi(TransactionDetails);
+
+    }
+
+    private void onTransactionSubmitted() {
+        // Payment Pending
+        System.out.println("Pending | Submitted");
+
+    }
+
+    private void onTransactionFailed() {
+        // Payment Failed
+        System.out.println("Failed");
+
+    }
     @Override
     public int getItemCount() {
         return smartPlanModelsList.size();
     }
 
-
     public class PlanViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tv_title, tv_msg1;
+        TextView  tv_msg1;
         TextView tv_one_month, tv_two_month, tv_three_month;
         TextView img_green;
         ImageView iv_stk_ftr, iv_stk_opt, iv_index_ftr, iv_index_opt, iv_commodity, iv_telegram_update;
@@ -216,7 +314,7 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(uri);
             intent.setPackage(GOOGLE_PAY_PACKAGE_NAME);
-            ((Activity)  context).startActivityForResult(intent, GOOGLE_PAY_REQUEST_CODE);
+            ((Activity) context).startActivityForResult(intent, GOOGLE_PAY_REQUEST_CODE);
         } else {
             Toast.makeText(context, "Please Install GPay", Toast.LENGTH_SHORT).show();
         }
@@ -234,5 +332,101 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
             Toast.makeText(context, "Transaction Failed", Toast.LENGTH_SHORT).show();
         }
     }*/
+
+    private void AddUserSubscriptionDetailApi(String transactionDetails) {
+
+
+        String API_AddUserSubscriptionDetail = ROOT_URL + "add_user_subscription_detail.php";
+        try {
+
+            ConnectionDetector cd = new ConnectionDetector(context);
+            boolean isInternetPresent = cd.isConnectingToInternet();
+
+
+            if (isInternetPresent) {
+
+                Log.d("URL", API_AddUserSubscriptionDetail);
+
+                StringRequest stringRequest = new StringRequest(Request.Method.POST, API_AddUserSubscriptionDetail,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                Log.d("Response", response);
+
+                                try {
+                                    JSONObject jsonObject = new JSONObject(response);
+                                    System.out.println("Add User Subscription response"+response);
+                                    boolean status = jsonObject.getBoolean("status");
+                                    if (status) {
+
+                                        JSONObject dataObj = jsonObject.getJSONObject("data");
+                                        String message = jsonObject.getString("message");
+
+                                       /* ClientId = dataObj.getString("id");
+                                        StrName = dataObj.getString("name");
+                                        StrEmail = dataObj.getString("email_id");
+                                        StrMobile = dataObj.getString("mobile_no");
+                                        EmailVerified = dataObj.getString("is_email_verified");
+                                        MobileVerified = dataObj.getString("is_mobile_verified");
+*/
+                                    }
+
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                error.printStackTrace();
+
+                            }
+                        }) {
+
+                    @Override
+                    public String getBodyContentType() {
+                        return "application/x-www-form-urlencoded; charset=UTF-8";
+                    }
+
+                    @Override
+                    public Map<String, String> getParams() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<String, String>();
+                        params.put("user_id", mUserId);
+                        params.put("plan_id", mPlan_id);
+                        params.put("subscribed_on", mSubscripbed_on);
+                        params.put("payment_detail", transactionDetails.toString());
+                        params.put("package_id", mPackage_id);
+                        params.put("subscribed_till", msubscribed_till);
+                        Log.d("ParrasRegister", params.toString());
+
+                        return params;
+                    }
+
+
+                };
+
+                int socketTimeout = 50000;//30 seconds - change to what you want
+                RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+                stringRequest.setRetryPolicy(policy);
+                RequestQueue requestQueue = Volley.newRequestQueue(context);
+                requestQueue.add(stringRequest);
+
+
+            } else {
+                CommonMethods.DisplayToastInfo(context, "Please check your internet connection");
+            }
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
+
+
+    }
+
 
 }

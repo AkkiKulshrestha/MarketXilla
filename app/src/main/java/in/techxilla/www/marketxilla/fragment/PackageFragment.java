@@ -108,7 +108,7 @@ public class PackageFragment extends Fragment {
        // planList.add("Select Plan");
         planAmountList.add(0.0);
         String Uiid_id = UUID.randomUUID().toString();
-        String URL_GetSubscriptions = ROOT_URL + "get_subscriptions.php";//+ Uiid_id;;
+        String URL_GetSubscriptions = ROOT_URL + "get_subscriptions.php?"+ Uiid_id;;
 
 
         try {

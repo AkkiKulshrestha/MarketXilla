@@ -216,7 +216,12 @@ public class SplashActivity extends AppCompatActivity {
                             public void onClick(View v) {
                                 dialog.dismiss();
 
-                                UtilitySharedPreferences.clearPref(getApplicationContext());
+                                UtilitySharedPreferences.clearPref1(getApplicationContext(), "MemberId");
+                                UtilitySharedPreferences.clearPref1(getApplicationContext(), "MemberName");
+                                UtilitySharedPreferences.clearPref1(getApplicationContext(), "MemberEmailId");
+                                UtilitySharedPreferences.clearPref1(getApplicationContext(), "MemberMobile");
+                                UtilitySharedPreferences.clearPref1(getApplicationContext(), "MemberUsername");
+                               // UtilitySharedPreferences.clearPref(getApplicationContext());
                                 CommonMethods.deleteCache(getApplicationContext());
                                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
                                 finish();

@@ -22,6 +22,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,9 +50,11 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import in.techxilla.www.marketxilla.fragment.PackageFragment;
 import in.techxilla.www.marketxilla.model.SubscriptionPlanModel;
 import in.techxilla.www.marketxilla.utils.CommonMethods;
 import in.techxilla.www.marketxilla.utils.ConnectionDetector;
+import in.techxilla.www.marketxilla.utils.UtilitySharedPreferences;
 import in.techxilla.www.marketxilla.webservices.RestClient;
 
 import static in.techxilla.www.marketxilla.utils.CommonMethods.DisplaySnackBar;
@@ -64,11 +67,13 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
     ImageView iv_back;
     Button btnSubscribe;
     int mStackCount;
+    ScrollView scrollView;
     LinearLayout ll_parent_subscription_plan, ll_details;
     String plan_name, date, mSubscribed_till, mSubscribed_on, mShortDate;
-    String mUserId,mTransactionId,fileName,mPdf_name,mTransaction_Message;
+    String mUserId, mTransactionId, fileName, mPdf_name, mTransaction_Message;
     private static final int EXTERNAL_STORAGE_PERMISSION_CONSTANT = 100;
     ViewGroup viewGroup;
+    TextView tv_title_plan, tv_valid_till;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,23 +99,27 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
         });
         // recycler_list_subscriptionplan = (RecyclerView) findViewById(R.id.recycler_list_subscriptionplan);
         planList = new ArrayList<>();
+
+        scrollView = (ScrollView) findViewById(R.id.scrollView);
+
         ll_parent_subscription_plan = (LinearLayout) findViewById(R.id.ll_parent_subscription_plan);
         ll_details = (LinearLayout) findViewById(R.id.ll_details);
+        tv_title_plan = (TextView) findViewById(R.id.tv_title_plan);
+        tv_valid_till = (TextView) findViewById(R.id.tv_valid_till);
         btnSubscribe = (Button) findViewById(R.id.btnSubscribe);
         btnSubscribe.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("DefaultLocale")
             @Override
             public void onClick(View v) {
                 {
-                    Intent i = new Intent(SubscriptionPlanActivity.this, SubscriptionActivity.class);
-                    i.putExtra("smart_name", plan_name);
+                    Intent i = new Intent(SubscriptionPlanActivity.this, NewDashboard.class);
+                    i.putExtra("load_fragment", 2);
                     startActivity(i);
                 }
             }
         });
 
         getPlanDetail();
-        getTransactionDetails();
 
     }
 
@@ -130,7 +139,9 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
         if (planList != null) {
             planList = new ArrayList<>();
         }
-        final String get_plan_details_info = ROOT_URL + "get_user_subscription_details.php?user_id=" + "1";
+
+        String StrMemberId = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberId");
+        final String get_plan_details_info = ROOT_URL + "get_user_subscription_details.php?user_id=" + StrMemberId;
         Log.d("URL --->", get_plan_details_info);
         try {
             ConnectionDetector cd = new ConnectionDetector(this);
@@ -145,13 +156,26 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
                                 myDialog.dismiss();
                             }
                             JSONObject obj = new JSONObject(response);
+
+
+                            boolean status = obj.getBoolean("status");
+                            String Message = obj.getString("message");
+
                             JSONArray m_jArry = obj.getJSONArray("data");
 
                             mStackCount = m_jArry.length();
+
+                            if (mStackCount == 0)
+                            {
+                                tv_title_plan.setText("NO ACTIVE PLAN");
+                                tv_valid_till.setVisibility(View.GONE);
+                                btnSubscribe.setVisibility(View.VISIBLE);
+
+                            }
                             for (int i = 0; i < m_jArry.length(); i++) {
 
                                 JSONObject jo_data = m_jArry.getJSONObject(i);
-                                mTransactionId =jo_data.getString("transaction_id");
+                                mTransactionId = jo_data.getString("transaction_id");
                                 String id = jo_data.getString("id");
                                 mUserId = jo_data.getString("user_id");
                                 String plan_id = jo_data.getString("plan_id");
@@ -160,13 +184,13 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
                                 String payment_detail = jo_data.getString("payment_detail");
                                 mPdf_name = jo_data.getString("pdf_name");
                                 plan_name = jo_data.getString("plan_name");
-                               // String plan_amount = jo_data.getString("plan_amount");
+                                // String plan_amount = jo_data.getString("plan_amount");
                                 String package_id = jo_data.getString("package_id");
                                 String plan_description = jo_data.getString("plan_description");
-                                String plan_amount1_month =jo_data.getString("plan_amount1_month");
-                                String plan_amount2_month =jo_data.getString("plan_amount2_month");
-                                String plan_amount3_month =jo_data.getString("plan_amount3_month");
-
+                                String plan_amount1_month = jo_data.getString("plan_amount1_month");
+                                String plan_amount2_month = jo_data.getString("plan_amount2_month");
+                                String plan_amount3_month = jo_data.getString("plan_amount3_month");
+                                getTransactionDetails(mUserId, mTransactionId);
 
 
                                 LayoutInflater inflater = (LayoutInflater) Objects.requireNonNull(getApplicationContext()).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -181,16 +205,13 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
                                 TextView tv_status = (TextView) rowView1.findViewById(R.id.tv_status);
                                 tv_plan_name.setText(plan_name);
 
-                                if(package_id.equalsIgnoreCase("1"))
-                                {
+                                if (package_id.equalsIgnoreCase("1")) {
                                     tv_plan_amount.setText("Amount : \u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(plan_amount1_month));
                                 }
-                                if(package_id.equalsIgnoreCase("2"))
-                                {
+                                if (package_id.equalsIgnoreCase("2")) {
                                     tv_plan_amount.setText("Amount : \u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(plan_amount2_month));
                                 }
-                                if(package_id.equalsIgnoreCase("3"))
-                                {
+                                if (package_id.equalsIgnoreCase("3")) {
                                     tv_plan_amount.setText("Amount : \u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(plan_amount3_month));
                                 }
 
@@ -205,12 +226,12 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
                                         mSubscribed_till = sdf21.format(newSubscriptedTilldate);
                                         mShortDate = new SimpleDateFormat("MMM yyyy").format(newSubscriptedTilldate).toString();
                                         if (new Date().after(newSubscriptedTilldate)) {
-                                            tv_Subscripte_till_date.setText(" Subscribed till : " +mSubscribed_till);
+                                            tv_Subscripte_till_date.setText(" Subscribed till : " + mSubscribed_till);
                                             tv_status.setText("InActive");
                                             tv_status.setTextColor(getResources().getColor(R.color.md_red_a400));
                                             btnSubscribe.setVisibility(View.VISIBLE);
                                         } else {
-                                            tv_Subscripte_till_date.setText(" Subscribed till : " +mSubscribed_till);
+                                            tv_Subscripte_till_date.setText(" Subscribed till : " + mSubscribed_till);
                                             tv_status.setText("Active");
                                             tv_status.setTextColor(getResources().getColor(R.color.result_points));
                                             btnSubscribe.setVisibility(View.GONE);
@@ -228,18 +249,23 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
                                         sdf21 = new SimpleDateFormat("dd MMM, yyyy");
                                         mSubscribed_on = sdf21.format(currentdate2).toString();
                                         if (new Date().after(currentdate2)) {
-                                            tv_Subscripte_on_date.setText(" Subscribed on : "+mSubscribed_on);
+                                            tv_Subscripte_on_date.setText(" Subscribed on : " + mSubscribed_on);
                                             // tv_status.setText("In Active");
                                         } else {
-                                            tv_Subscripte_on_date.setText(" Subscribed on : "+mSubscribed_on);
+                                            tv_Subscripte_on_date.setText(" Subscribed on : " + mSubscribed_on);
                                         }
                                     } catch (ParseException e) {
                                         e.printStackTrace();
                                     }
                                 }
 
+                                if(i==1) {
+                                    tv_title_plan.setText("Current Plan : " + plan_name);
+                                    tv_valid_till.setVisibility(View.VISIBLE);
+                                    tv_valid_till.setText("Valid on \n" + mSubscribed_on);
+                                }
 
-                                // if(sdf2.format(currentdate).ge)
+
 
                                 ll_parent_subscription_plan.addView(rowView1);
 
@@ -264,6 +290,7 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
                                                     diskCacheStrategy(DiskCacheStrategy.ALL).into(img_add);
                                         } else {
                                             table_layout.setVisibility(View.VISIBLE);
+                                            scrollView.scrollTo(0, scrollView.getBottom());
                                             Glide.with(SubscriptionPlanActivity.this).
                                                     load(R.mipmap.ic_up_white).
                                                     diskCacheStrategy(DiskCacheStrategy.ALL).into(img_add);
@@ -281,7 +308,7 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
                                 TextView tv_amount = (TextView) rowView2.findViewById(R.id.tv_amount);
                                 TextView tv_payment_receipt = (TextView) rowView2.findViewById(R.id.tv_payment_receipt);
                                 TextView tv_Receipt_on_email = (TextView) rowView2.findViewById(R.id.tv_Receipt_on_email);
-                               String path_link = ROOT_URL+"payment_receipt/"+mPdf_name;
+                                String path_link = ROOT_URL + "payment_receipt/" + mPdf_name;
                                 tv_payment_receipt.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
@@ -297,22 +324,19 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
                                 tv_Receipt_on_email.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        CommonMethods.DisplaySnackBar(viewGroup,mTransaction_Message,"WARNING");
+                                        CommonMethods.DisplaySnackBar(viewGroup, mTransaction_Message, "WARNING");
                                     }
                                 });
 
                                 date.setText(mShortDate.toString());
 
-                                if(package_id.equalsIgnoreCase("1"))
-                                {
+                                if (package_id.equalsIgnoreCase("1")) {
                                     tv_amount.setText("Amount : \u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(plan_amount1_month));
                                 }
-                                if(package_id.equalsIgnoreCase("2"))
-                                {
+                                if (package_id.equalsIgnoreCase("2")) {
                                     tv_amount.setText("Amount : \u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(plan_amount2_month));
                                 }
-                                if(package_id.equalsIgnoreCase("3"))
-                                {
+                                if (package_id.equalsIgnoreCase("3")) {
                                     tv_amount.setText("Amount : \u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(plan_amount3_month));
                                 }
 
@@ -357,10 +381,10 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
     }
 //https://marketxilla.com/marketxilla_app/send_transaction_receipt_on_mail.php?user_id=1&transaction_id=30
 
-    private void getTransactionDetails() {
+    private void getTransactionDetails(String mUserId, String mTransactionId) {
 
-        final String get_bank_details_info = ROOT_URL + "send_transaction_receipt_on_mail.php?user_id=" + mUserId+"&transaction_id="+mTransactionId;
-        Log.d("URL --->", get_bank_details_info);
+        final String get_bank_details_info = ROOT_URL + "send_transaction_receipt_on_mail.php?user_id=" + mUserId + "&transaction_id=" + mTransactionId;
+        Log.d("Details URL --->", get_bank_details_info);
         try {
             ConnectionDetector cd = new ConnectionDetector(this);
             boolean isInternetPresent = cd.isConnectingToInternet();
@@ -374,21 +398,29 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
                             JSONObject Jobj = new JSONObject(response);
 
                             boolean status = Jobj.getBoolean("status");
-                            mTransaction_Message= Jobj.getString("message");
+                            mTransaction_Message = Jobj.getString("message");
                             if (status) {
 
-                                String data = Jobj.getString("data");
-                                JSONObject jobject = new JSONObject(data);
+                                //String data = Jobj.getString("data");
+                                //JSONObject jobject = new JSONObject(data);
 
-                                String Id = jobject.getString("id");
-                                String pdf_name = jobject.getString("pdf_name");
-                                String plan_id = jobject.getString("plan_id");
-                                String package_id = jobject.getString("package_id");
-                                String subscribed_on = jobject.getString("subscribed_on");
-                                String subscribed_till = jobject.getString("subscribed_till");
-                                String name = jobject.getString("name");
-                                String email_id = jobject.getString("email_id");
 
+                                JSONObject obj = new JSONObject(response);
+                                JSONArray m_jArry = obj.getJSONArray("data");
+
+                                mStackCount = m_jArry.length();
+                                for (int i = 0; i < m_jArry.length(); i++) {
+
+                                    JSONObject jobject = m_jArry.getJSONObject(i);
+                                    String Id = jobject.getString("id");
+                                    String pdf_name = jobject.getString("pdf_name");
+                                    String plan_id = jobject.getString("plan_id");
+                                    String package_id = jobject.getString("package_id");
+                                    String subscribed_on = jobject.getString("subscribed_on");
+                                    String subscribed_till = jobject.getString("subscribed_till");
+                                    String name = jobject.getString("name");
+                                    String email_id = jobject.getString("email_id");
+                                }
 
                             }
 
@@ -417,12 +449,13 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
 
 
     }
+
     public class DownloadAsync extends AsyncTask<String, Integer, String> {
 
         @Override
         public void onPreExecute() {
             super.onPreExecute();
-           CommonMethods.DisplayToast(SubscriptionPlanActivity.this,"Start download");
+            CommonMethods.DisplayToast(SubscriptionPlanActivity.this, "Start download");
             // pogressDialog();
         }
 
@@ -430,12 +463,11 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
         protected String doInBackground(String... url) {
 
 
-            File mydir =  getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+            File mydir = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
             if (!mydir.exists()) {
                 mydir.mkdirs();
             }
-            try
-            {
+            try {
                 DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
                 String url_link = url[0];
                 Uri downloadUri = Uri.parse(url_link);
@@ -444,10 +476,10 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
                 String fileExtension = MimeTypeMap.getFileExtensionFromUrl(String.valueOf(downloadUri));
                 // concatinate above fileExtension to fileName
                 fileName = "." + fileExtension;
-                Log.e("File Extension",""+fileName);
+                Log.e("File Extension", "" + fileName);
 
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                date= dateFormat.format(new Date());
+                date = dateFormat.format(new Date());
 
                 request.setAllowedNetworkTypes(
                         DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE)
@@ -455,20 +487,20 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
                         .setTitle("Downloading")
                         .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                         //.setMimeType(fileExtension)
-                        .setDestinationInExternalPublicDir("/MarketXill", date+ fileName);
+                        .setDestinationInExternalPublicDir("/MarketXill", date + fileName);
 
                 manager.enqueue(request);
-            }catch(RuntimeException e){
-                Log.d("SubscriptionPlan",e.getMessage());
+            } catch (RuntimeException e) {
+                Log.d("SubscriptionPlan", e.getMessage());
             }
-            return mydir.getPath() + File.separator + date +fileName;
+            return mydir.getPath() + File.separator + date + fileName;
 
         }
 
         @Override
         public void onPostExecute(String s) {
-            super .onPostExecute(s);
-            CommonMethods.DisplayToast(SubscriptionPlanActivity.this,"Successfully completed download. ");
+            super.onPostExecute(s);
+            CommonMethods.DisplayToast(SubscriptionPlanActivity.this, "Successfully completed download. ");
 
         }
     }

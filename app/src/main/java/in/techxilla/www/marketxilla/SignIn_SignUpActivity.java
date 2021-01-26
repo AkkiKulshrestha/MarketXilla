@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -17,7 +16,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -32,22 +30,21 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import es.dmoral.toasty.Toasty;
 import in.techxilla.www.marketxilla.utils.CommonMethods;
 import in.techxilla.www.marketxilla.utils.ConnectionDetector;
 import in.techxilla.www.marketxilla.utils.MyValidator;
 import in.techxilla.www.marketxilla.utils.UtilitySharedPreferences;
 
 import static in.techxilla.www.marketxilla.utils.CommonMethods.DisplaySnackBar;
-import static in.techxilla.www.marketxilla.utils.CommonMethods.ERROR_COLOR;
-import static in.techxilla.www.marketxilla.utils.CommonMethods.SUCCESS_COLOR;
-import static in.techxilla.www.marketxilla.utils.CommonMethods.WARNING_COLOR;
 import static in.techxilla.www.marketxilla.utils.CommonMethods.md5;
 import static in.techxilla.www.marketxilla.webservices.RestClient.ROOT_URL;
 
@@ -73,6 +70,7 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
     String MobileOtp,EmailPin;
     Dialog dialog11;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,6 +88,14 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
         myDialog.setMessage("Please wait...");
         myDialog.setCancelable(false);
         myDialog.setCanceledOnTouchOutside(false);
+
+
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(this, instanceIdResult -> {
+            String newToken = instanceIdResult.getToken();
+            Log.e("newToken", newToken);
+            UtilitySharedPreferences.setPrefs(getApplicationContext(), "token", newToken);
+            System.out.println("New Token :"+ UtilitySharedPreferences.getPrefs(getApplicationContext(),"token"));
+        });
 
 
         LayoutTabSignIn= (LinearLayout)findViewById(R.id.LayoutTabSignIn);
@@ -154,6 +160,8 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
 
 
     }
+
+
 
     private void GOTO_SIGIN() {
         LayoutTabSignIn.setBackgroundColor(getResources().getColor(R.color.colorPrimary));

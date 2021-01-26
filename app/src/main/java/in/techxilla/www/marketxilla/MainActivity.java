@@ -701,7 +701,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         } else if(id == R.id.nav_logout){
-            UtilitySharedPreferences.clearPref(getApplicationContext());
+           // UtilitySharedPreferences.clearPref(getApplicationContext());
             Intent i = new Intent(getApplicationContext(), SplashActivity.class);
             startActivity(i);
             overridePendingTransition(R.animator.left_right, R.animator.right_left);

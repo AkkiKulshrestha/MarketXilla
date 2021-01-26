@@ -960,7 +960,7 @@ public class CommonMethods
 
 	public static String DisplayCurrentDate() {
 		String CurrentDate = null;
-		SimpleDateFormat formDate = new SimpleDateFormat("dd-MM-yyyy");
+		SimpleDateFormat formDate = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
 		// String strDate = formDate.format(System.currentTimeMillis()); // option 1
 		CurrentDate = formDate.format(new Date(System.currentTimeMillis())); // option 2
@@ -973,6 +973,7 @@ public class CommonMethods
 
 		// String strDate = formDate.format(System.currentTimeMillis()); // option 1
 		CurrentDate = formDate.format(new Date(System.currentTimeMillis())); // option 2
+
 		return CurrentDate;
 	}
 

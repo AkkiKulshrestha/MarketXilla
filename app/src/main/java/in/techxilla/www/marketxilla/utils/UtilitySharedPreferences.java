@@ -31,11 +31,11 @@ public class UtilitySharedPreferences {
         preferences = context.getSharedPreferences(prefName, context.MODE_PRIVATE);
         editor = preferences.edit();
        editor.clear().commit();
-       CommonMethods.deleteCache(context);
+       //CommonMethods.deleteCache(context);
 
     }
 
-    static void clearPref1(Context context, String prefKey) {
+    public static void clearPref1(Context context, String prefKey) {
         preferences = context.getSharedPreferences(prefName, context.MODE_PRIVATE);
         editor = preferences.edit();
         editor.clear().commit();

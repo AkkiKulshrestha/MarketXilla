@@ -64,19 +64,19 @@ import static in.techxilla.www.marketxilla.utils.CommonMethods.DisplayToastError
 import static in.techxilla.www.marketxilla.utils.CommonMethods.DisplayToastWarning;
 import static in.techxilla.www.marketxilla.webservices.RestClient.ROOT_URL;
 
-public class NewDashboard extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,BottomNavigationView.OnNavigationItemSelectedListener {
+public class NewDashboard extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, BottomNavigationView.OnNavigationItemSelectedListener {
 
 
-    String StrMemberId,StrMemberName,StrMemberEmailId,StrMemberMobile,StrMemberUserName;
+    String StrMemberId, StrMemberName, StrMemberEmailId, StrMemberMobile, StrMemberUserName;
     ProgressDialog myDialog;
-    TextView TV_NameTxt,TV_Day_TimeDisplayingTxt;
+    TextView TV_NameTxt, TV_Day_TimeDisplayingTxt;
     String greeting;
     private ActionBarDrawerToggle mDrawerToggle;
     private static ViewPager mPager;
     private static int currentPage = 0;
     private static int NUM_PAGES = 0;
-    private static final Integer[] IMAGES= {R.drawable.slider1,R.drawable.slider2,R.drawable.slider3,
-            R.drawable.slider4,R.drawable.slider5,R.drawable.slider6};
+    private static final Integer[] IMAGES = {R.drawable.slider1, R.drawable.slider2, R.drawable.slider3,
+            R.drawable.slider4, R.drawable.slider5, R.drawable.slider6};
     private ArrayList<Integer> ImagesArray = new ArrayList<Integer>();
     TextView Tv_DisplayGolu;
     SliderView sliderView;
@@ -103,6 +103,8 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
     ViewGroup viewGroup;
     private static ArrayList<SmartPlanModel> smartPlanModelArrayList;
     MultiSnapHelper multiSnapHelper;
+    int loader_position = 0;
+    Fragment fragment = null;
     TextView badge_new_notification;
 
 
@@ -110,6 +112,11 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_dashboard);
+        if (getIntent().getExtras() != null) {
+            loader_position = getIntent().getExtras().getInt("load_fragment");
+        } else {
+            loader_position = 0;
+        }
 
         loadFragment(new HomeFragment());
 
@@ -135,11 +142,11 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
 
 
     private void initUI() {
-        StrMemberId = UtilitySharedPreferences.getPrefs(getApplicationContext(),"MemberId");
-        StrMemberName = UtilitySharedPreferences.getPrefs(getApplicationContext(),"MemberName");
-        StrMemberEmailId = UtilitySharedPreferences.getPrefs(getApplicationContext(),"MemberEmailId");
-        StrMemberMobile = UtilitySharedPreferences.getPrefs(getApplicationContext(),"MemberMobile");
-        StrMemberUserName = UtilitySharedPreferences.getPrefs(getApplicationContext(),"MemberUsername");
+        StrMemberId = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberId");
+        StrMemberName = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberName");
+        StrMemberEmailId = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberEmailId");
+        StrMemberMobile = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberMobile");
+        StrMemberUserName = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberUsername");
 
 
       /*  ImageView iv_refresh = findViewById(R.id.iv_refresh);
@@ -157,7 +164,7 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
         iv_notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),NotificationActivity.class);
+                Intent intent = new Intent(getApplicationContext(), NotificationActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.animator.move_left, R.animator.move_right);
 
@@ -168,16 +175,37 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
 
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
+        if (loader_position == 0) {
+            navigation.setSelectedItemId(R.id.navigation_home);
+            fragment = new HomeFragment();
+
+        }
+        /*if (loader_position == 1) {
+            navigation.setSelectedItemId(R.id.navigation_market);
+            fragment = new MarketFragment();
+
+        }*/
+        if (loader_position == 1) {
+            navigation.setSelectedItemId(R.id.navigation_holiday);
+            fragment = new HolidayFragment();
+
+        }
+        if (loader_position == 2) {
+            navigation.setSelectedItemId(R.id.navigation_package);
+            fragment = new PackageFragment();
+
+        }
+        loadFragment(fragment);
         navigation.setOnNavigationItemSelectedListener(this);
     }
 
 
     private void navigationView() {
-        StrMemberId = UtilitySharedPreferences.getPrefs(getApplicationContext(),"MemberId");
-        StrMemberName = UtilitySharedPreferences.getPrefs(getApplicationContext(),"MemberName");
-        StrMemberEmailId = UtilitySharedPreferences.getPrefs(getApplicationContext(),"MemberEmailId");
-        StrMemberMobile = UtilitySharedPreferences.getPrefs(getApplicationContext(),"MemberMobile");
-        StrMemberUserName = UtilitySharedPreferences.getPrefs(getApplicationContext(),"MemberUsername");
+        StrMemberId = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberId");
+        StrMemberName = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberName");
+        StrMemberEmailId = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberEmailId");
+        StrMemberMobile = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberMobile");
+        StrMemberUserName = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberUsername");
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -187,35 +215,35 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-        mDrawerToggle = new ActionBarDrawerToggle(this, drawer,toolbar,R.string.drawer_open, R.string.drawer_close) {
+        mDrawerToggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.drawer_open, R.string.drawer_close) {
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
+
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
         drawer.setDrawerListener(mDrawerToggle);
-        View hView =  navigationView.getHeaderView(0);
+        View hView = navigationView.getHeaderView(0);
 
 
-
-        TextView nav_header_userName = (TextView)hView.findViewById(R.id.nav_header_userName);
-        TextView nav_user_email = (TextView)hView.findViewById(R.id.nav_Email);
-        if(StrMemberName!=null && !StrMemberName.equalsIgnoreCase("")) {
+        TextView nav_header_userName = (TextView) hView.findViewById(R.id.nav_header_userName);
+        TextView nav_user_email = (TextView) hView.findViewById(R.id.nav_Email);
+        if (StrMemberName != null && !StrMemberName.equalsIgnoreCase("")) {
             nav_header_userName.setText(StrMemberName.toUpperCase());
         }
 
-        if(StrMemberMobile!=null && !StrMemberMobile.equalsIgnoreCase("")) {
-            nav_user_email.setText("Mobile No.: "+StrMemberMobile);
+        if (StrMemberMobile != null && !StrMemberMobile.equalsIgnoreCase("")) {
+            nav_user_email.setText("Mobile No.: " + StrMemberMobile);
         }
 
-        ImageView iv_facebook = (ImageView)navigationView.findViewById(R.id.iv_facebook);
-        ImageView iv_twitter = (ImageView)navigationView.findViewById(R.id.iv_twitter);
-        ImageView iv_telegram = (ImageView)navigationView.findViewById(R.id.iv_telegram);
-        ImageView iv_linked_in = (ImageView)navigationView.findViewById(R.id.iv_linked_in);
+        ImageView iv_facebook = (ImageView) navigationView.findViewById(R.id.iv_facebook);
+        ImageView iv_twitter = (ImageView) navigationView.findViewById(R.id.iv_twitter);
+        ImageView iv_telegram = (ImageView) navigationView.findViewById(R.id.iv_telegram);
+        ImageView iv_linked_in = (ImageView) navigationView.findViewById(R.id.iv_linked_in);
 
         iv_facebook.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -238,7 +266,7 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
         iv_telegram.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent telegram = new Intent(Intent.ACTION_VIEW );
+                Intent telegram = new Intent(Intent.ACTION_VIEW);
                 telegram.setData(Uri.parse(getResources().getString(R.string.telegram)));
                 startActivity(telegram);
             }
@@ -267,6 +295,7 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
+
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
@@ -274,6 +303,7 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
         }
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -291,9 +321,9 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
                 fragment = new HomeFragment();
                 break;
 
-             case R.id.navigation_market:
+           /* case R.id.navigation_market:
                 fragment = new MarketFragment();
-                break;
+                break;*/
 
             case R.id.navigation_holiday:
                 fragment = new HolidayFragment();
@@ -304,36 +334,36 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.nav_my_subscription:
-                Intent intent_subscription = new Intent(NewDashboard.this,SubscriptionPlanActivity.class);
+                Intent intent_subscription = new Intent(NewDashboard.this, SubscriptionPlanActivity.class);
                 startActivity(intent_subscription);
                 break;
 
             case R.id.nav_about_us:
-                Intent intent_about_us = new Intent(Intent.ACTION_VIEW );
+                Intent intent_about_us = new Intent(Intent.ACTION_VIEW);
                 intent_about_us.setData(Uri.parse("https://marketxilla.com/about-us"));
                 startActivity(intent_about_us);
                 break;
 
             case R.id.nav_contact_us:
-                Intent intent_contact_us = new Intent(Intent.ACTION_VIEW );
+                Intent intent_contact_us = new Intent(Intent.ACTION_VIEW);
                 intent_contact_us.setData(Uri.parse("https://marketxilla.com/contact-us"));
                 startActivity(intent_contact_us);
 
                 break;
             case R.id.nav_disclaimer:
-                Intent int_disclaimer = new Intent(Intent.ACTION_VIEW );
+                Intent int_disclaimer = new Intent(Intent.ACTION_VIEW);
                 int_disclaimer.setData(Uri.parse("https://marketxilla.com/disclaimer"));
                 startActivity(int_disclaimer);
 
                 break;
             case R.id.nav_terms_n_condition:
-                Intent intent_tnc = new Intent(Intent.ACTION_VIEW );
+                Intent intent_tnc = new Intent(Intent.ACTION_VIEW);
                 intent_tnc.setData(Uri.parse("https://marketxilla.com/terms-and-conditions"));
                 startActivity(intent_tnc);
 
                 break;
             case R.id.nav_privacy_policy:
-                Intent intent_pp = new Intent(Intent.ACTION_VIEW );
+                Intent intent_pp = new Intent(Intent.ACTION_VIEW);
                 intent_pp.setData(Uri.parse("https://marketxilla.com/privacy-policy"));
                 startActivity(intent_pp);
 
@@ -342,12 +372,12 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
             case R.id.nav_rate_us:
                 try {
                     Uri marketUri = Uri.parse("market://details?id=" + getPackageName());
-                    Log.d("MarketUri",""+marketUri);
+                    Log.d("MarketUri", "" + marketUri);
                     Intent marketIntent = new Intent(Intent.ACTION_VIEW, marketUri);
                     startActivity(marketIntent);
-                }catch(ActivityNotFoundException e) {
+                } catch (ActivityNotFoundException e) {
                     Uri marketUri = Uri.parse("https://play.google.com/store/apps/details?id=" + getPackageName());
-                    Log.d("MarketUri",""+marketUri);
+                    Log.d("MarketUri", "" + marketUri);
                     Intent marketIntent = new Intent(Intent.ACTION_VIEW, marketUri);
                     startActivity(marketIntent);
                 }
@@ -359,7 +389,7 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
                 Intent sendIntent = new Intent();
                 sendIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, "Greetings, \n\n"+
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "Greetings, \n\n" +
                         "Welcome To Marketxilla, \n" +
                         "\"An Intraday Research Service Providing App For NSE Future And Options, and Commodity\" \n\n\n\n" +
                         "Marketxilla App is Specially Designed For Intraday Traders. Our Research is Based On Dynamic Data And Technical Analysis. For Consistent Profit and Hassle-Free Trading, You Can Study Our Live Research Recommendations.\n" +
@@ -376,9 +406,6 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
                 overridePendingTransition(R.animator.left_right, R.animator.right_left);
                 finish();
                 break;
-
-
-
 
 
         }
@@ -406,7 +433,6 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
     private void fetchNotificationList() {
 
 
-
         String Uiid_id = UUID.randomUUID().toString();
 
 
@@ -427,7 +453,7 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
                         JSONObject jsonresponse = new JSONObject(response);
 
                         boolean status = jsonresponse.getBoolean("status");
-                        if(status) {
+                        if (status) {
                             String result = jsonresponse.getString("data");
                             JSONArray resultArry = new JSONArray(result);
 
@@ -435,7 +461,7 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
 
                             SetNotificationBadge();
 
-                        }else {
+                        } else {
                             notifications_count = 0;
                             SetNotificationBadge();
                         }
@@ -450,15 +476,15 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
                 public void onErrorResponse(VolleyError volleyError) {
 
                     volleyError.printStackTrace();
-                    DisplayToastError(getApplicationContext(),"Something goes wrong. Please try again");
+                    DisplayToastError(getApplicationContext(), "Something goes wrong. Please try again");
                 }
-            }) ;
+            });
             RequestQueue requestQueue = Volley.newRequestQueue(this);
             postrequest.setRetryPolicy(new DefaultRetryPolicy(0, -1, 0));
             requestQueue.add(postrequest);
 
-        }else {
-            DisplayToastWarning(getApplicationContext(),"No Internet Connection");
+        } else {
+            DisplayToastWarning(getApplicationContext(), "No Internet Connection");
 
         }
 
@@ -468,7 +494,7 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
     private void SetNotificationBadge() {
 
         badge_new_notification = findViewById(R.id.badge_new_notification);
-        badge_new_notification.setText(String.format("%02d",notifications_count));
+        badge_new_notification.setText(String.format("%02d", notifications_count));
     }
 
 

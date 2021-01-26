@@ -1,16 +1,11 @@
 package in.techxilla.www.marketxilla.fcm;
 
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.Icon;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
@@ -19,18 +14,16 @@ import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.TaskStackBuilder;
-import androidx.core.content.ContextCompat;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 
 import java.util.Map;
 
-import in.techxilla.www.marketxilla.AppController;
 import in.techxilla.www.marketxilla.NewDashboard;
 import in.techxilla.www.marketxilla.R;
-import in.techxilla.www.marketxilla.application.MyApplication;
 import in.techxilla.www.marketxilla.utils.UtilitySharedPreferences;
 
 public class CloudMessagingService extends FirebaseMessagingService {
@@ -50,16 +43,14 @@ public class CloudMessagingService extends FirebaseMessagingService {
         try {
 
             if (remoteMessage.getData().size() > 0) {
+                Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+
                 Bundle extras = new Bundle();
                 for (Map.Entry<String, String> entry : remoteMessage.getData().entrySet()) {
                     extras.putString(entry.getKey(), entry.getValue());
                 }
 
 
-                if (remoteMessage.getNotification() != null) {
-                    contentText = remoteMessage.getNotification().getBody();
-                    title = remoteMessage.getNotification().getTitle();
-                }
 
                 if (extras.getString("controller") != null)
                     mController = extras.getString("controller");
@@ -68,6 +59,10 @@ public class CloudMessagingService extends FirebaseMessagingService {
                     mUrl = extras.getString("url");
             }
 
+            if (remoteMessage.getNotification() != null) {
+                contentText = remoteMessage.getNotification().getBody();
+                title = remoteMessage.getNotification().getTitle();
+            }
 
             // Check if message contains a notification payload.
             if (remoteMessage.getData() != null) {
@@ -83,8 +78,14 @@ public class CloudMessagingService extends FirebaseMessagingService {
         super.onNewToken(token);
         Log.d(TAG, "Refreshed token: " + token);
         sendRegistrationToServer(token);
+
     }
 
+    public String CreateNewToken(){
+
+        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        return refreshedToken;
+    }
     /**
      * Persist token on third-party servers using your Retrofit APIs client.
      * Modify this method to associate the user's FCM InstanceID token with any server-side account
@@ -92,7 +93,7 @@ public class CloudMessagingService extends FirebaseMessagingService {
      * @param token The new token.
      */
     private void sendRegistrationToServer(String token) {
-        UtilitySharedPreferences.setPrefs(this, "token", token);
+        UtilitySharedPreferences.setPrefs(getApplicationContext(), "token", token);
         // make a own server request here using your http client
     }
 
