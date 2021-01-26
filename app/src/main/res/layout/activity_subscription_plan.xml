@@ -37,7 +37,7 @@
                     android:gravity="center"
                     android:minLines="2"
                     android:padding="16dp"
-                    android:text="NO ACTIVE PLAN"
+                    android:text=""
                     android:textAlignment="center"
                     android:textAllCaps="true"
                     android:textColor="@color/white"

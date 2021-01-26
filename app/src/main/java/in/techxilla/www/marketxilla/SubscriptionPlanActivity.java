@@ -139,9 +139,9 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
         if (planList != null) {
             planList = new ArrayList<>();
         }
-
+        String Uiid_id = UUID.randomUUID().toString();
         String StrMemberId = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberId");
-        final String get_plan_details_info = ROOT_URL + "get_user_subscription_details.php?user_id=" + StrMemberId;
+        final String get_plan_details_info = ROOT_URL + "get_user_subscription_details.php?"+Uiid_id+"&user_id=" + StrMemberId;
         Log.d("URL --->", get_plan_details_info);
         try {
             ConnectionDetector cd = new ConnectionDetector(this);
@@ -190,7 +190,7 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
                                 String plan_amount1_month = jo_data.getString("plan_amount1_month");
                                 String plan_amount2_month = jo_data.getString("plan_amount2_month");
                                 String plan_amount3_month = jo_data.getString("plan_amount3_month");
-                                getTransactionDetails(mUserId, mTransactionId);
+
 
 
                                 LayoutInflater inflater = (LayoutInflater) Objects.requireNonNull(getApplicationContext()).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -216,7 +216,7 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
                                 }
 
                                 SimpleDateFormat sdf, sdf2, sdf21;
-                                Date newSubscriptedTilldate, currentdate2;
+                                Date newSubscriptedTilldate, currentdate2,newSubscriptedOndate;
 
                                 if (!subscribed_till.equalsIgnoreCase("")) {
                                     try {
@@ -224,7 +224,7 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
                                         newSubscriptedTilldate = sdf.parse(subscribed_till);
                                         sdf21 = new SimpleDateFormat("dd MMM, yyyy");
                                         mSubscribed_till = sdf21.format(newSubscriptedTilldate);
-                                        mShortDate = new SimpleDateFormat("MMM yyyy").format(newSubscriptedTilldate).toString();
+
                                         if (new Date().after(newSubscriptedTilldate)) {
                                             tv_Subscripte_till_date.setText(" Subscribed till : " + mSubscribed_till);
                                             tv_status.setText("InActive");
@@ -248,6 +248,8 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
                                         currentdate2 = sdf2.parse(subscribed_on);
                                         sdf21 = new SimpleDateFormat("dd MMM, yyyy");
                                         mSubscribed_on = sdf21.format(currentdate2).toString();
+                                        newSubscriptedOndate = sdf2.parse(subscribed_on);
+                                        mShortDate = new SimpleDateFormat("MMM yyyy").format(newSubscriptedOndate).toString();
                                         if (new Date().after(currentdate2)) {
                                             tv_Subscripte_on_date.setText(" Subscribed on : " + mSubscribed_on);
                                             // tv_status.setText("In Active");
@@ -262,7 +264,7 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
                                 if(i==1) {
                                     tv_title_plan.setText("Current Plan : " + plan_name);
                                     tv_valid_till.setVisibility(View.VISIBLE);
-                                    tv_valid_till.setText("Valid on \n" + mSubscribed_on);
+                                    tv_valid_till.setText("Valid Till \n" + mSubscribed_till);
                                 }
 
 
@@ -290,7 +292,7 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
                                                     diskCacheStrategy(DiskCacheStrategy.ALL).into(img_add);
                                         } else {
                                             table_layout.setVisibility(View.VISIBLE);
-                                            scrollView.scrollTo(0, scrollView.getBottom());
+                                            ScrollDown();
                                             Glide.with(SubscriptionPlanActivity.this).
                                                     load(R.mipmap.ic_up_white).
                                                     diskCacheStrategy(DiskCacheStrategy.ALL).into(img_add);
@@ -303,41 +305,47 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
                                 TextView tv_transaction_details = (TextView) rowView2.findViewById(R.id.tv_transaction_details);
                                 TextView tv_Subscribed_till = (TextView) rowView2.findViewById(R.id.tv_Subscribed_till);
                                 TextView tv_subscribed_on = (TextView) rowView2.findViewById(R.id.tv_subscribed_on);
+                                TextView tv_planname =(TextView) rowView2.findViewById(R.id.tv_planname);
 
                                 TextView tv_paying_via = (TextView) rowView2.findViewById(R.id.tv_paying_via);
                                 TextView tv_amount = (TextView) rowView2.findViewById(R.id.tv_amount);
                                 TextView tv_payment_receipt = (TextView) rowView2.findViewById(R.id.tv_payment_receipt);
                                 TextView tv_Receipt_on_email = (TextView) rowView2.findViewById(R.id.tv_Receipt_on_email);
-                                String path_link = ROOT_URL + "payment_receipt/" + mPdf_name;
+
+                                tv_payment_receipt.setHint(mPdf_name);
                                 tv_payment_receipt.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
                                         /*Intent intent_download =new Intent(SubscriptionPlanActivity.this,WebViewActivity.class);
                                         intent_download.putExtra("path_link",path_link);
                                         startActivity(intent_download);*/
+                                        String path_link = ROOT_URL + "payment_receipt/" + tv_payment_receipt.getHint().toString().trim();
                                         Intent intent = new Intent(Intent.ACTION_VIEW);
                                         intent.setData(Uri.parse(path_link));
                                         startActivity(intent);
 
                                     }
                                 });
+                                tv_Receipt_on_email.setHint(mTransactionId);
                                 tv_Receipt_on_email.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        CommonMethods.DisplaySnackBar(viewGroup, mTransaction_Message, "WARNING");
+                                        getTransactionDetails(mUserId, tv_Receipt_on_email.getHint().toString());
+
                                     }
                                 });
 
                                 date.setText(mShortDate.toString());
+                                tv_planname.setText(plan_name+" - "+package_id+" Months");
 
                                 if (package_id.equalsIgnoreCase("1")) {
-                                    tv_amount.setText("Amount : \u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(plan_amount1_month));
+                                    tv_amount.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(plan_amount1_month));
                                 }
                                 if (package_id.equalsIgnoreCase("2")) {
-                                    tv_amount.setText("Amount : \u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(plan_amount2_month));
+                                    tv_amount.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(plan_amount2_month));
                                 }
                                 if (package_id.equalsIgnoreCase("3")) {
-                                    tv_amount.setText("Amount : \u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(plan_amount3_month));
+                                    tv_amount.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(plan_amount3_month));
                                 }
 
 
@@ -382,8 +390,8 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
 //https://marketxilla.com/marketxilla_app/send_transaction_receipt_on_mail.php?user_id=1&transaction_id=30
 
     private void getTransactionDetails(String mUserId, String mTransactionId) {
-
-        final String get_bank_details_info = ROOT_URL + "send_transaction_receipt_on_mail.php?user_id=" + mUserId + "&transaction_id=" + mTransactionId;
+        String Uiid_id = UUID.randomUUID().toString();
+        final String get_bank_details_info = ROOT_URL + "send_transaction_receipt_on_mail.php?"+Uiid_id+"&user_id=" + mUserId + "&transaction_id=" + mTransactionId;
         Log.d("Details URL --->", get_bank_details_info);
         try {
             ConnectionDetector cd = new ConnectionDetector(this);
@@ -396,36 +404,17 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
                             Log.d("Response", "" + response);
 
                             JSONObject Jobj = new JSONObject(response);
+                            Log.d("ResponseOBJ", "" + Jobj.toString());
 
                             boolean status = Jobj.getBoolean("status");
-                            mTransaction_Message = Jobj.getString("message");
+                            String message = Jobj.getString("message");
                             if (status) {
-
-                                //String data = Jobj.getString("data");
-                                //JSONObject jobject = new JSONObject(data);
-
-
-                                JSONObject obj = new JSONObject(response);
-                                JSONArray m_jArry = obj.getJSONArray("data");
-
-                                mStackCount = m_jArry.length();
-                                for (int i = 0; i < m_jArry.length(); i++) {
-
-                                    JSONObject jobject = m_jArry.getJSONObject(i);
-                                    String Id = jobject.getString("id");
-                                    String pdf_name = jobject.getString("pdf_name");
-                                    String plan_id = jobject.getString("plan_id");
-                                    String package_id = jobject.getString("package_id");
-                                    String subscribed_on = jobject.getString("subscribed_on");
-                                    String subscribed_till = jobject.getString("subscribed_till");
-                                    String name = jobject.getString("name");
-                                    String email_id = jobject.getString("email_id");
-                                }
-
+                                CommonMethods.DisplayToastSuccess(getApplicationContext(),message);
                             }
 
                         } catch (Exception e) {
-                            Log.d("Exception", e.toString());
+
+                            e.printStackTrace();
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -503,6 +492,15 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
             CommonMethods.DisplayToast(SubscriptionPlanActivity.this, "Successfully completed download. ");
 
         }
+    }
+
+    private void ScrollDown(){
+        scrollView.post(new Runnable() {
+            @Override
+            public void run() {
+                scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+            }
+        });
     }
 
 }
