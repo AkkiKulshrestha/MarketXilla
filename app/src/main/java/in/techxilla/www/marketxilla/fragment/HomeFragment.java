@@ -331,7 +331,8 @@ public class HomeFragment extends Fragment {
                                         String strike = jsonObject.getString("strike");
                                         String buy_sell_closing_price = jsonObject.getString("buy_sell_closing_price");
                                         String profit_loss = jsonObject.getString("profit_loss");
-
+                                        String is_active_performance = jsonObject.getString("is_active_performance");
+                                        String is_call_for_paid_customer=  jsonObject.getString("is_call_for_paid_customer");
 
                                         callListModel = new CallModel();
                                         callListModel.setId(id);
@@ -349,6 +350,8 @@ public class HomeFragment extends Fragment {
                                         callListModel.setStrike(strike);
                                         callListModel.setBuy_sell_closing_price(buy_sell_closing_price);
                                         callListModel.setProfit_loss(profit_loss);
+                                        callListModel.setIs_active_performance(is_active_performance);
+                                        callListModel.setIs_call_for_paid_customer(is_call_for_paid_customer);
 
                                         callModel_list.add(callListModel);
 

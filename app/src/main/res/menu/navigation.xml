@@ -21,6 +21,10 @@
         android:icon="@drawable/icons_cart"
         android:title="@string/title_package"   />
 
+    <item
+        android:id="@+id/navigation_paid_user"
+        android:icon="@drawable/icons_cart"
+        android:title="@string/title_paid_user"   />
 
 
 </menu>

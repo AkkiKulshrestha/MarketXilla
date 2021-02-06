@@ -87,8 +87,6 @@ public class PackageFragment extends Fragment {
 
         mContext = getContext();
 
-        smartPlanModelArrayList = new ArrayList<SubscritPlanModel>();
-
         //Set up Adapter
         recyclerSmartPlan = (RecyclerView) rootView.findViewById(R.id.recyclerSmartPlan);
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
@@ -113,7 +111,9 @@ public class PackageFragment extends Fragment {
         String Uiid_id = UUID.randomUUID().toString();
         String URL_GetSubscriptions = ROOT_URL + "get_subscriptions.php?"+ Uiid_id;;
 
-
+        if(smartPlanModelArrayList!=null){
+            smartPlanModelArrayList = new ArrayList<>();
+        }
         try {
             Log.d("URL", URL_GetSubscriptions);
 

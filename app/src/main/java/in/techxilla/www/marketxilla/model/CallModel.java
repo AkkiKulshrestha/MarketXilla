@@ -18,6 +18,10 @@ public class CallModel {
     String profit_loss;
     String buy_sell_closing_price;
 
+
+    String is_active_performance;
+    String is_call_for_paid_customer;
+
     public String getProfit_loss() {
         return profit_loss;
     }
@@ -34,6 +38,21 @@ public class CallModel {
         this.buy_sell_closing_price = buy_sell_closing_price;
     }
 
+    public String getIs_active_performance() {
+        return is_active_performance;
+    }
+
+    public void setIs_active_performance(String is_active_performance) {
+        this.is_active_performance = is_active_performance;
+    }
+
+    public String getIs_call_for_paid_customer() {
+        return is_call_for_paid_customer;
+    }
+
+    public void setIs_call_for_paid_customer(String is_call_for_paid_customer) {
+        this.is_call_for_paid_customer = is_call_for_paid_customer;
+    }
 
 
     public CallModel() {

@@ -28,10 +28,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <receiver
+            android:name=".service.SMSBroadcastReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.auth.api.phone.SMS_RETRIEVED" />
+            </intent-filter>
+        </receiver>
         <activity
             android:name=".SignIn_SignUpActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" /> <!-- Firebase Cloud Message -->
+            android:theme="@style/AppTheme.NoActionBar" />
+
+
+        <!-- Firebase Cloud Message -->
         <!--
 <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"

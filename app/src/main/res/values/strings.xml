@@ -26,6 +26,7 @@
     <string name="title_market">Market</string>
     <string name="title_news">News</string>
     <string name="title_package">Packages</string>
+    <string name="title_paid_user">Paid User</string>
     <string name="drawer_open">DRAWER OPEN</string>
     <string name="drawer_close">DRAWER CLOSED</string>
     <string name="title_holiday">Holidays</string>
@@ -69,6 +70,8 @@
         <item>2 Month</item>
         <item>3 Month</item>
     </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

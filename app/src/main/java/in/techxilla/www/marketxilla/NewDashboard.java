@@ -333,6 +333,10 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
                 fragment = new PackageFragment();
                 break;
 
+            case R.id.navigation_paid_user:
+                fragment = new PackageFragment();
+                break;
+
             case R.id.nav_my_subscription:
                 Intent intent_subscription = new Intent(NewDashboard.this, SubscriptionPlanActivity.class);
                 startActivity(intent_subscription);

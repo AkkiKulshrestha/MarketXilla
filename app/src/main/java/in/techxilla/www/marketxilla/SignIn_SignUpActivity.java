@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,7 +18,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -30,6 +33,14 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import com.google.android.gms.auth.api.phone.SmsRetriever;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseException;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 
@@ -38,37 +49,43 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+import in.techxilla.www.marketxilla.service.SMSBroadcastReceiver;
 import in.techxilla.www.marketxilla.utils.CommonMethods;
 import in.techxilla.www.marketxilla.utils.ConnectionDetector;
 import in.techxilla.www.marketxilla.utils.MyValidator;
 import in.techxilla.www.marketxilla.utils.UtilitySharedPreferences;
 
 import static in.techxilla.www.marketxilla.utils.CommonMethods.DisplaySnackBar;
+import static in.techxilla.www.marketxilla.utils.CommonMethods.DisplayToast;
 import static in.techxilla.www.marketxilla.utils.CommonMethods.md5;
 import static in.techxilla.www.marketxilla.webservices.RestClient.ROOT_URL;
 
-public class SignIn_SignUpActivity extends AppCompatActivity {
+public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroadcastReceiver.OTPReceiveListener{
 
 
-    LinearLayout ll_parent_sign_in,ll_parent_sign_up;
-    LinearLayout LayoutTabSignIn,LayoutTabSignUp;
+    LinearLayout ll_parent_sign_in, ll_parent_sign_up;
+    LinearLayout LayoutTabSignIn, LayoutTabSignUp;
     ProgressDialog myDialog;
 
-    EditText Edt_Email_Mobile,Edt_Password;
+    EditText Edt_Email_Mobile, Edt_Password;
     Button BtnSignIn;
 
-    EditText Edt_SU_Fullname,Edt_SU_EmailId,Edt_SU_MobileNo,edt_Su_Password;
+    EditText Edt_SU_Fullname, Edt_SU_EmailId, Edt_SU_MobileNo, edt_Su_Password;
     Button BtnSignUp;
     ViewGroup viewGroup;
-    String StrName,StrEmail,StrMobile,ClientId,EmailVerified,MobileVerified;
+    String StrName, StrEmail, StrMobile, ClientId, EmailVerified, MobileVerified;
 
-    TextView txt_resend_email_otp,txt_resend_mobile_otp,txt_timer;
-    EditText edt_Check_Mobile_Otp,edt_Check_Email_Otp;
+    TextView txt_resend_email_otp, txt_resend_mobile_otp, txt_timer;
+    EditText edt_Check_Mobile_Otp, edt_Check_Email_Otp;
     boolean emailOtpVerified = false;
     boolean mobileOtpVerified = false;
-    String MobileOtp,EmailPin;
+    String MobileOtp, EmailPin;
     Dialog dialog11;
+    IntentFilter filter;
+    SMSBroadcastReceiver smsBroadcastReceiver;
+    String verificationID;
 
 
     @Override
@@ -94,24 +111,31 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
             String newToken = instanceIdResult.getToken();
             Log.e("newToken", newToken);
             UtilitySharedPreferences.setPrefs(getApplicationContext(), "token", newToken);
-            System.out.println("New Token :"+ UtilitySharedPreferences.getPrefs(getApplicationContext(),"token"));
+            System.out.println("New Token :" + UtilitySharedPreferences.getPrefs(getApplicationContext(), "token"));
         });
 
 
-        LayoutTabSignIn= (LinearLayout)findViewById(R.id.LayoutTabSignIn);
-        LayoutTabSignUp= (LinearLayout)findViewById(R.id.LayoutTabSignUp);
+        LayoutTabSignIn = (LinearLayout) findViewById(R.id.LayoutTabSignIn);
+        LayoutTabSignUp = (LinearLayout) findViewById(R.id.LayoutTabSignUp);
         LayoutTabSignIn.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
         LayoutTabSignUp.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight));
-        ll_parent_sign_in = (LinearLayout)findViewById(R.id.ll_parent_sign_in);
-        ll_parent_sign_up= (LinearLayout)findViewById(R.id.ll_parent_sign_up);
+        ll_parent_sign_in = (LinearLayout) findViewById(R.id.ll_parent_sign_in);
+        ll_parent_sign_up = (LinearLayout) findViewById(R.id.ll_parent_sign_up);
 
         ll_parent_sign_in.setVisibility(View.VISIBLE);
         ll_parent_sign_up.setVisibility(View.GONE);
+        smsBroadcastReceiver = new SMSBroadcastReceiver();
+        smsBroadcastReceiver.setOtpReceiveListener(SignIn_SignUpActivity.this);
+        filter = new IntentFilter();
+        filter.addAction(SmsRetriever.SMS_RETRIEVED_ACTION);
+
+
+        registerReceiver(smsBroadcastReceiver, filter);
 
         LayoutTabSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               GOTO_SIGIN();
+                GOTO_SIGIN();
 
             }
         });
@@ -128,31 +152,31 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
         });
 
 
-        Edt_Email_Mobile = (EditText)findViewById(R.id.Edt_Email_Mobile);
-        Edt_Password = (EditText)findViewById(R.id.Edt_Password);
+        Edt_Email_Mobile = (EditText) findViewById(R.id.Edt_Email_Mobile);
+        Edt_Password = (EditText) findViewById(R.id.Edt_Password);
 
-        BtnSignIn = (Button)findViewById(R.id.BtnSignIn);
+        BtnSignIn = (Button) findViewById(R.id.BtnSignIn);
         BtnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isValidLogin()){
+                if (isValidLogin()) {
                     LogInApi();
                 }
             }
         });
 
 
-        Edt_SU_Fullname = (EditText)findViewById(R.id.Edt_SU_Fullname);
-        Edt_SU_EmailId = (EditText)findViewById(R.id.Edt_SU_EmailId);
-        Edt_SU_MobileNo = (EditText)findViewById(R.id.Edt_SU_MobileNo);
-        edt_Su_Password = (EditText)findViewById(R.id.edt_Su_Password);
+        Edt_SU_Fullname = (EditText) findViewById(R.id.Edt_SU_Fullname);
+        Edt_SU_EmailId = (EditText) findViewById(R.id.Edt_SU_EmailId);
+        Edt_SU_MobileNo = (EditText) findViewById(R.id.Edt_SU_MobileNo);
+        edt_Su_Password = (EditText) findViewById(R.id.edt_Su_Password);
 
-        BtnSignUp = (Button)findViewById(R.id.BtnSignUp);
+        BtnSignUp = (Button) findViewById(R.id.BtnSignUp);
 
         BtnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isValidRegister()){
+                if (isValidRegister()) {
                     RegisterApi();
                 }
             }
@@ -160,7 +184,6 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
 
 
     }
-
 
 
     private void GOTO_SIGIN() {
@@ -173,8 +196,8 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
     private void LogInApi() {
 
 
-        String StrUserName =  Edt_Email_Mobile.getText().toString();
-        String StrPassword =  Edt_Password.getText().toString();
+        String StrUserName = Edt_Email_Mobile.getText().toString();
+        String StrPassword = Edt_Password.getText().toString();
 
         myDialog.show();
         String API_LOGIN = ROOT_URL + "login.php";
@@ -184,25 +207,24 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
             boolean isInternetPresent = cd.isConnectingToInternet();
 
 
-
             if (isInternetPresent) {
 
-                Log.d("URL",API_LOGIN);
+                Log.d("URL", API_LOGIN);
 
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, API_LOGIN,
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
-                                Log.d("Response",response);
-                                if(myDialog!=null && myDialog.isShowing()){
+                                Log.d("Response", response);
+                                if (myDialog != null && myDialog.isShowing()) {
                                     myDialog.dismiss();
                                 }
                                 try {
                                     JSONObject jsonObject = new JSONObject(response);
                                     boolean status = jsonObject.getBoolean("status");
-                                    if(status){
+                                    if (status) {
 
-                                        JSONObject  dataObj = jsonObject.getJSONObject("data");
+                                        JSONObject dataObj = jsonObject.getJSONObject("data");
                                         String message = jsonObject.getString("message");
 
                                         ClientId = dataObj.getString("id");
@@ -214,41 +236,39 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
                                         MobileVerified = dataObj.getString("is_mobile_verified");
 
 
-                                        if (EmailVerified!=null && EmailVerified.equalsIgnoreCase("0")){
+                                        if (EmailVerified != null && EmailVerified.equalsIgnoreCase("0")) {
                                             emailOtpVerified = false;
-                                        }else if(EmailVerified!=null && EmailVerified.equalsIgnoreCase("1")){
+                                        } else if (EmailVerified != null && EmailVerified.equalsIgnoreCase("1")) {
                                             emailOtpVerified = true;
                                         }
 
-                                        if(MobileVerified!=null && MobileVerified.equalsIgnoreCase("1")){
+                                        if (MobileVerified != null && MobileVerified.equalsIgnoreCase("1")) {
                                             mobileOtpVerified = true;
-                                        }else if (MobileVerified.equalsIgnoreCase("0")){
+                                        } else if (MobileVerified.equalsIgnoreCase("0")) {
                                             mobileOtpVerified = false;
                                         }
 
-                                        if(!mobileOtpVerified || !emailOtpVerified){
+                                        if (!mobileOtpVerified || !emailOtpVerified) {
                                             VerifyEmail_MobilePopup();
-                                        }else{
+                                        } else {
 
-                                            UtilitySharedPreferences.setPrefs(getApplicationContext(),"MemberId",ClientId);
-                                            UtilitySharedPreferences.setPrefs(getApplicationContext(),"MemberName",StrName);
-                                            UtilitySharedPreferences.setPrefs(getApplicationContext(),"MemberEmailId",StrEmail);
-                                            UtilitySharedPreferences.setPrefs(getApplicationContext(),"MemberMobile",StrMobile);
+                                            UtilitySharedPreferences.setPrefs(getApplicationContext(), "MemberId", ClientId);
+                                            UtilitySharedPreferences.setPrefs(getApplicationContext(), "MemberName", StrName);
+                                            UtilitySharedPreferences.setPrefs(getApplicationContext(), "MemberEmailId", StrEmail);
+                                            UtilitySharedPreferences.setPrefs(getApplicationContext(), "MemberMobile", StrMobile);
 
                                             //DisplaySnackBar(viewGroup,message,"SUCCESS");
-                                            CommonMethods.DisplayToastSuccess(getApplicationContext(),message);
+                                            CommonMethods.DisplayToastSuccess(getApplicationContext(), message);
                                             Intent i = new Intent(getApplicationContext(), NewDashboard.class);
                                             startActivity(i);
-                                            overridePendingTransition(R.animator.move_left,R.animator.move_right);
+                                            overridePendingTransition(R.animator.move_left, R.animator.move_right);
                                             finish();
                                         }
 
 
-
-                                    }else {
+                                    } else {
                                         String message = jsonObject.getString("message");
-                                        DisplaySnackBar(viewGroup,message,"ERROR");
-
+                                        DisplaySnackBar(viewGroup, message, "ERROR");
 
 
                                     }
@@ -265,27 +285,27 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
                             @Override
                             public void onErrorResponse(VolleyError error) {
                                 error.printStackTrace();
-                                if(myDialog!=null && myDialog.isShowing()){
+                                if (myDialog != null && myDialog.isShowing()) {
                                     myDialog.dismiss();
                                 }
                             }
-                        }){
+                        }) {
 
                     @Override
                     public String getBodyContentType() {
                         return "application/x-www-form-urlencoded; charset=UTF-8";
                     }
+
                     @Override
                     public Map<String, String> getParams() throws AuthFailureError {
                         Map<String, String> params = new HashMap<String, String>();
                         params.put("username", StrUserName.toUpperCase());
                         params.put("password", md5(StrPassword));
-                        params.put("token",UtilitySharedPreferences.getPrefs(getApplicationContext(),"token"));
-                        Log.d("ParrasLogin",params.toString() );
+                        params.put("token", UtilitySharedPreferences.getPrefs(getApplicationContext(), "token"));
+                        Log.d("ParrasLogin", params.toString());
 
                         return params;
                     }
-
 
 
                 };
@@ -297,7 +317,6 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
                 requestQueue.add(stringRequest);
 
 
-
             } else {
                 CommonMethods.DisplayToastInfo(this, "Please check your internet connection");
             }
@@ -306,7 +325,6 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
             e.printStackTrace();
 
         }
-
 
 
     }
@@ -316,26 +334,26 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
 
         if (!MyValidator.isValidEmailMobile(Edt_Email_Mobile)) {
             Edt_Email_Mobile.requestFocus();
-            DisplaySnackBar(viewGroup,"Please enter either Email Id or Mobile No","WARNING");
+            DisplaySnackBar(viewGroup, "Please enter either Email Id or Mobile No", "WARNING");
             result = false;
         }
 
-        if (!MyValidator.isValidField(Edt_Password) ) {
+        if (!MyValidator.isValidField(Edt_Password)) {
             Edt_Password.requestFocus();
-            DisplaySnackBar(viewGroup,"Please enter Password","WARNING");
+            DisplaySnackBar(viewGroup, "Please enter Password", "WARNING");
             result = false;
         }
-        return  result;
+        return result;
 
     }
 
     private void RegisterApi() {
 
 
-        StrName  =  Edt_SU_Fullname.getText().toString();
-        StrEmail  =  Edt_SU_EmailId.getText().toString();
-        StrMobile  =  Edt_SU_MobileNo.getText().toString();
-        String StrPassword =  edt_Su_Password.getText().toString();
+        StrName = Edt_SU_Fullname.getText().toString();
+        StrEmail = Edt_SU_EmailId.getText().toString();
+        StrMobile = Edt_SU_MobileNo.getText().toString();
+        String StrPassword = edt_Su_Password.getText().toString();
 
         myDialog.show();
         String API_REGISTER = ROOT_URL + "register.php";
@@ -345,25 +363,24 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
             boolean isInternetPresent = cd.isConnectingToInternet();
 
 
-
             if (isInternetPresent) {
 
-                Log.d("URL",API_REGISTER);
+                Log.d("URL", API_REGISTER);
 
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, API_REGISTER,
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
-                                Log.d("Response",response);
-                                if(myDialog!=null && myDialog.isShowing()){
+                                Log.d("Response", response);
+                                if (myDialog != null && myDialog.isShowing()) {
                                     myDialog.dismiss();
                                 }
                                 try {
                                     JSONObject jsonObject = new JSONObject(response);
                                     boolean status = jsonObject.getBoolean("status");
-                                    if(status){
+                                    if (status) {
 
-                                        JSONObject  dataObj = jsonObject.getJSONObject("data");
+                                        JSONObject dataObj = jsonObject.getJSONObject("data");
                                         String message = jsonObject.getString("message");
 
                                         ClientId = dataObj.getString("id");
@@ -374,31 +391,30 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
                                         MobileVerified = dataObj.getString("is_mobile_verified");
 
 
-                                        if (EmailVerified!=null && EmailVerified.equalsIgnoreCase("0")){
+                                        if (EmailVerified != null && EmailVerified.equalsIgnoreCase("0")) {
                                             emailOtpVerified = false;
-                                        }else if(EmailVerified!=null && EmailVerified.equalsIgnoreCase("1")){
+                                        } else if (EmailVerified != null && EmailVerified.equalsIgnoreCase("1")) {
                                             emailOtpVerified = true;
                                         }
 
-                                        if(MobileVerified!=null && MobileVerified.equalsIgnoreCase("1")){
+                                        if (MobileVerified != null && MobileVerified.equalsIgnoreCase("1")) {
                                             mobileOtpVerified = true;
-                                        }else if (MobileVerified.equalsIgnoreCase("0")){
+                                        } else if (MobileVerified.equalsIgnoreCase("0")) {
                                             mobileOtpVerified = false;
                                         }
 
-                                        if(!mobileOtpVerified || !emailOtpVerified){
-                                                    VerifyEmail_MobilePopup();
+                                        if (!mobileOtpVerified || !emailOtpVerified) {
+                                            VerifyEmail_MobilePopup();
                                         }
 
 
-                                    }else {
+                                    } else {
                                         String message = jsonObject.getString("message");
                                         //CommonMethods.DisplayToastError(getApplicationContext(),""+message);
-                                        DisplaySnackBar(viewGroup,message,"ERROR");
+                                        DisplaySnackBar(viewGroup, message, "ERROR");
 
 
                                     }
-
 
 
                                 } catch (JSONException e) {
@@ -412,16 +428,17 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
                             @Override
                             public void onErrorResponse(VolleyError error) {
                                 error.printStackTrace();
-                                if(myDialog!=null && myDialog.isShowing()){
+                                if (myDialog != null && myDialog.isShowing()) {
                                     myDialog.dismiss();
                                 }
                             }
-                        }){
+                        }) {
 
                     @Override
                     public String getBodyContentType() {
                         return "application/x-www-form-urlencoded; charset=UTF-8";
                     }
+
                     @Override
                     public Map<String, String> getParams() throws AuthFailureError {
                         Map<String, String> params = new HashMap<String, String>();
@@ -429,12 +446,11 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
                         params.put("email_id", StrEmail);
                         params.put("mobile_no", StrMobile);
                         params.put("password", md5(StrPassword));
-                        params.put("token",UtilitySharedPreferences.getPrefs(getApplicationContext(),"token"));
-                        Log.d("ParrasRegister",params.toString() );
+                        params.put("token", UtilitySharedPreferences.getPrefs(getApplicationContext(), "token"));
+                        Log.d("ParrasRegister", params.toString());
 
                         return params;
                     }
-
 
 
                 };
@@ -446,7 +462,6 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
                 requestQueue.add(stringRequest);
 
 
-
             } else {
                 CommonMethods.DisplayToastInfo(this, "Please check your internet connection");
             }
@@ -455,7 +470,6 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
             e.printStackTrace();
 
         }
-
 
 
     }
@@ -475,7 +489,7 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
         txt_timer = (TextView) dialog11.findViewById(R.id.txt_timer);
 
 
-        if (EmailVerified!=null && EmailVerified.equals("1")) {
+        if (EmailVerified != null && EmailVerified.equals("1")) {
             edt_Check_Email_Otp.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.tick, 0);
             txt_resend_email_otp.setVisibility(View.GONE);
             emailOtpVerified = true;
@@ -484,11 +498,11 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
             edt_Check_Email_Otp.setHint("Email Verified");
             edt_Check_Email_Otp.setHintTextColor(getResources().getColor(R.color.primary_green));
 
-        }else {
+        } else {
             edt_Check_Email_Otp.setHint("Email PIN *");
         }
 
-        if (MobileVerified!=null && MobileVerified.equals("1")) {
+        if (MobileVerified != null && MobileVerified.equals("1")) {
             edt_Check_Mobile_Otp.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.tick, 0);
             txt_resend_mobile_otp.setVisibility(View.GONE);
             mobileOtpVerified = true;
@@ -496,7 +510,7 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
             edt_Check_Mobile_Otp.setHint("");
             edt_Check_Mobile_Otp.setHint("Mobile Verified");
             edt_Check_Mobile_Otp.setHintTextColor(getResources().getColor(R.color.primary_green));
-        }else {
+        } else {
             edt_Check_Mobile_Otp.setHint("Mobile OTP *");
         }
 
@@ -511,18 +525,35 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
 
                 if (emailOtpVerified && mobileOtpVerified) {
                     dialog11.dismiss();
-                    UtilitySharedPreferences.setPrefs(getApplicationContext(),"MemberId",ClientId);
-                    UtilitySharedPreferences.setPrefs(getApplicationContext(),"MemberName",StrName);
-                    UtilitySharedPreferences.setPrefs(getApplicationContext(),"MemberEmailId",StrEmail);
-                    UtilitySharedPreferences.setPrefs(getApplicationContext(),"MemberMobile",StrMobile);
+                    UtilitySharedPreferences.setPrefs(getApplicationContext(), "MemberId", ClientId);
+                    UtilitySharedPreferences.setPrefs(getApplicationContext(), "MemberName", StrName);
+                    UtilitySharedPreferences.setPrefs(getApplicationContext(), "MemberEmailId", StrEmail);
+                    UtilitySharedPreferences.setPrefs(getApplicationContext(), "MemberMobile", StrMobile);
 
-                    Intent i = new Intent(getApplicationContext(), NewDashboard.class);
-                    startActivity(i);
-                    overridePendingTransition(R.animator.move_left,R.animator.move_right);
-                    finish();
+                    if(verificationID !=null)
+                    {
+                        PhoneAuthCredential phoneAuthCredential =PhoneAuthProvider.getCredential(verificationID,edt_Check_Mobile_Otp.getText().toString());
+
+                        FirebaseAuth.getInstance().signInWithCredential(phoneAuthCredential)
+                                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                        if(task.isSuccessful())
+                                        {
+                                            Intent i = new Intent(getApplicationContext(), NewDashboard.class);
+                                            startActivity(i);
+                                            overridePendingTransition(R.animator.move_left, R.animator.move_right);
+                                            finish();
+                                        } else {
+                                            DisplayToast(SignIn_SignUpActivity.this,"The verification code entered was invalid");
+                                        }
+
+                                    }
+                                });
+                    }
 
                 } else {
-                    DisplaySnackBar(viewGroup,"Please verify both the OTP","WARNING");
+                    DisplaySnackBar(viewGroup, "Please verify both the OTP", "WARNING");
                 }
 
             }
@@ -606,33 +637,32 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
         });
 
 
-
     }
 
 
     private void resendMobilePin() {
         myDialog.show();
-        String URL_Resend_Mobile_Pin = ROOT_URL+"resendMobilePin.php";
-        Log.d("UrlresendMobilePin",URL_Resend_Mobile_Pin);
-        StringRequest strReq = new StringRequest(Request.Method.POST,URL_Resend_Mobile_Pin,
+        String URL_Resend_Mobile_Pin = ROOT_URL + "resendMobilePin.php";
+        Log.d("UrlresendMobilePin", URL_Resend_Mobile_Pin);
+        StringRequest strReq = new StringRequest(Request.Method.POST, URL_Resend_Mobile_Pin,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         Log.d("TAG", response.toString());
 
-                        if(myDialog!=null && myDialog.isShowing()) {
+                        if (myDialog != null && myDialog.isShowing()) {
                             myDialog.dismiss();
                         }
                         try {
                             JSONObject jsonObject = new JSONObject(response);
                             boolean status = jsonObject.getBoolean("status");
-                            if(status){
-                                CommonMethods.DisplayToastSuccess(getApplicationContext(),"Mobile OTP Mail Sent Successfully");
+                            if (status) {
+                                CommonMethods.DisplayToastSuccess(getApplicationContext(), "Mobile OTP Mail Sent Successfully");
                             }
 
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            if(myDialog!=null && myDialog.isShowing()) {
+                            if (myDialog != null && myDialog.isShowing()) {
                                 myDialog.dismiss();
                             }
                         }
@@ -643,7 +673,7 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         VolleyLog.d("TAG", "Error: " + error.getMessage());
-                        if(myDialog!=null && myDialog.isShowing()) {
+                        if (myDialog != null && myDialog.isShowing()) {
                             myDialog.dismiss();
                         }
                     }
@@ -669,26 +699,26 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
 
     private void resendEmailPin() {
         myDialog.show();
-        String URL_Resend_Email_Pin = ROOT_URL+"resendEmailPin.php";
-        Log.d("UrlresendMobilePin",URL_Resend_Email_Pin);
-        StringRequest strReq = new StringRequest(Request.Method.POST,URL_Resend_Email_Pin,
+        String URL_Resend_Email_Pin = ROOT_URL + "resendEmailPin.php";
+        Log.d("UrlresendMobilePin", URL_Resend_Email_Pin);
+        StringRequest strReq = new StringRequest(Request.Method.POST, URL_Resend_Email_Pin,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         Log.d("TAG", response.toString());
-                        if(myDialog!=null && myDialog.isShowing()) {
+                        if (myDialog != null && myDialog.isShowing()) {
                             myDialog.dismiss();
                         }
                         try {
                             JSONObject jsonObject = new JSONObject(response);
                             boolean status = jsonObject.getBoolean("status");
-                            if(status){
-                                CommonMethods.DisplayToastSuccess(getApplicationContext(),"Email Pin sent Successfully");
+                            if (status) {
+                                CommonMethods.DisplayToastSuccess(getApplicationContext(), "Email Pin sent Successfully");
                             }
 
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            if(myDialog!=null && myDialog.isShowing()) {
+                            if (myDialog != null && myDialog.isShowing()) {
                                 myDialog.dismiss();
                             }
                         }
@@ -699,7 +729,7 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         VolleyLog.d("TAG", "Error: " + error.getMessage());
-                        if(myDialog!=null && myDialog.isShowing()) {
+                        if (myDialog != null && myDialog.isShowing()) {
                             myDialog.dismiss();
                         }
                     }
@@ -722,12 +752,10 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
     }
 
 
-
-
     private void VerifyEmailPin(final String EmailPin) {
-        String URL_EMAIL_VERIFY = ROOT_URL+"verifyUserEmail.php";
-        Log.d("UrlEmailVerify",URL_EMAIL_VERIFY);
-        StringRequest strReq = new StringRequest(Request.Method.POST,URL_EMAIL_VERIFY,
+        String URL_EMAIL_VERIFY = ROOT_URL + "verifyUserEmail.php";
+        Log.d("UrlEmailVerify", URL_EMAIL_VERIFY);
+        StringRequest strReq = new StringRequest(Request.Method.POST, URL_EMAIL_VERIFY,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -744,7 +772,7 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
                                 edt_Check_Email_Otp.setEnabled(false);
                                 emailOtpVerified = true;
                                 txt_resend_email_otp.setVisibility(View.GONE);
-                            }else {
+                            } else {
                                 CommonMethods.DisplayToastError(getApplicationContext(), "Invalid Otp");
                             }
 
@@ -782,8 +810,8 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
 
     private void VerifyMobileOtp(final String MobileOtp) {
 
-        String MobileVerifyUrl =  ROOT_URL+"verifyUserMobile.php";
-        Log.d("MobileVerfiyUrl",MobileVerifyUrl);
+        String MobileVerifyUrl = ROOT_URL + "verifyUserMobile.php";
+        Log.d("MobileVerfiyUrl", MobileVerifyUrl);
         StringRequest strReq = new StringRequest(Request.Method.POST, MobileVerifyUrl,
                 new Response.Listener<String>() {
                     @Override
@@ -796,13 +824,43 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
                             boolean status = jsonObject.getBoolean("status");
                             if (status) {
                                 CommonMethods.DisplayToastSuccess(getApplicationContext(), "Mobile No. is Verified Successfully");
+                                PhoneAuthProvider.getInstance().verifyPhoneNumber("91" + edt_Check_Mobile_Otp.getText().toString(), 60,
+                                        TimeUnit.SECONDS, SignIn_SignUpActivity.this,
+                                        new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
-                                edt_Check_Mobile_Otp.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.tick, 0);
-                                edt_Check_Mobile_Otp.setEnabled(false);
-                                mobileOtpVerified = true;
-                                MobileVerified = "1";
-                                txt_resend_mobile_otp.setVisibility(View.GONE);
-                            }else {
+
+                                            @Override
+                                            public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
+
+                                            }
+
+                                            @Override
+                                            public void onVerificationFailed(@NonNull FirebaseException e) {
+                                                try
+                                                {
+                                                    mobileOtpVerified = false;
+                                                    MobileVerified = "0";
+                                                } catch (Exception e1)
+                                                {
+                                                    e1.printStackTrace();
+                                                    e.getMessage();
+                                                }
+
+                                            }
+
+                                            @Override
+                                            public void onCodeSent(@NonNull String verificationID, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
+
+                                                edt_Check_Mobile_Otp.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.tick, 0);
+                                                edt_Check_Mobile_Otp.setEnabled(false);
+                                                mobileOtpVerified = true;
+                                                MobileVerified = "1";
+                                                txt_resend_mobile_otp.setVisibility(View.GONE);
+                                            }
+                                        });
+
+
+                            } else {
                                 CommonMethods.DisplayToastError(getApplicationContext(), "Invalid Otp");
 
                             }
@@ -826,7 +884,7 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("user_id", ClientId);
                 params.put("Mobile", StrMobile);
-                params.put("OTP",MobileOtp);
+                params.put("OTP", MobileOtp);
                 Log.d("ParamsVerifyMobile", params.toString());
                 return params;
             }
@@ -854,35 +912,41 @@ public class SignIn_SignUpActivity extends AppCompatActivity {
     private boolean isValidRegister() {
         boolean result = true;
 
-        if (!MyValidator.isValidName(Edt_SU_Fullname) ) {
+        if (!MyValidator.isValidName(Edt_SU_Fullname)) {
             Edt_SU_Fullname.requestFocus();
-            DisplaySnackBar(viewGroup,"Please Enter Full Name","WARNING");
+            DisplaySnackBar(viewGroup, "Please Enter Full Name", "WARNING");
             result = false;
 
         }
 
-        if (!MyValidator.isValidEmail(Edt_SU_EmailId) ) {
+        if (!MyValidator.isValidEmail(Edt_SU_EmailId)) {
             Edt_SU_EmailId.requestFocus();
-            DisplaySnackBar(viewGroup,"Please Enter Email Id","WARNING");
+            DisplaySnackBar(viewGroup, "Please Enter Email Id", "WARNING");
             result = false;
         }
 
-        if (!MyValidator.isValidMobile(Edt_SU_MobileNo) ) {
+        if (!MyValidator.isValidMobile(Edt_SU_MobileNo)) {
             Edt_SU_MobileNo.requestFocus();
-            DisplaySnackBar(viewGroup,"Please Enter Mobile No","WARNING");
+            DisplaySnackBar(viewGroup, "Please Enter Mobile No", "WARNING");
             result = false;
         }
 
 
-
-        if (!MyValidator.isValidField(edt_Su_Password) ) {
+        if (!MyValidator.isValidField(edt_Su_Password)) {
             edt_Su_Password.requestFocus();
-            DisplaySnackBar(viewGroup,"Please Enter Password","WARNING");
+            DisplaySnackBar(viewGroup, "Please Enter Password", "WARNING");
             result = false;
         }
 
-        return  result;
+        return result;
     }
 
 
+    @Override
+    public void onSuccessOtp(String otp) {
+        if (smsBroadcastReceiver != null) {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(smsBroadcastReceiver);
+        }
+        edt_Check_Mobile_Otp.setText(otp);
+    }
 }
