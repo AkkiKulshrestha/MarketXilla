@@ -133,9 +133,8 @@ public class HolidayFragment extends Fragment {
                                         Object is_active = jsonObject.get("is_active");
 
 
-
-                                        LayoutInflater inflater = (LayoutInflater) Objects.requireNonNull(getActivity()).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                                        @SuppressLint("InflateParams") final View rowView1 = Objects.requireNonNull(inflater).inflate(R.layout.row_holiday_info, null);
+                                        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                        final View rowView1 = inflater.inflate(R.layout.row_holiday_info, null);
                                         rowView1.setPadding(10, 10, 10, 10);
 
                                         RelativeLayout relativeDate = rowView1.findViewById(R.id.relativeDate);
@@ -143,7 +142,7 @@ public class HolidayFragment extends Fragment {
                                         TextView tv_holiday_name = (TextView) rowView1.findViewById(R.id.tv_holiday_name);
                                         TextView tv_day = (TextView) rowView1.findViewById(R.id.tv_day);
 
-                                        if(is_national_holiday!=null && is_national_holiday.equals("1")){
+                                        if(is_national_holiday.equals("1")){
                                             relativeDate.setBackgroundColor(mContext.getResources().getColor(R.color.mpn_red));
                                         }else{
                                             relativeDate.setBackgroundColor(mContext.getResources().getColor(R.color.colorPrimary));

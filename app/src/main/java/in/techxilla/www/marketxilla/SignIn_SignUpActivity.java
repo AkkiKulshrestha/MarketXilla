@@ -36,10 +36,14 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.phone.SmsRetriever;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.FirebaseException;
+import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.iid.FirebaseInstanceId;
 
@@ -86,6 +90,21 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
     IntentFilter filter;
     SMSBroadcastReceiver smsBroadcastReceiver;
     String verificationID;
+    private static final int STATE_INITIALIZED = 1;
+    private static final int STATE_CODE_SENT = 2;
+    private static final int STATE_VERIFY_FAILED = 3;
+    private static final int STATE_VERIFY_SUCCESS = 4;
+    private static final int STATE_SIGNIN_FAILED = 5;
+    private static final int STATE_SIGNIN_SUCCESS = 6;
+
+    // [START declare_auth]
+    private FirebaseAuth mAuth;
+    // [END declare_auth]
+
+    private boolean mVerificationInProgress = false;
+    private String mVerificationId;
+    private PhoneAuthProvider.ForceResendingToken mResendToken;
+    private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
 
 
     @Override
@@ -238,6 +257,7 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
 
                                         if (EmailVerified != null && EmailVerified.equalsIgnoreCase("0")) {
                                             emailOtpVerified = false;
+                                            resendEmailPin();
                                         } else if (EmailVerified != null && EmailVerified.equalsIgnoreCase("1")) {
                                             emailOtpVerified = true;
                                         }
@@ -246,6 +266,7 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
                                             mobileOtpVerified = true;
                                         } else if (MobileVerified.equalsIgnoreCase("0")) {
                                             mobileOtpVerified = false;
+                                            resendMobilePin();
                                         }
 
                                         if (!mobileOtpVerified || !emailOtpVerified) {
@@ -473,6 +494,7 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
 
 
     }
+
 
     private void VerifyEmail_MobilePopup() {
         dialog11 = new Dialog(SignIn_SignUpActivity.this);
@@ -824,45 +846,17 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
                             boolean status = jsonObject.getBoolean("status");
                             if (status) {
                                 CommonMethods.DisplayToastSuccess(getApplicationContext(), "Mobile No. is Verified Successfully");
-                                PhoneAuthProvider.getInstance().verifyPhoneNumber("91" + edt_Check_Mobile_Otp.getText().toString(), 60,
-                                        TimeUnit.SECONDS, SignIn_SignUpActivity.this,
-                                        new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
-
-                                            @Override
-                                            public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
-
-                                            }
-
-                                            @Override
-                                            public void onVerificationFailed(@NonNull FirebaseException e) {
-                                                try
-                                                {
-                                                    mobileOtpVerified = false;
-                                                    MobileVerified = "0";
-                                                } catch (Exception e1)
-                                                {
-                                                    e1.printStackTrace();
-                                                    e.getMessage();
-                                                }
-
-                                            }
-
-                                            @Override
-                                            public void onCodeSent(@NonNull String verificationID, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
-
-                                                edt_Check_Mobile_Otp.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.tick, 0);
-                                                edt_Check_Mobile_Otp.setEnabled(false);
-                                                mobileOtpVerified = true;
-                                                MobileVerified = "1";
-                                                txt_resend_mobile_otp.setVisibility(View.GONE);
-                                            }
-                                        });
-
+                                edt_Check_Mobile_Otp.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.tick, 0);
+                                edt_Check_Mobile_Otp.setEnabled(false);
+                                mobileOtpVerified = true;
+                                MobileVerified = "1";
+                                txt_resend_mobile_otp.setVisibility(View.GONE);
 
                             } else {
                                 CommonMethods.DisplayToastError(getApplicationContext(), "Invalid Otp");
-
+                                mobileOtpVerified = false;
+                                MobileVerified = "0";
                             }
 
                         } catch (JSONException e) {

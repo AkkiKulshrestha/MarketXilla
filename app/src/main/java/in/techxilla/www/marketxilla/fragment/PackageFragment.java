@@ -60,7 +60,7 @@ public class PackageFragment extends Fragment {
     RecyclerView.LayoutManager layoutManager;
     SubscriptionPlanAdapter smartPlanAdapter;
     ViewGroup viewGroup;
-    private static ArrayList<SubscritPlanModel> smartPlanModelArrayList;
+    private  ArrayList<SubscritPlanModel> smartPlanModelArrayList = new ArrayList<>();
     private ViewPager mPager;
     private PagerAdapter mPagerAdapter;
     private int[] layouts;
@@ -104,16 +104,15 @@ public class PackageFragment extends Fragment {
 
 
     private void fetchPlans() {
-        planList = new ArrayList<>();
-        planAmountList = new ArrayList<>();
-       // planList.add("Select Plan");
-        planAmountList.add(0.0);
+
         String Uiid_id = UUID.randomUUID().toString();
         String URL_GetSubscriptions = ROOT_URL + "get_subscriptions.php?"+ Uiid_id;;
 
-        if(smartPlanModelArrayList!=null){
+        if(smartPlanModelArrayList.size() > 0){
             smartPlanModelArrayList = new ArrayList<>();
         }
+
+
         try {
             Log.d("URL", URL_GetSubscriptions);
 
@@ -123,7 +122,6 @@ public class PackageFragment extends Fragment {
 
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, URL_GetSubscriptions,
                         new Response.Listener<String>() {
-                            @SuppressLint("UseCompatLoadingForDrawables")
                             @Override
                             public void onResponse(String response) {
                                 Log.d("Response", response);
@@ -169,8 +167,6 @@ public class PackageFragment extends Fragment {
                                         subscritPlanModel.setAmount3Months((plan_amount3_month));
 
                                         smartPlanModelArrayList.add(subscritPlanModel);
-
-
 
                                         smartPlanAdapter = new SubscriptionPlanAdapter(smartPlanModelArrayList,mContext);
                                         recyclerSmartPlan.setAdapter(smartPlanAdapter);

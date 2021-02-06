@@ -1,7 +1,6 @@
 package in.techxilla.www.marketxilla;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -35,7 +34,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.awt.font.TextAttribute;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;

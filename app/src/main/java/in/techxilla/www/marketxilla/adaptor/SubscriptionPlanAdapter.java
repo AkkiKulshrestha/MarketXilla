@@ -5,20 +5,16 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -47,25 +43,19 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import in.techxilla.www.marketxilla.R;
-import in.techxilla.www.marketxilla.SubscriptionActivity;
-import in.techxilla.www.marketxilla.model.SmartPlanModel;
 import in.techxilla.www.marketxilla.model.SubscritPlanModel;
 import in.techxilla.www.marketxilla.utils.CommonMethods;
 import in.techxilla.www.marketxilla.utils.ConnectionDetector;
 import in.techxilla.www.marketxilla.utils.UtilitySharedPreferences;
 
-import static android.app.Activity.RESULT_OK;
-import static in.techxilla.www.marketxilla.utils.CommonMethods.DisplaySnackBar;
-import static in.techxilla.www.marketxilla.utils.CommonMethods.md5;
 import static in.techxilla.www.marketxilla.webservices.RestClient.ROOT_URL;
 
 public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPlanAdapter.PlanViewHolder>  {
 
-    public List<SubscritPlanModel> smartPlanModelsList;
+    public ArrayList<SubscritPlanModel> smartPlanModelsList;
     String GOOGLE_PAY_PACKAGE_NAME = "com.google.android.apps.nbu.paisa.user";
     int GOOGLE_PAY_REQUEST_CODE = 123;
     Uri uri;
@@ -73,7 +63,7 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
     private Context context;
    // PaymentDetail payment;
 
-    public SubscriptionPlanAdapter(List<SubscritPlanModel> smartPlanModelsList, Context context) {
+    public SubscriptionPlanAdapter(ArrayList<SubscritPlanModel> smartPlanModelsList, Context context) {
         this.smartPlanModelsList = smartPlanModelsList;
         this.context = context;
     }

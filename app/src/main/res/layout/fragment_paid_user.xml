@@ -1,88 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/colorAccent">
+    android:background="@color/colorAccent"
+    android:orientation="vertical">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fitsSystemWindows="true"
-        android:layout_marginTop="60sp"
-        >
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginEnd="10sp"
-            android:layout_marginStart="10sp"
-            android:padding="5dp"
-            >
-            <TextView
-                android:id="@+id/tv_text"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/ll_planTop"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Paid User"
-                android:layout_marginTop="5sp"
-                android:textSize="16sp"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:visibility="gone"
-                android:layout_marginStart="5sp"
-                android:layout_marginEnd="10sp"
-                android:layout_marginBottom="5dp"
-                android:textColor="@color/colorPrimary"/>
-
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerPaidPlan"
-                android:layout_width="match_parent"
-                android:visibility="visible"
-
-                android:layout_height="wrap_content"/>
-
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                    android:id="@+id/refresh_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <in.techxilla.stickylistheaders.StickyListHeadersListView
-
-                        android:id="@+id/list"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:clipToPadding="false"
-                        android:drawSelectorOnTop="true"
-                        android:padding="16dp"
-                        android:scrollbarStyle="outsideOverlay"
-                        android:fastScrollEnabled="true"
-                        android:overScrollMode="never"/>
-
-                </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                android:layout_marginTop="50sp"
+                android:background="@color/white">
 
                 <TextView
-                    android:id="@+id/empty"
-                    android:layout_width="match_parent"
+                    android:id="@+id/tv_title_plan"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
                     android:gravity="center"
+                    android:minLines="2"
+                    android:padding="16dp"
+                    android:textAlignment="center"
+                    android:textAllCaps="true"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_valid_till"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:gravity="center"
+                    android:padding="16dp"
                     android:text=""
-                    android:textSize="30sp"
-                    android:visibility="gone"/>
+                    android:textAlignment="center"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="12sp"
+                    android:visibility="gone" />
 
-            </FrameLayout>
 
+            </RelativeLayout>
 
-        </LinearLayout>
+            <TextView
+                android:id="@+id/tv_noRecordFound"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimary"
+                android:padding="8dp"
+                android:layout_margin="8dp"
+                android:layout_below="@+id/ll_planTop"
+                android:textColor="@color/white"
+                android:visibility="gone"
+                android:text="No Calls Available"/>
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/ll_planTop"
+                android:scrollbars="vertical" />
+        </RelativeLayout>
     </ScrollView>
 
-</LinearLayout>
+</RelativeLayout>

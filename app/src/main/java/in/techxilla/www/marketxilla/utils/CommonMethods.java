@@ -991,12 +991,7 @@ public class CommonMethods
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
-
-
-
 		}
-
-
 		return result;
 	}
 

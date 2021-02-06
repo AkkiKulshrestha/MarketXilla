@@ -1,15 +1,12 @@
 package in.techxilla.www.marketxilla;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -25,7 +22,6 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -50,17 +46,14 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import in.techxilla.www.marketxilla.fragment.PackageFragment;
 import in.techxilla.www.marketxilla.model.SubscriptionPlanModel;
 import in.techxilla.www.marketxilla.utils.CommonMethods;
 import in.techxilla.www.marketxilla.utils.ConnectionDetector;
 import in.techxilla.www.marketxilla.utils.UtilitySharedPreferences;
-import in.techxilla.www.marketxilla.webservices.RestClient;
 
-import static in.techxilla.www.marketxilla.utils.CommonMethods.DisplaySnackBar;
 import static in.techxilla.www.marketxilla.webservices.RestClient.ROOT_URL;
 
-public class SubscriptionPlanActivity extends AppCompatActivity {
+public class MySubscriptionPlanActivity extends AppCompatActivity {
     ArrayList<SubscriptionPlanModel> planList;
     ProgressDialog myDialog;
     TextView tv_title;
@@ -112,7 +105,7 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 {
-                    Intent i = new Intent(SubscriptionPlanActivity.this, NewDashboard.class);
+                    Intent i = new Intent(MySubscriptionPlanActivity.this, NewDashboard.class);
                     i.putExtra("load_fragment", 2);
                     startActivity(i);
                 }
@@ -141,7 +134,7 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
         }
         String Uiid_id = UUID.randomUUID().toString();
         String StrMemberId = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberId");
-        final String get_plan_details_info = ROOT_URL + "get_user_subscription_details.php?"+Uiid_id+"&user_id=" + StrMemberId;
+        final String get_plan_details_info = ROOT_URL + "get_user_subscription_details.php?_"+Uiid_id+"&user_id=" + StrMemberId;
         Log.d("URL --->", get_plan_details_info);
         try {
             ConnectionDetector cd = new ConnectionDetector(this);
@@ -191,8 +184,6 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
                                 String plan_amount2_month = jo_data.getString("plan_amount2_month");
                                 String plan_amount3_month = jo_data.getString("plan_amount3_month");
 
-
-
                                 LayoutInflater inflater = (LayoutInflater) Objects.requireNonNull(getApplicationContext()).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                                 final View rowView1 = Objects.requireNonNull(inflater).inflate(R.layout.row_subscription_plan, null);
                                 rowView1.setPadding(10, 10, 10, 10);
@@ -223,8 +214,9 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
                                         sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
                                         newSubscriptedTilldate = sdf.parse(subscribed_till);
                                         sdf21 = new SimpleDateFormat("dd MMM, yyyy");
+                                        sdf2 = new SimpleDateFormat("dd/MM/yyyy");
                                         mSubscribed_till = sdf21.format(newSubscriptedTilldate);
-
+                                        String SubcribedTill_DMY = sdf2.format(newSubscriptedTilldate);
                                         if (new Date().after(newSubscriptedTilldate)) {
                                             tv_Subscripte_till_date.setText(" Subscribed till : " + mSubscribed_till);
                                             tv_status.setText("InActive");
@@ -236,10 +228,24 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
                                             tv_status.setTextColor(getResources().getColor(R.color.result_points));
                                             btnSubscribe.setVisibility(View.GONE);
                                         }
+
+                                        if(i==0 && !CommonMethods.isDateExpired(SubcribedTill_DMY)) {
+                                            tv_title_plan.setText("Current Plan : " + plan_name);
+                                            tv_valid_till.setVisibility(View.VISIBLE);
+                                            tv_valid_till.setText("Valid Till \n" + mSubscribed_till);
+                                        }else {
+                                            tv_title_plan.setText("NO ACTIVE PLAN");
+                                            tv_valid_till.setVisibility(View.GONE);
+                                            btnSubscribe.setVisibility(View.VISIBLE);
+                                        }
+
                                     } catch (ParseException e) {
                                         e.printStackTrace();
                                     }
                                 }
+
+
+
 
                                 if (!subscribed_on.equalsIgnoreCase("")) {
                                     try {
@@ -261,11 +267,6 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
                                     }
                                 }
 
-                                if(i==1) {
-                                    tv_title_plan.setText("Current Plan : " + plan_name);
-                                    tv_valid_till.setVisibility(View.VISIBLE);
-                                    tv_valid_till.setText("Valid Till \n" + mSubscribed_till);
-                                }
 
 
 
@@ -287,13 +288,13 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
                                     public void onClick(View view) {
                                         if (table_layout.getVisibility() == View.VISIBLE) {
                                             table_layout.setVisibility(View.GONE);
-                                            Glide.with(SubscriptionPlanActivity.this).
+                                            Glide.with(MySubscriptionPlanActivity.this).
                                                     load(R.mipmap.ic_down_white).
                                                     diskCacheStrategy(DiskCacheStrategy.ALL).into(img_add);
                                         } else {
                                             table_layout.setVisibility(View.VISIBLE);
                                             ScrollDown();
-                                            Glide.with(SubscriptionPlanActivity.this).
+                                            Glide.with(MySubscriptionPlanActivity.this).
                                                     load(R.mipmap.ic_up_white).
                                                     diskCacheStrategy(DiskCacheStrategy.ALL).into(img_add);
                                         }
@@ -387,7 +388,6 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
 
 
     }
-//https://marketxilla.com/marketxilla_app/send_transaction_receipt_on_mail.php?user_id=1&transaction_id=30
 
     private void getTransactionDetails(String mUserId, String mTransactionId) {
         String Uiid_id = UUID.randomUUID().toString();
@@ -444,7 +444,7 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
         @Override
         public void onPreExecute() {
             super.onPreExecute();
-            CommonMethods.DisplayToast(SubscriptionPlanActivity.this, "Start download");
+            CommonMethods.DisplayToast(MySubscriptionPlanActivity.this, "Start download");
             // pogressDialog();
         }
 
@@ -489,7 +489,7 @@ public class SubscriptionPlanActivity extends AppCompatActivity {
         @Override
         public void onPostExecute(String s) {
             super.onPostExecute(s);
-            CommonMethods.DisplayToast(SubscriptionPlanActivity.this, "Successfully completed download. ");
+            CommonMethods.DisplayToast(MySubscriptionPlanActivity.this, "Successfully completed download. ");
 
         }
     }

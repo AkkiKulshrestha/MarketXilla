@@ -10,6 +10,7 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,7 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -45,21 +47,25 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import in.techxilla.www.marketxilla.adaptor.ImageSliderAdapter;
 import in.techxilla.www.marketxilla.adaptor.SmartPlanAdapter;
 import in.techxilla.www.marketxilla.fragment.HomeFragment;
 import in.techxilla.www.marketxilla.fragment.HolidayFragment;
-import in.techxilla.www.marketxilla.fragment.MarketFragment;
 import in.techxilla.www.marketxilla.fragment.PackageFragment;
+import in.techxilla.www.marketxilla.fragment.PaidUserFragment;
 import in.techxilla.www.marketxilla.model.CallModel;
 import in.techxilla.www.marketxilla.model.SmartPlanModel;
+import in.techxilla.www.marketxilla.utils.CommonMethods;
 import in.techxilla.www.marketxilla.utils.ConnectionDetector;
 import in.techxilla.www.marketxilla.utils.UtilitySharedPreferences;
 
-import static in.techxilla.www.marketxilla.utils.CommonMethods.DisplaySnackBar;
 import static in.techxilla.www.marketxilla.utils.CommonMethods.DisplayToastError;
 import static in.techxilla.www.marketxilla.utils.CommonMethods.DisplayToastWarning;
 import static in.techxilla.www.marketxilla.webservices.RestClient.ROOT_URL;
@@ -106,7 +112,7 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
     int loader_position = 0;
     Fragment fragment = null;
     TextView badge_new_notification;
-
+    boolean isPaidUser = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,17 +155,6 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
         StrMemberUserName = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberUsername");
 
 
-      /*  ImageView iv_refresh = findViewById(R.id.iv_refresh);
-        iv_refresh.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),NotificationActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.animator.move_left, R.animator.move_right);
-
-            }
-        });*/
-
         iv_notification = findViewById(R.id.iv_notification);
         iv_notification.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -170,11 +165,27 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
 
             }
         });
-
+        getPlanDetail();
         fetchNotificationList();
 
 
+
+    }
+
+    public void setBottomNavigation(){
+
         BottomNavigationView navigation = findViewById(R.id.navigation);
+        Menu nav_Menu = navigation.getMenu();
+        if(isPaidUser) {
+            nav_Menu.findItem(R.id.navigation_paid_user).setVisible(true);
+            if (loader_position == 2) {
+                navigation.setSelectedItemId(R.id.navigation_package);
+                fragment = new PackageFragment();
+
+            }
+        }else {
+            nav_Menu.findItem(R.id.navigation_paid_user).setVisible(false);
+        }
         if (loader_position == 0) {
             navigation.setSelectedItemId(R.id.navigation_home);
             fragment = new HomeFragment();
@@ -190,16 +201,105 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
             fragment = new HolidayFragment();
 
         }
-        if (loader_position == 2) {
-            navigation.setSelectedItemId(R.id.navigation_package);
-            fragment = new PackageFragment();
 
-        }
         loadFragment(fragment);
         navigation.setOnNavigationItemSelectedListener(this);
+
     }
 
+    private void getPlanDetail() {
 
+
+        String Uiid_id = UUID.randomUUID().toString();
+        String StrMemberId = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberId");
+        final String get_plan_details_info = ROOT_URL + "get_user_subscription_details.php?"+Uiid_id+"&user_id=" + StrMemberId;
+        Log.d("URL --->", get_plan_details_info);
+        try {
+            ConnectionDetector cd = new ConnectionDetector(getApplicationContext());
+            boolean isInternetPresent = cd.isConnectingToInternet();
+            if (isInternetPresent) {
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, get_plan_details_info, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            Log.d("Response", "" + response);
+
+                            JSONObject obj = new JSONObject(response);
+
+
+                            boolean status = obj.getBoolean("status");
+                            String Message = obj.getString("message");
+                            JSONArray m_jArry = obj.getJSONArray("data");
+                            mStackCount = m_jArry.length();
+
+                            if (mStackCount == 0)
+                            {
+                                isPaidUser = false;
+                                Log.d("PaidUser","No");
+
+                            }else {
+                                for (int i = 0; i < m_jArry.length(); i++) {
+
+                                    JSONObject jo_data = m_jArry.getJSONObject(i);
+
+                                    String StrPlanId = jo_data.getString("plan_id");
+                                    String plan_name = jo_data.getString("plan_name");
+                                    String subscribed_till = jo_data.getString("subscribed_till");
+                                    SimpleDateFormat sdf, sdf2, sdf21;
+                                    Date newSubscriptedTilldate, currentdate2, newSubscriptedOndate;
+
+                                    if (!subscribed_till.equalsIgnoreCase("")) {
+                                        try {
+                                            sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                                            newSubscriptedTilldate = sdf.parse(subscribed_till);
+                                            sdf21 = new SimpleDateFormat("dd/MM/yyyy");
+                                            String mSubscribed_till = sdf21.format(newSubscriptedTilldate);
+                                            if (i == 0 && !CommonMethods.isDateExpired(mSubscribed_till)) {
+                                                isPaidUser = true;
+                                                Log.d("PaidUser","Yes");
+                                            }else{
+                                                isPaidUser = false;
+                                                Log.d("PaidUser","No");
+                                            }
+                                        } catch (ParseException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+
+
+                                }
+
+                            }
+
+                            setBottomNavigation();
+                        } catch (Exception e) {
+                            Log.d("Exception", e.toString());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        volleyError.printStackTrace();
+                        //Log.d("Vollley Err", volleyError.toString());
+                        if (myDialog != null && myDialog.isShowing()) {
+                            myDialog.dismiss();
+                        }
+                    }
+                });
+                RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+                int socketTimeout = 50000;//30 seconds - change to what you want
+                RetryPolicy policy = new DefaultRetryPolicy((int) TimeUnit.SECONDS.toMillis(20), 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+                stringRequest.setRetryPolicy(policy);
+                requestQueue.add(stringRequest);
+            } else {
+                CommonMethods.DisplayToastWarning(getApplicationContext(), "No Internet Connection");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+
+    }
     private void navigationView() {
         StrMemberId = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberId");
         StrMemberName = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberName");
@@ -334,11 +434,11 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.navigation_paid_user:
-                fragment = new PackageFragment();
+                fragment = new PaidUserFragment();
                 break;
 
             case R.id.nav_my_subscription:
-                Intent intent_subscription = new Intent(NewDashboard.this, SubscriptionPlanActivity.class);
+                Intent intent_subscription = new Intent(NewDashboard.this, MySubscriptionPlanActivity.class);
                 startActivity(intent_subscription);
                 break;
 

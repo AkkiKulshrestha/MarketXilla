@@ -281,11 +281,6 @@ public class HomeFragment extends Fragment {
             callModel_list = new ArrayList<>();
         }
 
-        /*myDialog = new ProgressDialog(mContext);
-        myDialog.setMessage("Please wait...");
-        myDialog.setCancelable(false);
-        myDialog.setCanceledOnTouchOutside(false);
-        myDialog.show();*/
         String Uiid_id = UUID.randomUUID().toString();
         String URL_GetCallList = ROOT_URL + "fetchPerformanceData.php?_" + Uiid_id + "&per_for=all";
 
