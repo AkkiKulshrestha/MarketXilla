@@ -123,8 +123,7 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
         } else {
             loader_position = 0;
         }
-
-        loadFragment(new HomeFragment());
+        setBottomNavigation();
 
         viewGroup = (ViewGroup) ((ViewGroup) this
                 .findViewById(android.R.id.content)).getChildAt(0);
@@ -178,28 +177,25 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
         Menu nav_Menu = navigation.getMenu();
         if(isPaidUser) {
             nav_Menu.findItem(R.id.navigation_paid_user).setVisible(true);
-            if (loader_position == 2) {
-                navigation.setSelectedItemId(R.id.navigation_package);
-                fragment = new PackageFragment();
-
-            }
         }else {
             nav_Menu.findItem(R.id.navigation_paid_user).setVisible(false);
         }
+
         if (loader_position == 0) {
             navigation.setSelectedItemId(R.id.navigation_home);
             fragment = new HomeFragment();
 
-        }
-        /*if (loader_position == 1) {
-            navigation.setSelectedItemId(R.id.navigation_market);
-            fragment = new MarketFragment();
-
-        }*/
-        if (loader_position == 1) {
+        }else  if (loader_position == 1) {
             navigation.setSelectedItemId(R.id.navigation_holiday);
             fragment = new HolidayFragment();
 
+        }else if (loader_position == 2) {
+            navigation.setSelectedItemId(R.id.navigation_package);
+            fragment = new PackageFragment();
+
+        }else{
+            navigation.setSelectedItemId(R.id.navigation_home);
+            fragment = new HomeFragment();
         }
 
         loadFragment(fragment);

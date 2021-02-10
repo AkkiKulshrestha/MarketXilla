@@ -28,10 +28,10 @@
                     <corners
                         android:radius="10dp"/>
                     <padding
-                        android:left="5dp"
-                        android:top="5dp"
-                        android:right="5dp"
-                        android:bottom="5dp"/>
+                        android:left="8dp"
+                        android:top="8dp"
+                        android:right="8dp"
+                        android:bottom="8dp"/>
                 </shape>
             </item>
         </layer-list>
@@ -58,10 +58,10 @@
                     <corners
                         android:radius="19dp"/>
                     <padding
-                        android:left="15dp"
-                        android:top="10dp"
-                        android:right="5dp"
-                        android:bottom="10dp"/>
+                        android:left="8dp"
+                        android:top="8dp"
+                        android:right="8dp"
+                        android:bottom="8dp"/>
                 </shape>
             </item>
         </layer-list>
