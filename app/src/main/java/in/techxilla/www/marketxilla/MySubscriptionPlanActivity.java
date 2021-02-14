@@ -33,6 +33,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.material.button.MaterialButton;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -107,7 +108,9 @@ public class MySubscriptionPlanActivity extends AppCompatActivity {
                 {
                     Intent i = new Intent(MySubscriptionPlanActivity.this, NewDashboard.class);
                     i.putExtra("load_fragment", 2);
+                    overridePendingTransition(R.animator.move_left,R.animator.move_right);
                     startActivity(i);
+                    finish();
                 }
             }
         });
@@ -194,6 +197,13 @@ public class MySubscriptionPlanActivity extends AppCompatActivity {
                                 TextView tv_plan_name = (TextView) rowView1.findViewById(R.id.tv_plan_name);
                                 TextView tv_plan_amount = (TextView) rowView1.findViewById(R.id.tv_plan_amount);
                                 TextView tv_status = (TextView) rowView1.findViewById(R.id.tv_status);
+                                TextView tv_status_text = (TextView)rowView1.findViewById(R.id.tv_status_text);
+                                TextView tv_status_text1 = (TextView)rowView1.findViewById(R.id.tv_status_text1);
+
+                                Button btn_payment_receipt = (Button)rowView1.findViewById(R.id.btn_payment_receipt);
+
+                                btn_payment_receipt.setHint(mPdf_name);
+
                                 tv_plan_name.setText(plan_name);
 
                                 if (package_id.equalsIgnoreCase("1")) {
@@ -218,14 +228,41 @@ public class MySubscriptionPlanActivity extends AppCompatActivity {
                                         mSubscribed_till = sdf21.format(newSubscriptedTilldate);
                                         String SubcribedTill_DMY = sdf2.format(newSubscriptedTilldate);
                                         if (new Date().after(newSubscriptedTilldate)) {
-                                            tv_Subscripte_till_date.setText(" Subscribed till : " + mSubscribed_till);
+                                            tv_Subscripte_till_date.setText(mSubscribed_till);
+                                            tv_status_text.setText("You do not have any active plan.");
+                                            tv_status_text1.setText("Buy the best plan and enjoy your service");
+                                            btn_payment_receipt.setText("Subscribe Now");
+                                            btn_payment_receipt.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    Intent i = new Intent(MySubscriptionPlanActivity.this, NewDashboard.class);
+                                                    i.putExtra("load_fragment", 2);
+                                                    overridePendingTransition(R.animator.move_left,R.animator.move_right);
+                                                    startActivity(i);
+                                                    finish();
+                                                }
+                                            });
                                             tv_status.setText("InActive");
                                             tv_status.setTextColor(getResources().getColor(R.color.md_red_a400));
                                             btnSubscribe.setVisibility(View.VISIBLE);
                                         } else {
-                                            tv_Subscripte_till_date.setText(" Subscribed till : " + mSubscribed_till);
+                                            tv_Subscripte_till_date.setText(mSubscribed_till);
+                                            tv_status_text.setText("Your plan is currently Active.");
+                                            tv_status_text1.setText("Enjoy your Service");
+                                            btn_payment_receipt.setText("Download Transaction Details");
+
+                                            btn_payment_receipt.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    String path_link = ROOT_URL + "payment_receipt/" + btn_payment_receipt.getHint().toString().trim();
+                                                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                                                    intent.setData(Uri.parse(path_link));
+                                                    startActivity(intent);
+                                                }
+                                            });
+
                                             tv_status.setText("Active");
-                                            tv_status.setTextColor(getResources().getColor(R.color.result_points));
+                                            tv_status.setTextColor(getResources().getColor(R.color.selected_green));
                                             btnSubscribe.setVisibility(View.GONE);
                                         }
 
@@ -257,10 +294,10 @@ public class MySubscriptionPlanActivity extends AppCompatActivity {
                                         newSubscriptedOndate = sdf2.parse(subscribed_on);
                                         mShortDate = new SimpleDateFormat("MMM yyyy").format(newSubscriptedOndate).toString();
                                         if (new Date().after(currentdate2)) {
-                                            tv_Subscripte_on_date.setText(" Subscribed on : " + mSubscribed_on);
+                                            tv_Subscripte_on_date.setText(mSubscribed_on);
                                             // tv_status.setText("In Active");
                                         } else {
-                                            tv_Subscripte_on_date.setText(" Subscribed on : " + mSubscribed_on);
+                                            tv_Subscripte_on_date.setText(mSubscribed_on);
                                         }
                                     } catch (ParseException e) {
                                         e.printStackTrace();
@@ -503,4 +540,11 @@ public class MySubscriptionPlanActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent i = new Intent(getApplicationContext(), NewDashboard.class);
+        startActivity(i);
+        overridePendingTransition(R.animator.left_right,R.animator.right_left);
+        finish();
+    }
 }

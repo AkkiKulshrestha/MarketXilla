@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -115,7 +117,7 @@ public class HomeFragment extends Fragment {
     private static ArrayList<SmartPlanModel> smartPlanModelArrayList;
     public Toolbar toolbar;
     public ActionBar actionBar;
-
+    AppCompatSpinner SpnCallTenure;
     View rootView;
     Context mContext;
 
@@ -138,12 +140,16 @@ public class HomeFragment extends Fragment {
         NewDashboard activity = (NewDashboard) getActivity();
         toolbar = activity.findViewById(R.id.toolbar);
         activity.setSupportActionBar(toolbar);
+        myDialog = new ProgressDialog(mContext);
+        myDialog.setMessage("Please wait...");
+        myDialog.setCancelable(false);
+        myDialog.setCanceledOnTouchOutside(false);
 
         ImageView iv_refresh = (ImageView) toolbar.findViewById(R.id.iv_refresh);
         iv_refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fetchCallData();
+                fetchCallData(0);
             }
         });
 
@@ -184,6 +190,19 @@ public class HomeFragment extends Fragment {
 
         SocialNetworkingLinks();
 
+        SpnCallTenure = (AppCompatSpinner)rootView.findViewById(R.id.SpnCallTenure);
+        SpnCallTenure.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                fetchCallData(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         recycler_list = rootView.findViewById(R.id.recycler_list);
         recycler_list.setHasFixedSize(true);
         recycler_list.setNestedScrollingEnabled(false);
@@ -194,17 +213,10 @@ public class HomeFragment extends Fragment {
         recycler_list.setLayoutManager(layoutManager);
 
 
-        fetchCallData();
+        fetchCallData(0);
 
     }
 
-
-    public void RefreshPage() {
-
-
-        fetchCallData();
-
-    }
 
     private void SocialNetworkingLinks() {
 
@@ -276,10 +288,15 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void fetchCallData() {
+    private void fetchCallData(int call_for_period_id) {
 
-        if (callModel_list != null) {
+
+        if (callModel_list != null && callModel_list.size() > 0) {
             callModel_list = new ArrayList<>();
+        }
+
+        if (myDialog != null && !myDialog.isShowing()) {
+            myDialog.show();
         }
 
         String Uiid_id = UUID.randomUUID().toString();
@@ -299,9 +316,7 @@ public class HomeFragment extends Fragment {
                             @Override
                             public void onResponse(String response) {
                                 Log.d("Response", response);
-                                if (myDialog != null && myDialog.isShowing()) {
-                                    myDialog.dismiss();
-                                }
+
                                 try {
 
                                     JSONObject jobj = new JSONObject(response);
@@ -357,12 +372,16 @@ public class HomeFragment extends Fragment {
                                     stackLayoutAdapter = new StackLayoutAdapter(mContext, callModel_list);
                                     recycler_list.setAdapter(stackLayoutAdapter);
                                     stackLayoutAdapter.notifyDataSetChanged();
-
+                                    if (myDialog != null && myDialog.isShowing()) {
+                                        myDialog.dismiss();
+                                    }
 
                                 } catch (Exception e) {
 
                                     e.printStackTrace();
-
+                                    if (myDialog != null && myDialog.isShowing()) {
+                                        myDialog.dismiss();
+                                    }
                                 }
 
                             }

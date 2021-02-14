@@ -43,20 +43,21 @@
 
 
         <!-- Firebase Cloud Message -->
-        <!--
-<meta-data
-            android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/new_notification" />
-        -->
+
+      <!--  -->
+
         <!--
  Set color used with incoming notification messages.
         This is used when no color is set for the incoming notification message. See README
         (https://github.com/firebase/quickstart-android/tree/master/messaging#custom-default-color) for more.
         -->
-        <meta-data
+       <!-- <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/black" />
+            android:resource="@color/black" />-->
 
+       <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_new_notification_icon" />
 
         <service
             android:name=".fcm.CloudMessagingService"
@@ -65,7 +66,6 @@
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
-
         </service>
 
 
@@ -84,6 +84,19 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MySubscriptionPlanActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".CalculatorActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".PivotCalc"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".GannCartCalc"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 

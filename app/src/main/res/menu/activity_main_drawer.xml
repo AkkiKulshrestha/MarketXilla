@@ -9,6 +9,14 @@
             android:icon="@drawable/ic_info"
             android:iconTint="@color/black"
             android:title="@string/my_subscription" />
+
+        <item
+            android:id="@+id/nav_calc"
+            android:icon="@drawable/ic_calc"
+            android:iconTint="@color/black"
+            android:title="@string/trade_calculators" />
+
+
         <item
             android:id="@+id/nav_about_us"
             android:icon="@drawable/ic_info"

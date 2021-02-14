@@ -19,7 +19,6 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-
 import java.util.Map;
 
 import in.techxilla.www.marketxilla.NewDashboard;
@@ -27,10 +26,9 @@ import in.techxilla.www.marketxilla.R;
 import in.techxilla.www.marketxilla.utils.UtilitySharedPreferences;
 
 public class CloudMessagingService extends FirebaseMessagingService {
+    public static final String NOTIFICATION_CHANNEL_ID = String.valueOf(System.currentTimeMillis());
     private static final String TAG = "CloudMessagingService";
     private final static String default_notification_channel_id = "default";
-
-    public static final String NOTIFICATION_CHANNEL_ID = String.valueOf(System.currentTimeMillis());
     String mController = null, mUrl = null, contentText = "", title = "";
 
     @Override
@@ -49,7 +47,6 @@ public class CloudMessagingService extends FirebaseMessagingService {
                 for (Map.Entry<String, String> entry : remoteMessage.getData().entrySet()) {
                     extras.putString(entry.getKey(), entry.getValue());
                 }
-
 
 
                 if (extras.getString("controller") != null)
@@ -81,11 +78,12 @@ public class CloudMessagingService extends FirebaseMessagingService {
 
     }
 
-    public String CreateNewToken(){
+    public String CreateNewToken() {
 
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
         return refreshedToken;
     }
+
     /**
      * Persist token on third-party servers using your Retrofit APIs client.
      * Modify this method to associate the user's FCM InstanceID token with any server-side account
@@ -100,45 +98,29 @@ public class CloudMessagingService extends FirebaseMessagingService {
     /**
      * Schedule async work using WorkManager mostly these are one type job.
      */
-   /* private void scheduleLongRunningJob() {
-        OneTimeWorkRequest work = new OneTimeWorkRequest.Builder(DataSyncWorker.class)
-                .build();
-        WorkManager.getInstance().beginWith(work).enqueue();
-    }*/
     private void sendNotification(String controller, String url, String title, String contentText) {
         PendingIntent resultPendingIntent;
         Intent intentApp = null;
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
 
-
-
-     /*   if (controller != null) {
-            if (controller.equalsIgnoreCase("WebView")) {
-                intentApp = new Intent(this,.class);
-                intentApp.putExtra("url", url);
-            } else {
-                intentApp = new Intent(this, HomeActivity.class);
-            }
-        } else {*/
-            intentApp = new Intent(this, NewDashboard.class);
-            stackBuilder.addNextIntent(intentApp);
-            resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-
+        intentApp = new Intent(this, NewDashboard.class);
+        stackBuilder.addNextIntent(intentApp);
+        resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder   notificationBuilder =
-                    new NotificationCompat.Builder(this, default_notification_channel_id)
-                            .setSmallIcon(R.mipmap.ic_launcher)
-                            .setColor(getApplicationContext().getResources().getColor(R.color.black))
-                            .setContentTitle(title)
-                            .setContentText(contentText)
-                            .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.ic_launcher))
-                            .setAutoCancel(true)
-                            .setSound(defaultSoundUri)
-                            .setPriority(NotificationManager.IMPORTANCE_HIGH)
-                            .setContentIntent(resultPendingIntent);
+        NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(this, default_notification_channel_id)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setColor(getApplicationContext().getResources().getColor(R.color.black))
+                        .setContentTitle(title)
+                        .setContentText(contentText)
+                        .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.ic_launcher))
+                        .setAutoCancel(true)
+                        .setSound(defaultSoundUri)
+                        .setPriority(NotificationManager.IMPORTANCE_HIGH)
+                        .setContentIntent(resultPendingIntent);
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -151,7 +133,6 @@ public class CloudMessagingService extends FirebaseMessagingService {
             notificationManager.createNotificationChannel(channel);
         }
         notificationManager.notify((int) System.currentTimeMillis(), notificationBuilder.build());
-//        notificationManager.cancel(10);
-//        CallService.start(this);
+
     }
 }

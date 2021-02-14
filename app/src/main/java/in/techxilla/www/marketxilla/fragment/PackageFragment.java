@@ -1,6 +1,7 @@
 package in.techxilla.www.marketxilla.fragment;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -68,7 +69,7 @@ public class PackageFragment extends Fragment {
     String mDuration;
     ArrayList<String> planList = new ArrayList<String>();
     ArrayList<Double> planAmountList = new ArrayList<Double>();
-
+    ProgressDialog myDialog;
     String StrUpiAccountId,StrUPI_MerchantName;
 
     @SuppressLint("InflateParams")
@@ -86,6 +87,11 @@ public class PackageFragment extends Fragment {
     private void initUI() {
 
         mContext = getContext();
+
+        myDialog = new ProgressDialog(mContext);
+        myDialog.setMessage("Please wait...");
+        myDialog.setCancelable(false);
+        myDialog.setCanceledOnTouchOutside(false);
 
         //Set up Adapter
         recyclerSmartPlan = (RecyclerView) rootView.findViewById(R.id.recyclerSmartPlan);
@@ -111,7 +117,9 @@ public class PackageFragment extends Fragment {
         if(smartPlanModelArrayList.size() > 0){
             smartPlanModelArrayList = new ArrayList<>();
         }
-
+        if (myDialog != null && !myDialog.isShowing()) {
+            myDialog.show();
+        }
 
         try {
             Log.d("URL", URL_GetSubscriptions);
@@ -172,9 +180,14 @@ public class PackageFragment extends Fragment {
                                         recyclerSmartPlan.setAdapter(smartPlanAdapter);
 
                                     }
-
+                                    if (myDialog != null && myDialog.isShowing()) {
+                                        myDialog.hide();
+                                    }
                                 } catch (JSONException e) {
                                     e.printStackTrace();
+                                    if (myDialog != null && myDialog.isShowing()) {
+                                        myDialog.hide();
+                                    }
                                 }
 
                             }
@@ -184,7 +197,9 @@ public class PackageFragment extends Fragment {
                     public void onErrorResponse(VolleyError error) {
                         VolleyLog.d("volley", "Error: " + error.getMessage());
                         error.printStackTrace();
-
+                        if (myDialog != null && myDialog.isShowing()) {
+                            myDialog.hide();
+                        }
 
                     }
                 });

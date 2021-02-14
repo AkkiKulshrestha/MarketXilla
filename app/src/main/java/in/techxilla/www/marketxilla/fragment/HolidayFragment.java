@@ -1,6 +1,7 @@
 package in.techxilla.www.marketxilla.fragment;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -52,6 +53,7 @@ public class HolidayFragment extends Fragment {
     Context mContext;
     LinearLayout ll_parent_holiday;
     Toolbar toolbar;
+    ProgressDialog myDialog;
 
 
     @SuppressLint("InflateParams")
@@ -69,6 +71,10 @@ public class HolidayFragment extends Fragment {
     private void initUI() {
 
         mContext = getContext();
+        myDialog = new ProgressDialog(mContext);
+        myDialog.setMessage("Please wait...");
+        myDialog.setCancelable(false);
+        myDialog.setCanceledOnTouchOutside(false);
 
         NewDashboard activity = (NewDashboard) getActivity();
         if (activity != null) {
@@ -76,6 +82,7 @@ public class HolidayFragment extends Fragment {
             activity.setSupportActionBar(toolbar);
 
         }
+
 
         ImageView iv_refresh = (ImageView) toolbar.findViewById(R.id.iv_refresh);
         iv_refresh.setOnClickListener(new View.OnClickListener() {
@@ -90,12 +97,17 @@ public class HolidayFragment extends Fragment {
         fetchHolidayData();
     }
 
-    private void fetchHolidayData() {
 
+
+
+    private void fetchHolidayData() {
         if(ll_parent_holiday!=null && ll_parent_holiday.getChildCount()>0){
             ll_parent_holiday.removeAllViews();
         }
 
+        if (myDialog != null && !myDialog.isShowing()) {
+            myDialog.show();
+        }
 
         String Uiid_id = UUID.randomUUID().toString();
         String URL_GetHolidayList = ROOT_URL+"holiday_list.php?_"+Uiid_id;
@@ -120,6 +132,8 @@ public class HolidayFragment extends Fragment {
                                     JSONObject jobj = new JSONObject(response);
 
                                     JSONArray data = jobj.getJSONArray("data");
+
+
                                     for(int k = 0; k< data.length();k++) {
                                         JSONObject jsonObject = data.getJSONObject(k);
                                         Log.d("jobj", "" + jsonObject);
@@ -162,11 +176,18 @@ public class HolidayFragment extends Fragment {
                                         tv_holiday_name.setText(holiday);
                                         tv_day.setText(day);
                                         ll_parent_holiday.addView(rowView1);
-                                    }
 
+                                    }
+                                    if (myDialog != null && myDialog.isShowing()) {
+                                        myDialog.dismiss();
+                                    }
                                 } catch (Exception e) {
 
                                     e.printStackTrace();
+
+                                    if (myDialog != null && myDialog.isShowing()) {
+                                        myDialog.dismiss();
+                                    }
 
                                 }
 
@@ -177,7 +198,9 @@ public class HolidayFragment extends Fragment {
                     public void onErrorResponse(VolleyError error) {
                         VolleyLog.d("volley", "Error: " + error.getMessage());
                         error.printStackTrace();
-
+                        if (myDialog != null && myDialog.isShowing()) {
+                            myDialog.dismiss();
+                        }
 
                     }
                 });

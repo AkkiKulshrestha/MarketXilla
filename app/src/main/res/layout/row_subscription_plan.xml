@@ -1,138 +1,265 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/CardSchemeName"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="10sp"
-
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="16dp"
+    app:cardCornerRadius="16dp"
+    app:cardBackgroundColor="@android:color/transparent"
     app:cardUseCompatPadding="true">
-
 
     <LinearLayout
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:background="@drawable/cw_shadow_grey"
+            android:layout_height="140dp"
+            android:background="@drawable/cw_shadow_transparent"
+            android:minHeight="150dp"
             android:orientation="vertical">
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:background="@color/primary_grey"
-                android:orientation="vertical">
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/logo"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:padding="8dp"
+                    android:src="@drawable/logo"
+                    android:text="@string/app_name" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center"
+                    android:layout_below="@+id/logo"
                     android:orientation="horizontal"
-                    android:padding="8dp"
                     android:weightSum="10">
 
-
-                    <TextView
-                        android:id="@+id/tv_plan_name"
-                        android:layout_width="match_parent"
+                    <LinearLayout
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center|start"
-                        android:layout_marginStart="5dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_weight="7"
+                        android:orientation="vertical">
 
-                        android:layout_weight="4"
-                        android:gravity="start"
-                        android:padding="4dp"
-                        android:text="@string/sliver"
-                        android:textAllCaps="true"
-                        android:textColor="@color/black"
-                        android:textSize="18sp" />
+                        <TextView
+                            android:id="@+id/tv_plan_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center|start"
+                            android:layout_marginStart="5dp"
+                            android:gravity="start"
+                            android:padding="4dp"
+                            android:text="@string/sliver"
+                            android:textAllCaps="true"
+                            android:textColor="@color/white"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/tv_plan_name"
+                            android:layout_gravity="center|start"
+                            android:layout_marginStart="5dp"
+                            android:gravity="start"
+                            android:padding="4dp"
+                            android:text="Current Plan"
+                            android:textAllCaps="true"
+                            android:textColor="@color/white"
+                            android:textSize="10sp" />
+
+
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/tv_status"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:layout_marginEnd="12dp"
-                        android:layout_weight="
-6"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_gravity="end|center"
+                        android:layout_margin="8dp"
+                        android:layout_weight="3"
+                        android:background="@drawable/btn_color_form_background"
                         android:gravity="end"
                         android:padding="4dp"
                         android:text="active"
+                        android:textAlignment="center"
                         android:textAllCaps="true"
-                        android:textColor="@color/green"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/mpn_green"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        tools:ignore="RtlCompat" />
+
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/tv_Subscripte_till_date"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="10dp"
-                    android:padding="8dp"
-                    android:text="Subscripted till : 21 Mar, 2021"
-                    android:textAllCaps="true"
-                    android:textColor="@color/black"
-                    android:textSize="11sp" />
-            </LinearLayout>
+
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/cw_shadow_bottom_bg"
+            android:minHeight="230dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_status_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:padding="4dp"
+                android:text="Your plan is currently Active"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tv_status_text1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:padding="4dp"
+                android:text="Enjoy your Service"
+                android:textColor="@color/white"
+                android:textSize="10sp" />
+
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:background="@color/black"
-                android:padding="8dp" />
+                android:layout_height="0.5dp"
+                android:background="@color/black" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:background="@color/dot_light_screen4"
-                android:orientation="vertical">
+                android:orientation="horizontal"
+                android:weightSum="10">
 
-                <TextView
-                    android:id="@+id/tv_Subscripte_on_date"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:padding="4dp"
+                        android:text="From"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:textSize="10sp" />
+
+                    <TextView
+                        android:id="@+id/tv_Subscripte_on_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="8dp"
+                        android:text="21 Mar, 2021"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="0.5dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/black" />
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_weight="5"
+                    android:orientation="vertical">
 
-                    android:layout_marginTop="10dp"
-                    android:padding="8dp"
-                    android:text="Subscripted on : 21 Mar, 2021"
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:padding="4dp"
+                        android:text="Till"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:textSize="10sp" />
 
-                    android:textAllCaps="true"
-                    android:textColor="@color/black"
-                    android:textSize="11sp" />
+                    <TextView
+                        android:id="@+id/tv_Subscripte_till_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="8dp"
+                        android:text="21 Mar, 2021"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
 
-                <TextView
-                    android:id="@+id/tv_plan_amount"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="10dp"
-                    android:enabled="false"
-                    android:padding="8dp"
-
-                    android:text="212021"
-                    android:textAllCaps="true"
-                    android:textColor="@color/black"
-                    android:textSize="13sp" />
-
+                </LinearLayout>
             </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:id="@+id/tv_plan_amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:enabled="false"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="Amount: Rs. 212021"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/btn_payment_receipt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_gravity="center|start"
+                android:background="@drawable/cw_shadow_black"
+                android:gravity="center"
+                android:minHeight="40dp"
+                android:padding="16dp"
+                android:text="Download Transaction Details"
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
         </LinearLayout>
-
-
     </LinearLayout>
-
 </androidx.cardview.widget.CardView>
+
+
+

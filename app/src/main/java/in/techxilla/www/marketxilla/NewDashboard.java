@@ -128,7 +128,10 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
         viewGroup = (ViewGroup) ((ViewGroup) this
                 .findViewById(android.R.id.content)).getChildAt(0);
 
-
+        myDialog = new ProgressDialog(this);
+        myDialog.setMessage("Please wait...");
+        myDialog.setCancelable(false);
+        myDialog.setCanceledOnTouchOutside(false);
         initUI();
         navigationView();
     }
@@ -436,6 +439,15 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
             case R.id.nav_my_subscription:
                 Intent intent_subscription = new Intent(NewDashboard.this, MySubscriptionPlanActivity.class);
                 startActivity(intent_subscription);
+                overridePendingTransition(R.animator.move_left,R.animator.move_right);
+                finish();
+                break;
+
+            case R.id.nav_calc :
+                Intent intent_calc = new Intent(NewDashboard.this, CalculatorActivity.class);
+                startActivity(intent_calc);
+                overridePendingTransition(R.animator.move_left,R.animator.move_right);
+                finish();
                 break;
 
             case R.id.nav_about_us:

@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.ColorInt;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -44,7 +45,7 @@ import java.util.Locale;
 
 import de.mateware.snacky.Snacky;
 import es.dmoral.toasty.Toasty;
-
+import in.techxilla.www.marketxilla.fragment.ProgressDialogFragment;
 
 
 public class CommonMethods
@@ -174,6 +175,11 @@ public class CommonMethods
 		}
 
 	}
+
+	public void showProgressDialog(FragmentManager fragmentManager){
+		ProgressDialogFragment.newInstance().show(fragmentManager,"");
+	}
+
 
 
 	public static String md5(String s) {

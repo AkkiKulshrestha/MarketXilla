@@ -93,6 +93,11 @@ public class PaidUserFragment extends Fragment {
     private void initUI() {
 
         mContext = getContext();
+        myDialog = new ProgressDialog(mContext);
+        myDialog.setMessage("Please wait...");
+        myDialog.setCancelable(false);
+        myDialog.setCanceledOnTouchOutside(false);
+
         NewDashboard activity = (NewDashboard) getActivity();
         toolbar = activity.findViewById(R.id.toolbar);
         activity.setSupportActionBar(toolbar);
@@ -124,7 +129,9 @@ public class PaidUserFragment extends Fragment {
 
     private void getPlanDetail() {
 
-
+        if (myDialog != null && !myDialog.isShowing()) {
+            myDialog.show();
+        }
         String Uiid_id = UUID.randomUUID().toString();
         String StrMemberId = UtilitySharedPreferences.getPrefs(mContext, "MemberId");
         final String get_plan_details_info = ROOT_URL + "get_user_subscription_details.php?" + Uiid_id + "&user_id=" + StrMemberId;
@@ -192,17 +199,23 @@ public class PaidUserFragment extends Fragment {
 
                             }
 
-
+                            if (myDialog != null && myDialog.isShowing()) {
+                                myDialog.hide();
+                            }
                         } catch (Exception e) {
                             Log.d("Exception", e.toString());
+                            if (myDialog != null && myDialog.isShowing()) {
+                                myDialog.hide();
+                            }
                         }
                     }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         volleyError.printStackTrace();
-                        //Log.d("Vollley Err", volleyError.toString());
-
+                        if (myDialog != null && myDialog.isShowing()) {
+                            myDialog.hide();
+                        }
                     }
                 });
                 RequestQueue requestQueue = Volley.newRequestQueue(mContext);
