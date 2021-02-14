@@ -79,6 +79,11 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="trade_calculators">TRADE CALCULATORS</string>
+    <string name="classic_pivot">CLASSIC / FLOOR PIVOT</string>
+    <string name="fibonacci_pivot">FIBONACCI PIVOT</string>
+    <string name="camerilla_pivot">CAMERILLA PIVOT</string>
+    <string name="forex_pivot">FOREX PIVOT</string>
+    <string name="woodie_s_pivot">WOODIE\'s PIVOT</string>
 
 
 </resources>

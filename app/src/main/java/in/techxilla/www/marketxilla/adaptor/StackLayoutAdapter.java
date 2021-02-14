@@ -64,7 +64,7 @@ public class StackLayoutAdapter extends RecyclerView.Adapter<StackLayoutAdapter.
             if (callArrayList.get(position).getPerformance_for().equalsIgnoreCase("Commodity")) {
                 viewHolder.tv_above_below.setText("BETWEEN \n" + callArrayList.get(position).getBuy_sell_above_below());
             } else {
-                viewHolder.tv_above_below.setText("ABOVE " + callArrayList.get(position).getBuy_sell_above_below());
+                viewHolder.tv_above_below.setText("BUY ABOVE " + callArrayList.get(position).getBuy_sell_above_below());
             }
 
             viewHolder.tv_sell_buy.setText("INTRADAY BUY");
@@ -75,7 +75,7 @@ public class StackLayoutAdapter extends RecyclerView.Adapter<StackLayoutAdapter.
             if (callArrayList.get(position).getPerformance_for().equalsIgnoreCase("Commodity")) {
                 viewHolder.tv_above_below.setText("BETWEEN \n" + callArrayList.get(position).getBuy_sell_above_below());
             } else {
-                viewHolder.tv_above_below.setText("BELOW " + callArrayList.get(position).getBuy_sell_above_below());
+                viewHolder.tv_above_below.setText("SELL BELOW " + callArrayList.get(position).getBuy_sell_above_below());
             }
 
             viewHolder.tv_sell_buy.setText("INTRADAY SELL");

@@ -14,7 +14,7 @@ public class CalculatorActivity extends AppCompatActivity {
 
     TextView tv_title;
     ImageView iv_back;
-    TextView gann_cart_9,classic_pivot,fibaonacci_pivot,camerilla_pivot,demark_pivot,woddie_pivot;
+    TextView gann_cart_9,classic_pivot,fibaonacci_pivot,camerilla_pivot,forex_pivot,woddie_pivot;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +42,7 @@ public class CalculatorActivity extends AppCompatActivity {
         classic_pivot  = (TextView)findViewById(R.id.classic_pivot);
         fibaonacci_pivot = (TextView)findViewById(R.id.fibaonacci_pivot);
         camerilla_pivot = (TextView)findViewById(R.id.camerilla_pivot);
-        demark_pivot = (TextView)findViewById(R.id.demark_pivot);
+        forex_pivot = (TextView)findViewById(R.id.forex_pivot);
         woddie_pivot = (TextView)findViewById(R.id.woddie_pivot);
 
         gann_cart_9.setOnClickListener(new View.OnClickListener() {
@@ -97,11 +97,11 @@ public class CalculatorActivity extends AppCompatActivity {
             }
         });
 
-        demark_pivot.setOnClickListener(new View.OnClickListener() {
+        forex_pivot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
-                bundle.putString("calc",demark_pivot.getText().toString());
+                bundle.putString("calc",forex_pivot.getText().toString());
                 Intent intent = new Intent(getApplicationContext(),PivotCalc.class);
                 intent.putExtras(bundle);
                 overridePendingTransition(R.animator.move_left,R.animator.move_right);

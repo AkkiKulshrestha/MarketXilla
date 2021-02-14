@@ -6,7 +6,7 @@
 
         <item
             android:id="@+id/nav_my_subscription"
-            android:icon="@drawable/ic_info"
+            android:icon="@drawable/ic_payment"
             android:iconTint="@color/black"
             android:title="@string/my_subscription" />
 

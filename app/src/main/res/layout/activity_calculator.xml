@@ -82,7 +82,7 @@
                 android:minHeight="48dp"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
-                android:text="CLASSIC / FLOOR PIVOT" />
+                android:text="@string/classic_pivot" />
 
             <View
                 android:layout_width="match_parent"
@@ -99,7 +99,7 @@
                 android:paddingHorizontal="16dp"
 
                 android:paddingVertical="8dp"
-                android:text="FIBONACCI PIVOT" />
+                android:text="@string/fibonacci_pivot" />
 
             <View
                 android:layout_width="match_parent"
@@ -116,7 +116,7 @@
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
 
-                android:text="CAMERILLA PIVOT" />
+                android:text="@string/camerilla_pivot" />
 
             <View
                 android:layout_width="match_parent"
@@ -124,7 +124,7 @@
                 android:background="@color/grey_bg_color" />
 
             <TextView
-                android:id="@+id/demark_pivot"
+                android:id="@+id/forex_pivot"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -133,7 +133,7 @@
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
 
-                android:text="DEMARK's PIVOT" />
+                android:text="@string/forex_pivot" />
 
             <View
                 android:layout_width="match_parent"
@@ -150,7 +150,7 @@
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
 
-                android:text="WOODIE's PIVOT" />
+                android:text="@string/woodie_s_pivot" />
 
             <View
                 android:layout_width="match_parent"

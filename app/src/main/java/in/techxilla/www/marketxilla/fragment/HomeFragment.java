@@ -1,6 +1,7 @@
 package in.techxilla.www.marketxilla.fragment;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -61,6 +62,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import in.techxilla.www.marketxilla.CalculatorActivity;
 import in.techxilla.www.marketxilla.MainActivity;
 import in.techxilla.www.marketxilla.NewDashboard;
 import in.techxilla.www.marketxilla.NotificationActivity;
@@ -223,6 +225,7 @@ public class HomeFragment extends Fragment {
         ImageView iv_gmail = (ImageView) rootView.findViewById(R.id.iv_gmail);
         ImageView iv_sms = (ImageView) rootView.findViewById(R.id.iv_sms);
         ImageView iv_whatsapp = (ImageView) rootView.findViewById(R.id.iv_whatsapp);
+        ImageView iv_calc = (ImageView) rootView.findViewById(R.id.iv_calc);
 
 
         iv_gmail.setOnClickListener(new View.OnClickListener() {
@@ -284,6 +287,14 @@ public class HomeFragment extends Fragment {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            }
+        });
+
+        iv_calc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent_calc = new Intent(getContext(), CalculatorActivity.class);
+                startActivity(intent_calc);
             }
         });
     }

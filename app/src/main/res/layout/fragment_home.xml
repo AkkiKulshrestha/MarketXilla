@@ -85,7 +85,6 @@
                         android:layout_height="40dp"
                         android:layout_centerVertical="true"
                         android:layout_centerInParent="true"
-                        android:layout_toStartOf="@+id/iv_gmail"
                         android:layout_marginEnd="50sp"
                         android:src="@drawable/whatsapp2" />
 
@@ -93,8 +92,7 @@
                         android:id="@+id/iv_gmail"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:layout_gravity="center"
-
+                        android:layout_toEndOf="@+id/iv_whatsapp"
                         android:layout_centerInParent="true"
                         android:layout_centerVertical="true"
                         android:src="@drawable/inbox" />
@@ -109,9 +107,18 @@
                         android:layout_centerInParent="true"
                         android:layout_toEndOf="@+id/iv_gmail"
                         android:layout_marginStart="50sp"
-                        android:src="@drawable/mail" />
+                        android:src="@drawable/text" />
 
-
+                    <ImageView
+                        android:id="@+id/iv_calc"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:layout_centerVertical="true"
+                        android:layout_centerInParent="true"
+                        android:layout_toEndOf="@+id/iv_sms"
+                        android:layout_marginStart="50sp"
+                        android:src="@drawable/calc" />
 
 
 
@@ -142,6 +149,7 @@
                 android:paddingHorizontal="16dp"
                 android:layout_marginEnd="20dp"
                 android:spinnerMode="dropdown"
+                android:visibility="gone"
                 style="@style/Widget.AppCompat.Spinner.Underlined"/>
 
 

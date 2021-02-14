@@ -607,7 +607,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/white"
-                        android:textSize="12sp" />
+                        android:textSize="10sp" />
 
                     <TextView
                         android:id="@+id/res2"
@@ -619,7 +619,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/white"
-                        android:textSize="12sp"
+                        android:textSize="10sp"
                         />
 
                     <TextView
@@ -632,7 +632,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/white"
-                        android:textSize="12sp" />
+                        android:textSize="10sp" />
 
                     <TextView
                         android:id="@+id/res4"
@@ -644,7 +644,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/white"
-                        android:textSize="12sp"
+                        android:textSize="10sp"
                         />
 
                     <TextView
@@ -657,7 +657,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/white"
-                        android:textSize="12sp"
+                        android:textSize="10sp"
                         />
 
 
@@ -754,7 +754,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/white"
-                        android:textSize="12sp" />
+                        android:textSize="10sp" />
 
                     <TextView
                         android:id="@+id/sup2"
@@ -766,7 +766,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/white"
-                        android:textSize="12sp"
+                        android:textSize="10sp"
                         />
 
                     <TextView
@@ -779,7 +779,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/white"
-                        android:textSize="12sp" />
+                        android:textSize="10sp" />
 
                     <TextView
                         android:id="@+id/sup4"
@@ -791,7 +791,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/white"
-                        android:textSize="12sp"
+                        android:textSize="10sp"
                         />
 
                     <TextView
@@ -804,7 +804,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/white"
-                        android:textSize="12sp"
+                        android:textSize="10sp"
                         />
 
 

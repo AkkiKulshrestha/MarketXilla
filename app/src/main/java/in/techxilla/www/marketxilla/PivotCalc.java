@@ -99,15 +99,15 @@ public class PivotCalc extends AppCompatActivity {
                     previous_low = StrPreviousLow != null ? Double.parseDouble(StrPreviousLow) : 0.0;
                     previous_close = StrPreviousClose != null ? Double.parseDouble(StrPreviousClose) : 0.0;
 
-                    if (CalcName != null && CalcName.equalsIgnoreCase("CLASSIC / FLOOR PIVOT")) {
+                    if (CalcName != null && CalcName.equalsIgnoreCase(getString(R.string.classic_pivot))) {
                         ClassicPivotCalc();
-                    } else if (CalcName != null && CalcName.equalsIgnoreCase("FIBONACCI PIVOT")) {
+                    } else if (CalcName != null && CalcName.equalsIgnoreCase(getString(R.string.fibonacci_pivot))) {
                         FibonacciPivotCalc();
-                    } else if (CalcName != null && CalcName.equalsIgnoreCase("CAMERILLA PIVOT")) {
+                    } else if (CalcName != null && CalcName.equalsIgnoreCase(getString(R.string.camerilla_pivot))) {
                         CamerillaPivotCalc();
-                    }/* else if (CalcName != null && CalcName.equalsIgnoreCase("DEMARK's PIVOT")) {
-                        DemarkPivotCalc();
-                    }*/ else if (CalcName != null && CalcName.equalsIgnoreCase("WOODIE's PIVOT")) {
+                    } else if (CalcName != null && CalcName.equalsIgnoreCase(getString(R.string.forex_pivot))) {
+                        ForexPivotCalc();
+                    } else if (CalcName != null && CalcName.equalsIgnoreCase(getString(R.string.woodie_s_pivot))) {
                         WoodiePivotCalc();
                     }
                 }
@@ -128,15 +128,15 @@ public class PivotCalc extends AppCompatActivity {
                     previous_low = StrPreviousLow != null ? Double.parseDouble(StrPreviousLow) : 0.0;
                     previous_close = StrPreviousClose != null ? Double.parseDouble(StrPreviousClose) : 0.0;
 
-                    if (CalcName != null && CalcName.equalsIgnoreCase("CLASSIC / FLOOR PIVOT")) {
+                    if (CalcName != null && CalcName.equalsIgnoreCase(getString(R.string.classic_pivot))) {
                         ClassicPivotCalc();
-                    } else if (CalcName != null && CalcName.equalsIgnoreCase("FIBONACCI PIVOT")) {
+                    } else if (CalcName != null && CalcName.equalsIgnoreCase(getString(R.string.fibonacci_pivot))) {
                         FibonacciPivotCalc();
-                    } else if (CalcName != null && CalcName.equalsIgnoreCase("CAMERILLA PIVOT")) {
+                    } else if (CalcName != null && CalcName.equalsIgnoreCase(getString(R.string.camerilla_pivot))) {
                         CamerillaPivotCalc();
-                    }/* else if (CalcName != null && CalcName.equalsIgnoreCase("DEMARK's PIVOT")) {
-                        DemarkPivotCalc();
-                    }*/ else if (CalcName != null && CalcName.equalsIgnoreCase("WOODIE's PIVOT")) {
+                    } else if (CalcName != null && CalcName.equalsIgnoreCase(getString(R.string.forex_pivot))) {
+                        ForexPivotCalc();
+                    } else if (CalcName != null && CalcName.equalsIgnoreCase(getString(R.string.woodie_s_pivot))) {
                         WoodiePivotCalc();
                     }
                 }
@@ -146,22 +146,7 @@ public class PivotCalc extends AppCompatActivity {
 
     }
 
-    private void WoodiePivotCalc() {
-
-        dou_pivot_point = (previous_high + previous_low + 2 * previous_close) / 4;
-
-        dou_resistance1 = (2 * dou_pivot_point) - previous_low;
-        dou_resistance2 = dou_pivot_point + (previous_high - previous_low);
-        dou_resistance3 = previous_high + 2 * (dou_pivot_point - previous_low);
-
-        dou_support1 = (2 * dou_pivot_point) - previous_high;
-        dou_support2 = dou_pivot_point - (previous_high - previous_low);
-        dou_support3 = previous_low - 2 * (previous_high - dou_pivot_point);
-
-        setResultToView(false);
-    }
-
-    private void DemarkPivotCalc() {
+    private void ClassicPivotCalc() {
 
         dou_pivot_point = (previous_high + previous_close + previous_low) / 3;
 
@@ -174,6 +159,23 @@ public class PivotCalc extends AppCompatActivity {
         dou_support3 = previous_low - 2 * (previous_high - dou_pivot_point);
 
         setResultToView(false);
+
+    }
+
+    private void FibonacciPivotCalc() {
+
+        dou_pivot_point = (previous_high + previous_close + previous_low) / 3;
+
+        dou_resistance1 = dou_pivot_point + 0.382 * (previous_high - previous_low);
+        dou_resistance2 = dou_pivot_point + 0.618 * (previous_high - previous_low);
+        dou_resistance3 = dou_pivot_point + 1 * (previous_high - previous_low);
+
+        dou_support1 = dou_pivot_point - 0.382 * (previous_high - previous_low);
+        dou_support2 = dou_pivot_point - 0.618 * (previous_high - previous_low);
+        dou_support3 = dou_pivot_point - 1 * (previous_high - previous_low);
+
+        setResultToView(false);
+
     }
 
     private void CamerillaPivotCalc() {
@@ -194,25 +196,25 @@ public class PivotCalc extends AppCompatActivity {
 
     }
 
-    private void FibonacciPivotCalc() {
+    private void ForexPivotCalc() {
 
         dou_pivot_point = (previous_high + previous_close + previous_low) / 3;
 
-        dou_resistance1 = dou_pivot_point + 0.382 * (previous_high - previous_low);
-        dou_resistance2 = dou_pivot_point + 0.618 * (previous_high - previous_low);
-        dou_resistance3 = dou_pivot_point + 1 * (previous_high - previous_low);
+        dou_resistance1 = (2 * dou_pivot_point) - previous_low;
+        dou_support1 = (2 * dou_pivot_point) - previous_high;
 
-        dou_support1 = dou_pivot_point - 0.382 * (previous_high - previous_low);
-        dou_support2 = dou_pivot_point - 0.618 * (previous_high - previous_low);
-        dou_support3 = dou_pivot_point - 1 * (previous_high - previous_low);
+        dou_resistance2 = dou_pivot_point +(dou_resistance1 - dou_support1);
+        dou_support2 = dou_pivot_point - (dou_resistance1 - dou_support1);
+
+        dou_resistance3 = previous_high + 2*(dou_pivot_point - previous_low);
+        dou_support3 = previous_low - 2*(previous_high - dou_pivot_point);
 
         setResultToView(false);
-
     }
 
-    private void ClassicPivotCalc() {
+    private void WoodiePivotCalc() {
 
-        dou_pivot_point = (previous_high + previous_close + previous_low) / 3;
+        dou_pivot_point = (previous_high + previous_low + 2 * previous_close) / 4;
 
         dou_resistance1 = (2 * dou_pivot_point) - previous_low;
         dou_resistance2 = dou_pivot_point + (previous_high - previous_low);
@@ -223,8 +225,13 @@ public class PivotCalc extends AppCompatActivity {
         dou_support3 = previous_low - 2 * (previous_high - dou_pivot_point);
 
         setResultToView(false);
-
     }
+
+
+
+
+
+
 
     public void setResultToView(boolean show4thRes_Sup) {
 
