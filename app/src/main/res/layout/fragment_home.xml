@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:background="@color/colorAccent"
-    >
+    android:orientation="vertical">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -22,10 +21,10 @@
                 android:id="@+id/CardImageSlider"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="60sp"
                 android:layout_marginEnd="16dp"
-                android:layout_alignParentTop="true"
                 android:layout_marginBottom="5dp"
                 app:cardCornerRadius="6dp">
 
@@ -57,12 +56,11 @@
                 android:visibility="gone" />
 
 
-
             <RelativeLayout
                 android:id="@+id/HeaderLayout"
                 android:layout_width="match_parent"
-                android:layout_below="@+id/CardImageSlider"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_below="@+id/CardImageSlider">
 
 
                 <RelativeLayout
@@ -70,11 +68,11 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
                     android:layout_centerInParent="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginBottom="5dp"
                     android:gravity="center"
                     android:minHeight="50sp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_centerVertical="true"
-                    android:layout_centerHorizontal="true"
                     android:orientation="horizontal"
                     android:weightSum="10">
 
@@ -83,8 +81,8 @@
                         android:id="@+id/iv_whatsapp"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:layout_centerVertical="true"
                         android:layout_centerInParent="true"
+                        android:layout_centerVertical="true"
                         android:layout_marginEnd="50sp"
                         android:src="@drawable/whatsapp2" />
 
@@ -92,9 +90,9 @@
                         android:id="@+id/iv_gmail"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:layout_toEndOf="@+id/iv_whatsapp"
                         android:layout_centerInParent="true"
                         android:layout_centerVertical="true"
+                        android:layout_toEndOf="@+id/iv_whatsapp"
                         android:src="@drawable/inbox" />
 
 
@@ -102,30 +100,28 @@
                         android:id="@+id/iv_sms"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:layout_gravity="center"
-                        android:layout_centerVertical="true"
                         android:layout_centerInParent="true"
-                        android:layout_toEndOf="@+id/iv_gmail"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center"
                         android:layout_marginStart="50sp"
+                        android:layout_toEndOf="@+id/iv_gmail"
                         android:src="@drawable/text" />
 
                     <ImageView
                         android:id="@+id/iv_calc"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:layout_gravity="center"
-                        android:layout_centerVertical="true"
                         android:layout_centerInParent="true"
-                        android:layout_toEndOf="@+id/iv_sms"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center"
                         android:layout_marginStart="50sp"
+                        android:layout_toEndOf="@+id/iv_sms"
                         android:src="@drawable/calc" />
-
 
 
                 </RelativeLayout>
 
             </RelativeLayout>
-
 
 
             <androidx.recyclerview.widget.RecyclerView
@@ -136,32 +132,59 @@
                 android:minHeight="400sp"
                 android:visibility="gone" />
 
-            <androidx.appcompat.widget.AppCompatSpinner
-                android:id="@+id/SpnCallTenure"
+            <LinearLayout
+                android:id="@+id/layout_tenure"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/HeaderLayout"
+                android:orientation="horizontal"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="8dp"
+                android:weightSum="10">
+
+                <Spinner
+                    android:id="@+id/SpnCallTenure"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_weight="5"
+                    android:background="@color/white"
+                    android:entries="@array/spin_item_calls"
+                    android:minHeight="55dp"
+                    android:visibility="visible" />
+
+
+                <Spinner
+                    android:id="@+id/SpnMonthwisePerformance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_weight="5"
+                    android:background="@color/white"
+                    android:minHeight="55dp"
+                    android:visibility="visible" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_netProfitLoss"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:entries="@array/spin_item_calls"
-                android:layout_below="@+id/HeaderLayout"
-                android:minHeight="40dp"
-                android:background="@color/white"
-                android:dropDownSelector="@color/colorAccent"
-                android:paddingHorizontal="16dp"
-                android:layout_marginEnd="20dp"
-                android:spinnerMode="dropdown"
+                android:layout_below="@+id/layout_tenure"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:padding="8dp"
                 android:visibility="gone"
-                style="@style/Widget.AppCompat.Spinner.Underlined"/>
-
-
-
+                android:layout_marginEnd="16dp"/>
 
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_below="@+id/tv_netProfitLoss"
                 android:layout_marginVertical="8dp"
-                android:layout_below="@+id/SpnCallTenure"
                 android:scrollbars="vertical" />
 
 

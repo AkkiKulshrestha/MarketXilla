@@ -1,34 +1,30 @@
 package in.techxilla.www.marketxilla.fragment;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -38,7 +34,6 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
@@ -48,24 +43,17 @@ import com.smarteist.autoimageslider.IndicatorAnimations;
 import com.smarteist.autoimageslider.IndicatorView.draw.controller.DrawController;
 import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderView;
-import com.takusemba.multisnaprecyclerview.MultiSnapHelper;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.net.URLEncoder;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 import in.techxilla.www.marketxilla.CalculatorActivity;
-import in.techxilla.www.marketxilla.MainActivity;
 import in.techxilla.www.marketxilla.NewDashboard;
-import in.techxilla.www.marketxilla.NotificationActivity;
 import in.techxilla.www.marketxilla.R;
 import in.techxilla.www.marketxilla.adaptor.ImageSliderAdapter;
 import in.techxilla.www.marketxilla.adaptor.SmartPlanAdapter;
@@ -76,53 +64,52 @@ import in.techxilla.www.marketxilla.model.SmartPlanModel;
 import in.techxilla.www.marketxilla.utils.CommonMethods;
 import in.techxilla.www.marketxilla.utils.ConnectionDetector;
 
-import static in.techxilla.www.marketxilla.utils.CommonMethods.DisplaySnackBar;
 import static in.techxilla.www.marketxilla.webservices.RestClient.ROOT_URL;
 
 public class HomeFragment extends Fragment {
 
 
+    private static final Integer[] IMAGES = {R.drawable.slider1, R.drawable.slider2, R.drawable.slider3,
+            R.drawable.slider4, R.drawable.slider5, R.drawable.slider6};
+    private static ViewPager mPager;
+    private static int currentPage = 0;
+    private static int NUM_PAGES = 0;
+    private static ArrayList<SmartPlanModel> smartPlanModelArrayList;
+    public Toolbar toolbar;
+    public ActionBar actionBar;
     String StrMemberId, StrMemberName, StrMemberEmailId, StrMemberMobile, StrMemberUserName;
     ProgressDialog myDialog;
     TextView TV_NameTxt, TV_Day_TimeDisplayingTxt;
     String greeting;
-    private static ViewPager mPager;
-    private static int currentPage = 0;
-    private static int NUM_PAGES = 0;
-    private static final Integer[] IMAGES = {R.drawable.slider1, R.drawable.slider2, R.drawable.slider3,
-            R.drawable.slider4, R.drawable.slider5, R.drawable.slider6};
-    private ArrayList<Integer> ImagesArray = new ArrayList<Integer>();
     TextView Tv_DisplayGolu;
     SliderView sliderView;
     ImageSliderAdapter adapter;
     int notifications_count = 0;
     LinearLayout ll_parent_calls;
-
-    private RecyclerView recyclerSmartCalls;
     SwipeRefreshLayout refreshLayout;
     RecyclerView recycler_list;
     RecyclerView.LayoutManager layoutManager;
-    private int mStackCount = 30;
     ImageView iv_notification;
-    private int mRandomPosition;
-
-    private StackLayoutManager mStackLayoutManager;
-    // SwipeRefreshLayout refreshLayout;
-
     ArrayList<CallModel> callModel_list = new ArrayList<>();
     CallModel callListModel;
+    // SwipeRefreshLayout refreshLayout;
     StackLayoutAdapter stackLayoutAdapter;
-    private String[] selectItems;
     RecyclerView recyclerSmartPlan;
     SmartPlanAdapter smartPlanAdapter;
     ViewGroup viewGroup;
-    private static ArrayList<SmartPlanModel> smartPlanModelArrayList;
-    public Toolbar toolbar;
-    public ActionBar actionBar;
-    AppCompatSpinner SpnCallTenure;
+    Spinner SpnCallTenure, SpnMonthwisePerformance;
     View rootView;
     Context mContext;
-
+    List<String> MonthsList = new ArrayList<>();
+    String SelectedMonth;
+    TextView tv_netProfitLoss;
+    Double netProfitLoss = 0.0;
+    private ArrayList<Integer> ImagesArray = new ArrayList<Integer>();
+    private RecyclerView recyclerSmartCalls;
+    private int mStackCount = 30;
+    private int mRandomPosition;
+    private StackLayoutManager mStackLayoutManager;
+    private String[] selectItems;
 
     @SuppressLint("InflateParams")
     @Nullable
@@ -142,6 +129,7 @@ public class HomeFragment extends Fragment {
         NewDashboard activity = (NewDashboard) getActivity();
         toolbar = activity.findViewById(R.id.toolbar);
         activity.setSupportActionBar(toolbar);
+
         myDialog = new ProgressDialog(mContext);
         myDialog.setMessage("Please wait...");
         myDialog.setCancelable(false);
@@ -151,7 +139,12 @@ public class HomeFragment extends Fragment {
         iv_refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fetchCallData(0);
+                myDialog.show();
+                fetchCallData();
+                SpnCallTenure.setSelection(0);
+                SpnMonthwisePerformance.setVisibility(View.GONE);
+                SpnMonthwisePerformance.setSelection(0);
+                tv_netProfitLoss.setVisibility(View.GONE);
             }
         });
 
@@ -192,11 +185,19 @@ public class HomeFragment extends Fragment {
 
         SocialNetworkingLinks();
 
-        SpnCallTenure = (AppCompatSpinner)rootView.findViewById(R.id.SpnCallTenure);
+        SpnCallTenure = (Spinner) rootView.findViewById(R.id.SpnCallTenure);
         SpnCallTenure.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                fetchCallData(position);
+                String SelectedTenure = parent.getItemAtPosition(position).toString();
+                if (SelectedTenure.equalsIgnoreCase("Today Calls")) {
+                    fetchCallData();
+                    SpnMonthwisePerformance.setVisibility(View.GONE);
+                    tv_netProfitLoss.setVisibility(View.GONE);
+                } else if (SelectedTenure.equalsIgnoreCase("Past Performance")) {
+                    SpnMonthwisePerformance.setVisibility(View.VISIBLE);
+                }
+
             }
 
             @Override
@@ -204,6 +205,29 @@ public class HomeFragment extends Fragment {
 
             }
         });
+
+
+        SpnMonthwisePerformance = (Spinner) rootView.findViewById(R.id.SpnMonthwisePerformance);
+        SpnMonthwisePerformance.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                if (position > 0) {
+                    SelectedMonth = parent.getItemAtPosition(position).toString();
+                    fetchPastPerformance();
+                } else {
+                    tv_netProfitLoss.setVisibility(View.GONE);
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        tv_netProfitLoss = (TextView) rootView.findViewById(R.id.tv_netProfitLoss);
 
         recycler_list = rootView.findViewById(R.id.recycler_list);
         recycler_list.setHasFixedSize(true);
@@ -215,7 +239,89 @@ public class HomeFragment extends Fragment {
         recycler_list.setLayoutManager(layoutManager);
 
 
-        fetchCallData(0);
+        fetchMonthList();
+        fetchCallData();
+        SpnMonthwisePerformance.setVisibility(View.GONE);
+
+    }
+
+
+    private void fetchMonthList() {
+
+        String Uiid_id = UUID.randomUUID().toString();
+        String URL_GetCallList = ROOT_URL + "getMonthList.php?_" + Uiid_id;
+        try {
+            Log.d("URL", URL_GetCallList);
+
+            ConnectionDetector cd = new ConnectionDetector(mContext);
+            boolean isInternetPresent = cd.isConnectingToInternet();
+            if (isInternetPresent) {
+
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, URL_GetCallList,
+                        new Response.Listener<String>() {
+                            @SuppressLint("UseCompatLoadingForDrawables")
+                            @Override
+                            public void onResponse(String response) {
+                                Log.d("Response", response);
+
+                                try {
+
+                                    JSONObject jobj = new JSONObject(response);
+
+                                    JSONArray data = jobj.getJSONArray("data");
+                                    mStackCount = data.length();
+                                    MonthsList = new ArrayList<>();
+                                    MonthsList.add("Select Month");
+                                    for (int k = 0; k < data.length(); k++) {
+                                        JSONObject jsonObject = data.getJSONObject(k);
+                                        Log.d("jobj", "" + jsonObject);
+                                        String month = jsonObject.getString("month");
+                                        MonthsList.add(month);
+                                    }
+                                    ArrayAdapter<String> adp = new ArrayAdapter<String>(mContext, android.R.layout.simple_spinner_dropdown_item, MonthsList);
+                                    // APP CURRENTLY CRASHING HERE
+                                    SpnMonthwisePerformance.setAdapter(adp);
+
+                                    if (myDialog != null && myDialog.isShowing()) {
+                                        myDialog.dismiss();
+                                    }
+
+                                } catch (Exception e) {
+
+                                    e.printStackTrace();
+                                    if (myDialog != null && myDialog.isShowing()) {
+                                        myDialog.dismiss();
+                                    }
+                                }
+
+                            }
+                        }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        VolleyLog.d("volley", "Error: " + error.getMessage());
+                        error.printStackTrace();
+                        if (myDialog != null && myDialog.isShowing()) {
+                            myDialog.dismiss();
+                        }
+
+                    }
+                });
+
+                RequestQueue requestQueue = Volley.newRequestQueue(mContext);
+                stringRequest.setRetryPolicy(new DefaultRetryPolicy(0, -1, 0));
+                requestQueue.add(stringRequest);
+
+
+            } else {
+                CommonMethods.DisplayToastInfo(mContext, "No Internet Connection");
+
+            }
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
 
     }
 
@@ -299,7 +405,7 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void fetchCallData(int call_for_period_id) {
+    private void fetchCallData() {
 
 
         if (callModel_list != null && callModel_list.size() > 0) {
@@ -354,7 +460,7 @@ public class HomeFragment extends Fragment {
                                         String buy_sell_closing_price = jsonObject.getString("buy_sell_closing_price");
                                         String profit_loss = jsonObject.getString("profit_loss");
                                         String is_active_performance = jsonObject.getString("is_active_performance");
-                                        String is_call_for_paid_customer=  jsonObject.getString("is_call_for_paid_customer");
+                                        String is_call_for_paid_customer = jsonObject.getString("is_call_for_paid_customer");
 
                                         callListModel = new CallModel();
                                         callListModel.setId(id);
@@ -427,7 +533,140 @@ public class HomeFragment extends Fragment {
 
     }
 
+    private void fetchPastPerformance() {
 
+
+        if (callModel_list != null && callModel_list.size() > 0) {
+            callModel_list = new ArrayList<>();
+        }
+
+        if (myDialog != null && !myDialog.isShowing()) {
+            myDialog.show();
+        }
+
+        String Uiid_id = UUID.randomUUID().toString();
+        String URL_GetCallList = ROOT_URL + "past_performance_data_monthwise.php?_" + Uiid_id + "&month=" + URLEncoder.encode(SelectedMonth);
+
+
+        try {
+            Log.d("URL", URL_GetCallList);
+
+            ConnectionDetector cd = new ConnectionDetector(mContext);
+            boolean isInternetPresent = cd.isConnectingToInternet();
+            if (isInternetPresent) {
+
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, URL_GetCallList,
+                        new Response.Listener<String>() {
+                            @SuppressLint("UseCompatLoadingForDrawables")
+                            @Override
+                            public void onResponse(String response) {
+                                Log.d("Response", response);
+
+                                try {
+
+                                    JSONObject jobj = new JSONObject(response);
+
+                                    //StatusCodeKYCComplaint = jobj.getInt("status");
+                                    JSONArray data = jobj.getJSONArray("data");
+                                    mStackCount = data.length();
+                                    netProfitLoss = 0.0;
+                                    for (int k = 0; k < data.length(); k++) {
+                                        JSONObject jsonObject = data.getJSONObject(k);
+                                        Log.d("jobj", "" + jsonObject);
+                                        String id = jsonObject.getString("id");
+                                        String stock_name = jsonObject.getString("stock_name");
+                                        String date = jsonObject.getString("date");
+                                        String performance_for = jsonObject.getString("performance_for");
+                                        String performance_for_id = jsonObject.getString("performance_for_id");
+                                        String is_buy_sell = jsonObject.getString("is_buy_sell");
+                                        String buy_sell_above_below = jsonObject.getString("buy_sell_above_below");
+                                        String stop_loss = jsonObject.getString("stop_loss");
+                                        String target1 = jsonObject.getString("target1");
+                                        String target2 = jsonObject.getString("target2");
+                                        String target3 = jsonObject.getString("target3");
+                                        String ce_pe = jsonObject.getString("ce_pe");
+                                        String strike = jsonObject.getString("strike");
+                                        String buy_sell_closing_price = jsonObject.getString("buy_sell_closing_price");
+                                        String profit_loss = jsonObject.getString("profit_loss");
+                                        String is_active_performance = jsonObject.getString("is_active_performance");
+                                        String is_call_for_paid_customer = jsonObject.getString("is_call_for_paid_customer");
+
+                                        callListModel = new CallModel();
+                                        callListModel.setId(id);
+                                        callListModel.setStock_name(stock_name.toUpperCase());
+                                        callListModel.setDate(date);
+                                        callListModel.setPerformance_for(performance_for);
+                                        callListModel.setPerformance_for_id(performance_for_id);
+                                        callListModel.setIs_buy_sell(is_buy_sell);
+                                        callListModel.setBuy_sell_above_below(buy_sell_above_below);
+                                        callListModel.setStop_loss(stop_loss);
+                                        callListModel.setTarget1(target1);
+                                        callListModel.setTarget2(target2);
+                                        callListModel.setTarget3(target3);
+                                        callListModel.setCe_pe(ce_pe);
+                                        callListModel.setStrike(strike);
+                                        callListModel.setBuy_sell_closing_price(buy_sell_closing_price);
+                                        callListModel.setProfit_loss(profit_loss);
+                                        callListModel.setIs_active_performance(is_active_performance);
+                                        callListModel.setIs_call_for_paid_customer(is_call_for_paid_customer);
+
+                                        callModel_list.add(callListModel);
+
+                                        double profit_loss_dou = profit_loss != null && !profit_loss.equalsIgnoreCase("") ? Double.parseDouble(profit_loss) : 0.0;
+                                        netProfitLoss += profit_loss_dou;
+
+
+                                    }
+
+                                    tv_netProfitLoss.setText("Net Profit / Loss: \u20B9" + CommonMethods.DecimalNumberDisplayFormattingWithComma(String.format("%.2f", netProfitLoss)));
+                                    tv_netProfitLoss.setVisibility(View.VISIBLE);
+
+                                    stackLayoutAdapter = new StackLayoutAdapter(mContext, callModel_list);
+                                    recycler_list.setAdapter(stackLayoutAdapter);
+                                    stackLayoutAdapter.notifyDataSetChanged();
+                                    if (myDialog != null && myDialog.isShowing()) {
+                                        myDialog.dismiss();
+                                    }
+
+                                } catch (Exception e) {
+
+                                    e.printStackTrace();
+                                    if (myDialog != null && myDialog.isShowing()) {
+                                        myDialog.dismiss();
+                                    }
+                                }
+
+                            }
+                        }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        VolleyLog.d("volley", "Error: " + error.getMessage());
+                        error.printStackTrace();
+                        if (myDialog != null && myDialog.isShowing()) {
+                            myDialog.dismiss();
+                        }
+
+                    }
+                });
+
+                RequestQueue requestQueue = Volley.newRequestQueue(mContext);
+                stringRequest.setRetryPolicy(new DefaultRetryPolicy(0, -1, 0));
+                requestQueue.add(stringRequest);
+
+
+            } else {
+                CommonMethods.DisplayToastInfo(mContext, "No Internet Connection");
+
+            }
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
+
+
+    }
 
 
 }

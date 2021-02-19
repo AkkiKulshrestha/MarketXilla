@@ -59,8 +59,7 @@ public class NotificationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification);
-        viewGroup = (ViewGroup) ((ViewGroup) this
-                .findViewById(android.R.id.content)).getChildAt(0);
+        //viewGroup = (ViewGroup) ((ViewGroup) this.findViewById(android.R.id.content)).getChildAt(0);
         init();
     }
 
@@ -83,30 +82,12 @@ public class NotificationActivity extends AppCompatActivity {
         ll_parent_notification = (LinearLayout) findViewById(R.id.ll_parent_notification);
         fetchNotificationList();
 
-
-
-        Handler handler = new Handler();
-        handler.postDelayed
-                (new Runnable() {
-
-                    @Override
-                    public void run() {
-                        fetchNotificationList();
-                    }
-                }, 60000);
     }
 
     private void fetchNotificationList() {
 
-        myDialog = new ProgressDialog(this);
-        myDialog.setMessage("Please wait...");
-        myDialog.setCancelable(false);
-        myDialog.setCanceledOnTouchOutside(false);
-        if(myDialog!=null && !myDialog.isShowing()){
-            myDialog.show();
-        }
 
-
+        if(myDialog!=null && !myDialog.isShowing()) myDialog.show();
 
         if(ll_parent_notification!=null && ll_parent_notification.getChildCount()>0){
             ll_parent_notification.removeAllViews();
@@ -115,27 +96,26 @@ public class NotificationActivity extends AppCompatActivity {
         String Uiid_id = UUID.randomUUID().toString();
 
 
-        ConnectionDetector cd = new ConnectionDetector(getApplicationContext());
+        ConnectionDetector cd = new ConnectionDetector(this);
         boolean isInternetPresent = cd.isConnectingToInternet();
         if (isInternetPresent) {
             String URL = ROOT_URL + "get_notifications_list.php?_" + Uiid_id;
             Log.d("URL", "--> " + URL);
             StringRequest postrequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
-                @SuppressLint("UseCompatLoadingForDrawables")
+                @SuppressLint({"UseCompatLoadingForDrawables", "SimpleDateFormat"})
                 @Override
                 public void onResponse(String response) {
                     try {
                         if (myDialog != null && myDialog.isShowing()) {
                             myDialog.dismiss();
                         }
-
                         Log.d("URL Response", "--> " + response);
 
-                        JSONObject jsonresponse = new JSONObject(response);
+                        JSONObject jsonResponse = new JSONObject(response);
 
-                        boolean status = jsonresponse.getBoolean("status");
+                        boolean status = jsonResponse.getBoolean("status");
                         if(status) {
-                            String result = jsonresponse.getString("data");
+                            String result = jsonResponse.getString("data");
                             JSONArray resultArry = new JSONArray(result);
                             if (resultArry.length() > 0) {
 
@@ -178,7 +158,7 @@ public class NotificationActivity extends AppCompatActivity {
                                 }
 
                             } else {
-                                String message = jsonresponse.getString("message");
+                                String message = jsonResponse.getString("message");
 
                                 TextView textView = new TextView(getApplicationContext());
                                 textView.setText(message);
@@ -192,7 +172,7 @@ public class NotificationActivity extends AppCompatActivity {
 
                             }
                         }else {
-                            String message = jsonresponse.getString("message");
+                            String message = jsonResponse.getString("message");
 
                             TextView textView = new TextView(getApplicationContext());
                             textView.setText(message);
