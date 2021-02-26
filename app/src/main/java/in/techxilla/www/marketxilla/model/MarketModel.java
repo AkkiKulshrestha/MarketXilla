@@ -2,7 +2,19 @@ package in.techxilla.www.marketxilla.model;
 
 public class MarketModel {
 
-    String symbol,series,openPrice,highPrice,lowPrice,ltp,previousPrice,netPrice,differencePrice,tradedQuantity,turnoverInLakhs,lastCorpAnnouncementDate,lastCorpAnnouncement;
+    private String symbol;
+    private String series;
+    private String openPrice;
+    private String highPrice;
+    private String lowPrice;
+    private String ltp;
+    private String previousPrice;
+    private String netPrice;
+    private String differencePrice;
+    private String tradedQuantity;
+    private String turnoverInLakhs;
+    private String lastCorpAnnouncementDate;
+    private String lastCorpAnnouncement;
 
     public MarketModel() {
     }

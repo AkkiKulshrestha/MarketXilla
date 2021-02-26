@@ -5,24 +5,18 @@ import android.app.Application;
 import in.techxilla.www.marketxilla.utils.ConnectivityReceiver;
 
 
-/**
- * Created by Ravi Tamada on 15/06/16.
- * www.androidhive.info
- */
-
 public class MyApplication extends Application {
 
     private static MyApplication mInstance;
 
+    public static synchronized MyApplication getInstance() {
+        return mInstance;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
-        //MultiDex.install(this);
         mInstance = this;
-    }
-
-    public static synchronized MyApplication getInstance() {
-        return mInstance;
     }
 
     public void setConnectivityListener(ConnectivityReceiver.ConnectivityReceiverListener listener) {

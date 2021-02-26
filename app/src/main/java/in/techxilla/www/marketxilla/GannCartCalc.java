@@ -1,5 +1,6 @@
 package in.techxilla.www.marketxilla;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -17,54 +18,51 @@ import in.techxilla.www.marketxilla.utils.MyValidator;
 
 public class GannCartCalc extends AppCompatActivity {
 
-    String CalcName = "";
-    TextView tv_title;
-    ImageView iv_back;
-    EditText Edt_LastTradedPrice;
+    private String CalcName;
+    private EditText Edt_LastTradedPrice;
 
-    String StrLastTradedPrice;
-    double last_traded_price = 0.0;
+    private String StrLastTradedPrice;
+    private double last_traded_price = 0.0;
 
-    Button btn_Calc;
-    TextView tv_buy_above, tv_sell_below;
-    TextView buy_abv_target1, sell_bel_target1;
-    TextView buy_abv_target2, sell_bel_target2;
-    TextView buy_abv_target3, sell_bel_target3;
-    TextView buy_abv_target4, sell_bel_target4;
-    TextView buy_abv_target5, sell_bel_target5;
-    TextView buy_abv_stop_loss, sell_blw_stop_loss;
+    private TextView tv_buy_above, tv_sell_below;
+    private TextView buy_abv_target1, sell_bel_target1;
+    private TextView buy_abv_target2, sell_bel_target2;
+    private TextView buy_abv_target3, sell_bel_target3;
+    private TextView buy_abv_target4, sell_bel_target4;
+    private TextView buy_abv_target5, sell_bel_target5;
+    private TextView buy_abv_stop_loss, sell_blw_stop_loss;
 
-    String Str_tv_buy_above, Str_tv_sell_below;
-    String Str_buy_abv_target1, Str_sell_bel_target1;
-    String Str_buy_abv_target2, Str_sell_bel_target2;
-    String Str_buy_abv_target3, Str_sell_bel_target3;
-    String Str_buy_abv_target4, Str_sell_bel_target4;
-    String Str_buy_abv_target5, Str_sell_bel_target5;
-    String Str_buy_abv_stop_loss, Str_sell_blw_stop_loss;
+    private String Str_tv_buy_above, Str_tv_sell_below;
+    private String Str_buy_abv_target1, Str_sell_bel_target1;
+    private String Str_buy_abv_target2, Str_sell_bel_target2;
+    private String Str_buy_abv_target3, Str_sell_bel_target3;
+    private String Str_buy_abv_target4, Str_sell_bel_target4;
+    private String Str_buy_abv_target5, Str_sell_bel_target5;
+    private String Str_buy_abv_stop_loss, Str_sell_blw_stop_loss;
 
-    double dou_tv_buy_above = 0.0, dou_tv_sell_below = 0.0;
-    double dou_buy_abv_target1 = 0.0, dou_sell_bel_target1 = 0.0;
-    double dou_buy_abv_target2 = 0.0, dou_sell_bel_target2 = 0.0;
-    double dou_buy_abv_target3 = 0.0, dou_sell_bel_target3 = 0.0;
-    double dou_buy_abv_target4 = 0.0, dou_sell_bel_target4 = 0.0;
-    double dou_buy_abv_target5 = 0.0, dou_sell_bel_target5 = 0.0;
-    double dou_buy_abv_stop_loss = 0.0, dou_sell_blw_stop_loss = 0.0;
+    private double dou_tv_buy_above = 0.0, dou_tv_sell_below = 0.0;
+    private double dou_buy_abv_target1 = 0.0, dou_sell_bel_target1 = 0.0;
+    private double dou_buy_abv_target2 = 0.0, dou_sell_bel_target2 = 0.0;
+    private double dou_buy_abv_target3 = 0.0, dou_sell_bel_target3 = 0.0;
+    private double dou_buy_abv_target4 = 0.0, dou_sell_bel_target4 = 0.0;
+    private double dou_buy_abv_target5 = 0.0, dou_sell_bel_target5 = 0.0;
+    private double dou_buy_abv_stop_loss = 0.0, dou_sell_blw_stop_loss = 0.0;
 
-    TextView res1, res2, res3, res4, res5;
-    TextView sup1, sup2, sup3, sup4, sup5;
+    private TextView res1, res2, res3, res4, res5;
+    private TextView sup1, sup2, sup3, sup4, sup5;
 
-    String Str_resistance5, Str_resistance4, Str_resistance3, Str_resistance2, Str_resistance1, Str_support1, Str_support2, Str_support3, Str_support4, Str_support5;
-    double dou_resistance5 = 0.0, dou_resistance4 = 0.0, dou_resistance3 = 0.0, dou_resistance2 = 0.0, dou_resistance1 = 0.0, dou_support1 = 0.0, dou_support2 = 0.0, dou_support3 = 0.0, dou_support4 = 0.0, dou_support5 = 0.0;
+    private String Str_resistance5, Str_resistance4, Str_resistance3, Str_resistance2, Str_resistance1, Str_support1, Str_support2, Str_support3, Str_support4, Str_support5;
+    private double dou_resistance5 = 0.0, dou_resistance4 = 0.0, dou_resistance3 = 0.0, dou_resistance2 = 0.0, dou_resistance1 = 0.0, dou_support1 = 0.0, dou_support2 = 0.0, dou_support3 = 0.0, dou_support4 = 0.0, dou_support5 = 0.0;
 
-    TextView box1, box2, box3, box4, box5, box6, box7, box8, box9, box10, box11, box12, box13, box14, box15, box16, box17, box18, box19,
+    private TextView box1, box2, box3, box4, box5, box6, box7, box8, box9, box10, box11, box12, box13, box14, box15, box16, box17, box18, box19,
             box20, box21, box22, box23, box24, box25, box26, box27, box28, box29, box30, box31, box32, box33, box34, box35, box36, box37,
             box38, box39, box40, box41, box42, box43, box44, box45, box46, box47, box48, box49;
 
-    String box1_str, box2_str, box3_str, box4_str, box5_str, box6_str, box7_str, box8_str, box9_str, box10_str, box11_str, box12_str, box13_str, box14_str, box15_str, box16_str, box17_str, box18_str, box19_str,
+    private String box1_str, box2_str, box3_str, box4_str, box5_str, box6_str, box7_str, box8_str, box9_str, box10_str, box11_str, box12_str, box13_str, box14_str, box15_str, box16_str, box17_str, box18_str, box19_str,
             box20_str, box21_str, box22_str, box23_str, box24_str, box25_str, box26_str, box27_str, box28_str, box29_str, box30_str, box31_str, box32_str, box33_str, box34_str, box35_str, box36_str, box37_str,
             box38_str, box39_str, box40_str, box41_str, box42_str, box43_str, box44_str, box45_str, box46_str, box47_str, box48_str, box49_str;
 
-    double box1_dou = 0.0, box2_dou = 0.0, box3_dou = 0.0, box4_dou = 0.0, box5_dou = 0.0, box6_dou = 0.0, box7_dou = 0.0, box8_dou = 0.0, box9_dou = 0.0, box10_dou = 0.0, box11_dou = 0.0, box12_dou = 0.0, box13_dou = 0.0, box14_dou = 0.0, box15_dou = 0.0, box16_dou = 0.0, box17_dou = 0.0, box18_dou = 0.0, box19_dou = 0.0,
+    private double box1_dou = 0.0, box2_dou = 0.0, box3_dou = 0.0, box4_dou = 0.0, box5_dou = 0.0, box6_dou = 0.0, box7_dou = 0.0, box8_dou = 0.0, box9_dou = 0.0, box10_dou = 0.0, box11_dou = 0.0, box12_dou = 0.0, box13_dou = 0.0, box14_dou = 0.0, box15_dou = 0.0, box16_dou = 0.0, box17_dou = 0.0, box18_dou = 0.0, box19_dou = 0.0,
             box20_dou = 0.0, box21_dou = 0.0, box22_dou = 0.0, box23_dou = 0.0, box24_dou = 0.0, box25_dou = 0.0, box26_dou = 0.0, box27_dou = 0.0, box28_dou = 0.0, box29_dou = 0.0, box30_dou = 0.0, box31_dou = 0.0, box32_dou = 0.0, box33_dou = 0.0, box34_dou = 0.0, box35_dou = 0.0, box36_dou = 0.0, box37_dou = 0.0,
             box38_dou = 0.0, box39_dou = 0.0, box40_dou = 0.0, box41_dou = 0.0, box42_dou = 0.0, box43_dou = 0.0, box44_dou = 0.0, box45_dou = 0.0, box46_dou = 0.0, box47_dou = 0.0, box48_dou = 0.0, box49_dou = 0.0;
 
@@ -78,13 +76,12 @@ public class GannCartCalc extends AppCompatActivity {
             CalcName = bundle.getString("calc");
         }
         init();
-
     }
 
     private void init() {
 
-        tv_title = (TextView) findViewById(R.id.tv_title);
-        iv_back = (ImageView) findViewById(R.id.back_btn_toolbar);
+        final TextView tv_title = (TextView) findViewById(R.id.tv_title);
+        final ImageView iv_back = (ImageView) findViewById(R.id.back_btn_toolbar);
 
         tv_title.setText(CalcName);
         iv_back.setOnClickListener(new View.OnClickListener() {
@@ -96,8 +93,7 @@ public class GannCartCalc extends AppCompatActivity {
 
         Edt_LastTradedPrice = (EditText) findViewById(R.id.Edt_LastTradedPrice);
 
-
-        btn_Calc = (Button) findViewById(R.id.btn_Calc);
+        Button btn_Calc = (Button) findViewById(R.id.btn_Calc);
         tv_buy_above = (TextView) findViewById(R.id.tv_buy_above);
         tv_sell_below = (TextView) findViewById(R.id.tv_sell_below);
         buy_abv_target1 = (TextView) findViewById(R.id.buy_abv_target1);
@@ -162,7 +158,6 @@ public class GannCartCalc extends AppCompatActivity {
         box35 = (TextView) findViewById(R.id.box35);
         box36 = (TextView) findViewById(R.id.box36);
         box37 = (TextView) findViewById(R.id.box37);
-
         box38 = (TextView) findViewById(R.id.box38);
         box39 = (TextView) findViewById(R.id.box39);
         box40 = (TextView) findViewById(R.id.box40);
@@ -176,19 +171,15 @@ public class GannCartCalc extends AppCompatActivity {
         box48 = (TextView) findViewById(R.id.box48);
         box49 = (TextView) findViewById(R.id.box49);
 
-
         btn_Calc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isValid()) {
                     StrLastTradedPrice = Edt_LastTradedPrice.getText().toString().trim();
-
-
                     last_traded_price = StrLastTradedPrice != null ? Double.parseDouble(StrLastTradedPrice) : 0.0;
-
-                    if(last_traded_price < 1000000) {
+                    if (last_traded_price < 1000000) {
                         Calculate();
-                    }else {
+                    } else {
                         Edt_LastTradedPrice.setError("Please Enter Amount Below 10 Lacs.");
                         Edt_LastTradedPrice.requestFocus();
                     }
@@ -201,13 +192,10 @@ public class GannCartCalc extends AppCompatActivity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (isValid()) {
                     StrLastTradedPrice = Edt_LastTradedPrice.getText().toString().trim();
-
-
                     last_traded_price = StrLastTradedPrice != null ? Double.parseDouble(StrLastTradedPrice) : 0.0;
-
-                    if(last_traded_price < 1000000) {
+                    if (last_traded_price < 1000000) {
                         Calculate();
-                    }else {
+                    } else {
                         Edt_LastTradedPrice.setError("Please Enter Amount Below 10 Lacs.");
                         Edt_LastTradedPrice.requestFocus();
                     }
@@ -216,21 +204,17 @@ public class GannCartCalc extends AppCompatActivity {
             }
         });
 
-
     }
 
 
+    @SuppressLint("DefaultLocale")
     private void Calculate() {
-
         InputMethodManager imm = (InputMethodManager) getApplicationContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(Edt_LastTradedPrice.getWindowToken(), 0);
-
         double squareRoot_TradedPrice = Math.sqrt(last_traded_price);
         int squre_rt = (int) squareRoot_TradedPrice;
         int base_value = squre_rt - 1;
-
         box25_dou = base_value * base_value;
-
         box25_str = String.format("%.2f", box25_dou);
         box25.setText(box25_str);
 
@@ -335,7 +319,7 @@ public class GannCartCalc extends AppCompatActivity {
             box30.setBackgroundColor(getApplicationContext().getResources().getColor(R.color.yellow));
             box30.setText(box30_str);
 
-            dou_tv_buy_above =  box23_dou;
+            dou_tv_buy_above = box23_dou;
             dou_tv_sell_below = box31_dou;
 
             dou_resistance1 = box9_dou;
@@ -352,7 +336,6 @@ public class GannCartCalc extends AppCompatActivity {
 
             dou_buy_abv_stop_loss = box31_dou;
             dou_sell_blw_stop_loss = box23_dou;
-
         } else {
             box30.setBackgroundColor(getApplicationContext().getResources().getColor(R.color.white));
             box30.setText("");
@@ -363,7 +346,7 @@ public class GannCartCalc extends AppCompatActivity {
             box16.setBackgroundColor(getApplicationContext().getResources().getColor(R.color.yellow));
             box16.setText(box16_str);
 
-            dou_tv_buy_above =  box9_dou;
+            dou_tv_buy_above = box9_dou;
             dou_tv_sell_below = box23_dou;
 
             dou_resistance1 = box11_dou;
@@ -380,8 +363,6 @@ public class GannCartCalc extends AppCompatActivity {
 
             dou_buy_abv_stop_loss = box23_dou;
             dou_sell_blw_stop_loss = box9_dou;
-
-
         } else {
             box16.setBackgroundColor(getApplicationContext().getResources().getColor(R.color.white));
             box16.setText("");
@@ -392,7 +373,7 @@ public class GannCartCalc extends AppCompatActivity {
             box10.setBackgroundColor(getApplicationContext().getResources().getColor(R.color.yellow));
             box10.setText(box10_str);
 
-            dou_tv_buy_above =  box11_dou;
+            dou_tv_buy_above = box11_dou;
             dou_tv_sell_below = box9_dou;
 
             dou_resistance1 = box13_dou;
@@ -409,7 +390,6 @@ public class GannCartCalc extends AppCompatActivity {
 
             dou_buy_abv_stop_loss = box9_dou;
             dou_sell_blw_stop_loss = box11_dou;
-
         } else {
             box10.setBackgroundColor(getApplicationContext().getResources().getColor(R.color.white));
             box10.setText("");
@@ -420,7 +400,7 @@ public class GannCartCalc extends AppCompatActivity {
             box12.setBackgroundColor(getApplicationContext().getResources().getColor(R.color.yellow));
             box12.setText(box12_str);
 
-            dou_tv_buy_above =  box13_dou;
+            dou_tv_buy_above = box13_dou;
             dou_tv_sell_below = box11_dou;
 
             dou_resistance1 = box27_dou;
@@ -437,7 +417,6 @@ public class GannCartCalc extends AppCompatActivity {
 
             dou_buy_abv_stop_loss = box11_dou;
             dou_sell_blw_stop_loss = box13_dou;
-
         } else {
             box12.setBackgroundColor(getApplicationContext().getResources().getColor(R.color.white));
             box12.setText("");
@@ -448,7 +427,7 @@ public class GannCartCalc extends AppCompatActivity {
             box20.setBackgroundColor(getApplicationContext().getResources().getColor(R.color.yellow));
             box20.setText(box20_str);
 
-            dou_tv_buy_above =  box27_dou;
+            dou_tv_buy_above = box27_dou;
             dou_tv_sell_below = box13_dou;
 
             dou_resistance1 = box41_dou;
@@ -465,7 +444,6 @@ public class GannCartCalc extends AppCompatActivity {
 
             dou_buy_abv_stop_loss = box13_dou;
             dou_sell_blw_stop_loss = box27_dou;
-
         } else {
             box20.setBackgroundColor(getApplicationContext().getResources().getColor(R.color.white));
             box20.setText("");
@@ -476,7 +454,7 @@ public class GannCartCalc extends AppCompatActivity {
             box34.setBackgroundColor(getApplicationContext().getResources().getColor(R.color.yellow));
             box34.setText(box34_str);
 
-            dou_tv_buy_above =  box41_dou;
+            dou_tv_buy_above = box41_dou;
             dou_tv_sell_below = box27_dou;
 
             dou_resistance1 = box39_dou;
@@ -493,7 +471,6 @@ public class GannCartCalc extends AppCompatActivity {
 
             dou_buy_abv_stop_loss = box27_dou;
             dou_sell_blw_stop_loss = box41_dou;
-
         } else {
             box34.setBackgroundColor(getApplicationContext().getResources().getColor(R.color.white));
             box34.setText("");
@@ -504,7 +481,7 @@ public class GannCartCalc extends AppCompatActivity {
             box40.setBackgroundColor(getApplicationContext().getResources().getColor(R.color.yellow));
             box40.setText(box40_str);
 
-            dou_tv_buy_above =  box39_dou;
+            dou_tv_buy_above = box39_dou;
             dou_tv_sell_below = box41_dou;
 
             dou_resistance1 = box37_dou;
@@ -521,7 +498,6 @@ public class GannCartCalc extends AppCompatActivity {
 
             dou_buy_abv_stop_loss = box41_dou;
             dou_sell_blw_stop_loss = box39_dou;
-
         } else {
             box40.setBackgroundColor(getApplicationContext().getResources().getColor(R.color.white));
             box40.setText("");
@@ -532,7 +508,7 @@ public class GannCartCalc extends AppCompatActivity {
             box38.setBackgroundColor(getApplicationContext().getResources().getColor(R.color.yellow));
             box38.setText(box38_str);
 
-            dou_tv_buy_above =  box37_dou;
+            dou_tv_buy_above = box37_dou;
             dou_tv_sell_below = box39_dou;
 
             dou_resistance1 = box22_dou;
@@ -550,13 +526,10 @@ public class GannCartCalc extends AppCompatActivity {
 
             dou_buy_abv_stop_loss = box39_dou;
             dou_sell_blw_stop_loss = box37_dou;
-
-
         } else {
             box38.setBackgroundColor(getApplicationContext().getResources().getColor(R.color.white));
             box38.setText("");
         }
-
 
         dou_buy_abv_target1 = dou_resistance1 * 0.9995;
         dou_buy_abv_target2 = dou_resistance2 * 0.9995;
@@ -600,19 +573,16 @@ public class GannCartCalc extends AppCompatActivity {
         buy_abv_stop_loss.setText(Str_buy_abv_stop_loss);
         sell_blw_stop_loss.setText(Str_sell_blw_stop_loss);
 
-
         Str_resistance1 = String.format("%.2f", dou_resistance1);
         Str_resistance2 = String.format("%.2f", dou_resistance2);
         Str_resistance3 = String.format("%.2f", dou_resistance3);
         Str_resistance4 = String.format("%.2f", dou_resistance4);
         Str_resistance5 = String.format("%.2f", dou_resistance5);
-
         Str_support1 = String.format("%.2f", dou_support1);
         Str_support2 = String.format("%.2f", dou_support2);
         Str_support3 = String.format("%.2f", dou_support3);
         Str_support4 = String.format("%.2f", dou_support4);
         Str_support5 = String.format("%.2f", dou_support5);
-
 
         res5.setText(Str_resistance5);
         res4.setText(Str_resistance4);
@@ -625,28 +595,21 @@ public class GannCartCalc extends AppCompatActivity {
         sup3.setText(Str_support3);
         sup4.setText(Str_support4);
         sup5.setText(Str_support5);
-
-
     }
 
 
     private boolean isValid() {
-
         boolean result = true;
-
-        if (!MyValidator.isValidField(Edt_LastTradedPrice)) {
+        if (MyValidator.isValidField(Edt_LastTradedPrice)) {
             Edt_LastTradedPrice.requestFocus();
             CommonMethods.DisplayToastWarning(getApplicationContext(), "Please Enter Last Traded Price");
             result = false;
         }
-
-
         return result;
     }
 
     public void OnResetClicked(View view) {
         Edt_LastTradedPrice.setText("");
-
         tv_buy_above.setText("");
         tv_sell_below.setText("");
         buy_abv_target1.setText("");
@@ -661,7 +624,6 @@ public class GannCartCalc extends AppCompatActivity {
         sell_bel_target5.setText("");
         buy_abv_stop_loss.setText("");
         sell_blw_stop_loss.setText("");
-
         res1.setText("");
         res2.setText("");
         res3.setText("");
@@ -672,7 +634,6 @@ public class GannCartCalc extends AppCompatActivity {
         sup3.setText("");
         sup4.setText("");
         sup5.setText("");
-
         box1.setText("");
         box2.setText("");
         box3.setText("");
@@ -722,8 +683,6 @@ public class GannCartCalc extends AppCompatActivity {
         box47.setText("");
         box48.setText("");
         box49.setText("");
-
-
         box30.setBackgroundColor(getApplicationContext().getResources().getColor(R.color.white));
         box16.setBackgroundColor(getApplicationContext().getResources().getColor(R.color.white));
         box10.setBackgroundColor(getApplicationContext().getResources().getColor(R.color.white));
@@ -732,7 +691,6 @@ public class GannCartCalc extends AppCompatActivity {
         box34.setBackgroundColor(getApplicationContext().getResources().getColor(R.color.white));
         box40.setBackgroundColor(getApplicationContext().getResources().getColor(R.color.white));
         box38.setBackgroundColor(getApplicationContext().getResources().getColor(R.color.white));
-
         Edt_LastTradedPrice.requestFocus();
     }
 
@@ -740,6 +698,5 @@ public class GannCartCalc extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.animator.left_right, R.animator.right_left);
-
     }
 }

@@ -2,24 +2,19 @@ package in.techxilla.www.marketxilla.adaptor;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-
 import com.bumptech.glide.Glide;
 import com.smarteist.autoimageslider.SliderViewAdapter;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import in.techxilla.www.marketxilla.R;
 import in.techxilla.www.marketxilla.model.SliderItem;
 
-public class ImageSliderAdapter extends  SliderViewAdapter<ImageSliderAdapter.SliderAdapterVH> {
+public class ImageSliderAdapter extends SliderViewAdapter<ImageSliderAdapter.SliderAdapterVH> {
 
     private final Context context;
     private View mItemView;
@@ -55,36 +50,20 @@ public class ImageSliderAdapter extends  SliderViewAdapter<ImageSliderAdapter.Sl
     public void onBindViewHolder(SliderAdapterVH viewHolder, final int position) {
 
         SliderItem sliderItem = mSliderItems.get(position);
-
-        /*viewHolder.textViewDescription.setText(sliderItem.getDescription());
-        viewHolder.textViewDescription.setTextSize(16);
-        viewHolder.textViewDescription.setTextColor(Color.WHITE);*/
-        Log.d("getDrawableImg",""+sliderItem.getDrawableImage());
-        if(context!=null) {
+        if (context != null) {
             Glide.with(context)
                     .load(sliderItem.getDrawableImage())
                     .fitCenter()
                     .into(viewHolder.imageViewBackground);
-
-            //viewHolder.imageViewBackground.setImageDrawable(mItemView.getContext().getDrawable(sliderItem.getDrawableImage()));
         }
-        /*viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Toast.makeText(context, "This is item in position " + position, Toast.LENGTH_SHORT).show();
-            }
-        });*/
     }
 
     @Override
     public int getCount() {
-        //slider view count could be dynamic size
         return mSliderItems.size();
     }
 
-    class SliderAdapterVH extends SliderViewAdapter.ViewHolder  {
-
-
+    class SliderAdapterVH extends SliderViewAdapter.ViewHolder {
         ImageView imageViewBackground;
         ImageView imageGifContainer;
         TextView textViewDescription;
@@ -97,5 +76,4 @@ public class ImageSliderAdapter extends  SliderViewAdapter<ImageSliderAdapter.Sl
             mItemView = itemView;
         }
     }
-
 }

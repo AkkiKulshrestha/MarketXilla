@@ -19,6 +19,8 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Map;
 
 import in.techxilla.www.marketxilla.NewDashboard;
@@ -29,25 +31,20 @@ public class CloudMessagingService extends FirebaseMessagingService {
     public static final String NOTIFICATION_CHANNEL_ID = String.valueOf(System.currentTimeMillis());
     private static final String TAG = "CloudMessagingService";
     private final static String default_notification_channel_id = "default";
-    String mController = null, mUrl = null, contentText = "", title = "";
+    private String mController = null;
+    private String mUrl = null;
+    private String contentText = "";
+    private String title = "";
 
     @Override
-    public void onMessageReceived(RemoteMessage remoteMessage) {
+    public void onMessageReceived(@NotNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-        // log the getting message from firebase
-        Log.d(TAG, "From: " + remoteMessage.getData().toString());
-//        Log.d(TAG, "From: " + remoteMessage.getNotification().getTitle());
-        //  if remote message contains a data payload.
         try {
-
             if (remoteMessage.getData().size() > 0) {
-                Log.d(TAG, "Message data payload: " + remoteMessage.getData());
-
                 Bundle extras = new Bundle();
                 for (Map.Entry<String, String> entry : remoteMessage.getData().entrySet()) {
                     extras.putString(entry.getKey(), entry.getValue());
                 }
-
 
                 if (extras.getString("controller") != null)
                     mController = extras.getString("controller");
@@ -61,7 +58,6 @@ public class CloudMessagingService extends FirebaseMessagingService {
                 title = remoteMessage.getNotification().getTitle();
             }
 
-            // Check if message contains a notification payload.
             if (remoteMessage.getData() != null) {
                 sendNotification(mController, mUrl, title, contentText);
             }
@@ -71,16 +67,14 @@ public class CloudMessagingService extends FirebaseMessagingService {
     }
 
     @Override
-    public void onNewToken(String token) {
+    public void onNewToken(@NotNull String token) {
         super.onNewToken(token);
         Log.d(TAG, "Refreshed token: " + token);
         sendRegistrationToServer(token);
-
     }
 
     public String CreateNewToken() {
-
-        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        final String refreshedToken = FirebaseInstanceId.getInstance().getToken();
         return refreshedToken;
     }
 
@@ -92,7 +86,6 @@ public class CloudMessagingService extends FirebaseMessagingService {
      */
     private void sendRegistrationToServer(String token) {
         UtilitySharedPreferences.setPrefs(getApplicationContext(), "token", token);
-        // make a own server request here using your http client
     }
 
     /**
@@ -101,13 +94,10 @@ public class CloudMessagingService extends FirebaseMessagingService {
     private void sendNotification(String controller, String url, String title, String contentText) {
         PendingIntent resultPendingIntent;
         Intent intentApp = null;
-
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-
         intentApp = new Intent(this, NewDashboard.class);
         stackBuilder.addNextIntent(intentApp);
         resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder =
@@ -122,17 +112,13 @@ public class CloudMessagingService extends FirebaseMessagingService {
                         .setPriority(NotificationManager.IMPORTANCE_HIGH)
                         .setContentIntent(resultPendingIntent);
 
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        // Since android Oreo notification channel is needed.
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Channel human readable title
             NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
                     "CLOUD MESSAGING SERVICE",
                     NotificationManager.IMPORTANCE_DEFAULT);
             notificationManager.createNotificationChannel(channel);
         }
         notificationManager.notify((int) System.currentTimeMillis(), notificationBuilder.build());
-
     }
 }

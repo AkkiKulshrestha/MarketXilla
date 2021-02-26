@@ -18,7 +18,6 @@ package in.techxilla.www.marketxilla.utils;
 
 
 import android.os.Bundle;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +26,6 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import in.techxilla.www.marketxilla.R;
-import in.techxilla.www.marketxilla.fragment.PackageFragment;
 
 /**
  * A fragment representing a single step in a wizard. The fragment shows a dummy title indicating
@@ -47,6 +45,9 @@ public class ScreenSlidePageFragment extends Fragment {
      */
     private int mPageNumber;
 
+    public ScreenSlidePageFragment() {
+    }
+
     /**
      * Factory method for this fragment class. Constructs a new fragment for the given page number.
      */
@@ -56,9 +57,6 @@ public class ScreenSlidePageFragment extends Fragment {
         args.putInt(ARG_PAGE, pageNumber);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public ScreenSlidePageFragment() {
     }
 
     @Override
@@ -75,8 +73,7 @@ public class ScreenSlidePageFragment extends Fragment {
                 .inflate(R.layout.plan_slide1, container, false);
 
         // Set the title view to show the page number.
-       ((TextView) rootView.findViewById(R.id.tv_msg1)).setText(getString(R.string.plan_msg1));
-
+        ((TextView) rootView.findViewById(R.id.tv_msg1)).setText(getString(R.string.plan_msg1));
         return rootView;
     }
 

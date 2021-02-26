@@ -21,53 +21,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Dir implements Parcelable {
-    private long id;
-    private String name;
-    private Uri preview;
-    private int count;
-
-    public Dir() {
-    }
-
-    protected Dir(Parcel in) {
-        id = in.readLong();
-        name = in.readString();
-        preview = in.readParcelable(Uri.class.getClassLoader());
-        count = in.readInt();
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setCount(int count) {
-        this.count = count;
-    }
-
-    public int getCount() {
-        return count;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setPreview(Uri preview) {
-        this.preview = preview;
-    }
-
-    public Uri getPreview() {
-        return preview;
-    }
-
     public static final Creator<Dir> CREATOR = new Creator<Dir>() {
         @Override
         public Dir createFromParcel(Parcel in) {
@@ -79,6 +32,52 @@ public class Dir implements Parcelable {
             return new Dir[size];
         }
     };
+    private long id;
+    private String name;
+    private Uri preview;
+    private int count;
+
+    public Dir() {
+    }
+
+    protected Dir(final Parcel in) {
+        id = in.readLong();
+        name = in.readString();
+        preview = in.readParcelable(Uri.class.getClassLoader());
+        count = in.readInt();
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Uri getPreview() {
+        return preview;
+    }
+
+    public void setPreview(Uri preview) {
+        this.preview = preview;
+    }
 
     @Override
     public int describeContents() {
@@ -86,7 +85,7 @@ public class Dir implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
+    public void writeToParcel(final Parcel dest, final int flags) {
         dest.writeLong(id);
         dest.writeString(name);
         dest.writeParcelable(preview, flags);

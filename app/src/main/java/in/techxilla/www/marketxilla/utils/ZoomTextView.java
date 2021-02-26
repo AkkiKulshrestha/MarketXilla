@@ -1,5 +1,6 @@
 package in.techxilla.www.marketxilla.utils;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -16,12 +17,9 @@ import androidx.appcompat.widget.AppCompatTextView;
 public class ZoomTextView extends AppCompatTextView {
     private static final String TAG = "ZoomTextView";
     private ScaleGestureDetector mScaleDetector;
-
     private float mScaleFactor = 1.f;
     private float defaultSize;
-
     private float zoomLimit = 3.0f;
-
 
     public ZoomTextView(Context context) {
         super(context);
@@ -41,7 +39,6 @@ public class ZoomTextView extends AppCompatTextView {
     private void initialize() {
         defaultSize = getTextSize();
         mScaleDetector = new ScaleGestureDetector(getContext(), new ScaleListener());
-
     }
 
     /***
@@ -58,6 +55,7 @@ public class ZoomTextView extends AppCompatTextView {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(@NonNull MotionEvent ev) {
         super.onTouchEvent(ev);
@@ -70,7 +68,6 @@ public class ZoomTextView extends AppCompatTextView {
     and mScaleFactor is mapped between 1.0 and and zoomLimit
     that is 3.0 by default. You can also change it. 3.0 means text
     can zoom to 3 times the default value.*/
-
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {

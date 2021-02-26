@@ -11,20 +11,15 @@ import java.io.File;
  */
 public class Constant {
 
-    public static Dialog mProgressDialog;
-
-    public String Plan;
-
-    public static String[] Month = new String[] {"January","February","March","April","May","June","July","August","September","October","November","December"};
-    public static String[] Period = new String[] {"Monthly","Quarterly","Half Yearly","Yearly" };
-    public static String[] SpinnerBreakPeriod= new String[] {"0", "1","2","3","4","5","6","7","8","9","10","11","12" };
-
     public static final String APP_NAME = "ABKMS";
     public static final String BASE_DIR = APP_NAME + File.separator;
-   //public static final String DIR_ROOT = FileUtils.getRootPath() + File.separator + Constant.BASE_DIR;
+    public static Dialog mProgressDialog;
+    public static String[] Month = new String[]{"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+    public static String[] Period = new String[]{"Monthly", "Quarterly", "Half Yearly", "Yearly"};
+    public static String[] SpinnerBreakPeriod = new String[]{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"};
+    public String Plan;
 
     public static Typeface TextBoldFont(Context context) {
-
         return Typeface.createFromAsset(context.getAssets(),
                 "font/Lato_bold.ttf");
     }
@@ -41,8 +36,6 @@ public class Constant {
                 "font/helvetica_neue_light.ttf");
     }
 
-
-
     public static Typeface LatoBold(Context context) {
 
         return Typeface.createFromAsset(context.getAssets(),
@@ -55,22 +48,15 @@ public class Constant {
                 "font/Lato_regular.ttf");
     }
 
-
-
-
     public static Typeface OpenSansBold(Context context) {
 
         return Typeface.createFromAsset(context.getAssets(),
                 "font/opensans_bold.ttf");
     }
 
-
-
-
     public static Typeface HelveticaBold(Context context) {
 
         return Typeface.createFromAsset(context.getAssets(),
                 "font/helvetica_neu_bold.ttf");
     }
-
 }

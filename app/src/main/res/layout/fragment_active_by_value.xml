@@ -5,32 +5,28 @@
     android:orientation="vertical">
 
     <TextView
+        android:id="@+id/tv_AsOnDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tv_AsOnDate"
-        android:layout_margin="5dp"
-        android:padding="10dp"
         android:layout_centerHorizontal="true"
-        android:gravity="center"
+        android:layout_margin="5dp"
         android:background="@color/colorPrimary"
+        android:gravity="center"
+        android:padding="10dp"
         android:textColor="@color/white"
-        android:textSize="14sp"/>
-
+        android:textSize="14sp" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
         android:layout_below="@+id/tv_AsOnDate"
-        >
+        android:fitsSystemWindows="true">
 
         <LinearLayout
             android:id="@+id/ll_parent_market"
-            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-
-            />
+            android:orientation="vertical" />
 
     </ScrollView>
 

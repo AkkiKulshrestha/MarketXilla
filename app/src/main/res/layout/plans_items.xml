@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -11,7 +10,6 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:orientation="vertical">
-
 
         <LinearLayout
             android:id="@+id/ll_header"
@@ -46,7 +44,6 @@
                 android:padding="4dp"
                 android:src="@mipmap/ic_down_white" />
 
-
         </LinearLayout>
 
         <TableLayout
@@ -57,7 +54,6 @@
             android:padding="4dp"
             android:stretchColumns="*"
             android:visibility="gone">
-
 
             <TableRow
                 android:id="@+id/table1"
@@ -92,7 +88,6 @@
                     android:textColor="@color/black"
                     android:textSize="12sp"
                     android:textStyle="bold" />
-
 
             </TableRow>
 
@@ -178,7 +173,6 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="3"
                     android:background="@drawable/border"
-
                     android:gravity="start"
                     android:padding="8dp"
                     android:text="Amount"
@@ -198,7 +192,6 @@
                     android:textColor="@color/black"
                     android:textSize="12sp"
                     android:textStyle="bold" />
-
             </TableRow>
 
             <TableRow
@@ -215,7 +208,6 @@
                     android:background="@drawable/border"
                     android:gravity="start"
                     android:padding="8dp"
-
                     android:text="Paying Via"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/dark_grey"
@@ -233,8 +225,6 @@
                     android:textColor="@color/black"
                     android:textSize="12sp"
                     android:textStyle="bold" />
-
-
             </TableRow>
 
             <TableRow
@@ -265,14 +255,12 @@
                     android:background="@drawable/border"
                     android:gravity="right"
                     android:padding="8dp"
-                    android:text=""
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/black"
                     android:textSize="12sp"
                     android:textStyle="bold" />
-
-
             </TableRow>
+
             <LinearLayout
                 android:id="@+id/tableRow7"
                 android:layout_width="match_parent"
@@ -312,12 +300,10 @@
                     android:textColor="@color/white"
                     android:textSize="10sp"
                     android:textStyle="bold" />
-
-
             </LinearLayout>
 
         </TableLayout>
 
-
     </LinearLayout>
+
 </LinearLayout>

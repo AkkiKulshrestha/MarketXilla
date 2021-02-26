@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="in.techxilla.www.marketxilla"
     android:installLocation="auto">
-    <!-- Include required permissions for Google Mobile Ads to run. -->
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
@@ -19,7 +22,9 @@
         android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme.NoActionBar">
+        android:theme="@style/AppTheme.NoActionBar"
+        tools:ignore="AllowBackup"
+        tools:replace="android:allowBackup">
 
         <activity android:name=".SplashActivity">
             <intent-filter>
@@ -31,7 +36,8 @@
 
         <receiver
             android:name=".service.SMSBroadcastReceiver"
-            android:exported="true">
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
             <intent-filter>
                 <action android:name="com.google.android.gms.auth.api.phone.SMS_RETRIEVED" />
             </intent-filter>
@@ -43,19 +49,7 @@
 
 
         <!-- Firebase Cloud Message -->
-
-      <!--  -->
-
-        <!--
- Set color used with incoming notification messages.
-        This is used when no color is set for the incoming notification message. See README
-        (https://github.com/firebase/quickstart-android/tree/master/messaging#custom-default-color) for more.
-        -->
-       <!-- <meta-data
-            android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/black" />-->
-
-       <meta-data
+        <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_new_notification_icon" />
 
@@ -68,16 +62,11 @@
             </intent-filter>
         </service>
 
-
         <activity
             android:name=".NewDashboard"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustPan" />
-        <activity
-            android:name=".SubscriptionActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".NotificationActivity"
             android:screenOrientation="portrait"
@@ -100,9 +89,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <activity android:name=".WebViewActivity"
+        <activity
+            android:name=".WebViewActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <uses-library
             android:name="org.apache.http.legacy"

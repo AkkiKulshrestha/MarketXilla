@@ -16,11 +16,47 @@ public class NumberTextWatcherForThousand implements TextWatcher {
 
     EditText editText;
 
-
     public NumberTextWatcherForThousand(EditText editText) {
         this.editText = editText;
+    }
 
+    public static String getDecimalFormattedString(String value) {
+        StringTokenizer lst = new StringTokenizer(value, ".");
+        String str1 = value;
+        String str2 = "";
+        if (lst.countTokens() > 1) {
+            str1 = lst.nextToken();
+            str2 = lst.nextToken();
+        }
+        String str3 = "";
+        int i = 0;
+        int j = -1 + str1.length();
+        if (str1.charAt(-1 + str1.length()) == '.') {
+            j--;
+            str3 = ".";
+        }
+        for (int k = j; ; k--) {
+            if (k < 0) {
+                if (str2.length() > 0)
+                    str3 = str3 + "." + str2;
+                return str3;
+            }
+            if (i == 3) {
+                str3 = "," + str3;
+                i = 0;
+            }
+            str3 = str1.charAt(k) + str3;
+            i++;
+        }
+    }
 
+    public static String trimCommaOfString(String string) {
+        // String returnString;
+        if (string.contains(",")) {
+            return string.replace(",", "");
+        } else {
+            return string;
+        }
     }
 
     @Override
@@ -36,17 +72,15 @@ public class NumberTextWatcherForThousand implements TextWatcher {
     @Override
     public void afterTextChanged(Editable s) {
         editText.removeTextChangedListener(this);
-
         try {
             String originalString = s.toString();
-
-            Long longval;
+            long longval;
             if (originalString.contains(",")) {
                 originalString = originalString.replaceAll(",", "");
             }
-            if(!originalString.equalsIgnoreCase("")) {
+            if (!originalString.equalsIgnoreCase("")) {
                 longval = Long.parseLong(originalString);
-            }else{
+            } else {
                 longval = Long.parseLong("0");
             }
             DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
@@ -59,54 +93,6 @@ public class NumberTextWatcherForThousand implements TextWatcher {
         } catch (NumberFormatException nfe) {
             nfe.printStackTrace();
         }
-
         editText.addTextChangedListener(this);
-    }
-
-    public static String getDecimalFormattedString(String value)
-    {
-        StringTokenizer lst = new StringTokenizer(value, ".");
-        String str1 = value;
-        String str2 = "";
-        if (lst.countTokens() > 1)
-        {
-            str1 = lst.nextToken();
-            str2 = lst.nextToken();
-        }
-        String str3 = "";
-        int i = 0;
-        int j = -1 + str1.length();
-        if (str1.charAt( -1 + str1.length()) == '.')
-        {
-            j--;
-            str3 = ".";
-        }
-        for (int k = j;; k--)
-        {
-            if (k < 0)
-            {
-                if (str2.length() > 0)
-                    str3 = str3 + "." + str2;
-                return str3;
-            }
-            if (i == 3)
-            {
-                str3 = "," + str3;
-                i = 0;
-            }
-            str3 = str1.charAt(k) + str3;
-            i++;
-        }
-
-    }
-
-    public static String trimCommaOfString(String string) {
-//        String returnString;
-        if(string.contains(",")){
-            return string.replace(",","");}
-        else {
-            return string;
-        }
-
     }
 }

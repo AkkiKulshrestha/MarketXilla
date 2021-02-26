@@ -2,25 +2,26 @@ package in.techxilla.www.marketxilla.model;
 
 public class CallModel {
 
-    String id;
-    String stock_name;
-    String date;
-    String is_buy_sell;
-    String buy_sell_above_below;
-    String stop_loss;
-    String target1;
-    String target2;
-    String target3;
-    String ce_pe;
-    String strike;
-    String performance_for;
-    String performance_for_id;
-    String profit_loss;
-    String buy_sell_closing_price;
+    private String id;
+    private String stock_name;
+    private String date;
+    private String is_buy_sell;
+    private String buy_sell_above_below;
+    private String stop_loss;
+    private String target1;
+    private String target2;
+    private String target3;
+    private String ce_pe;
+    private String strike;
+    private String performance_for;
+    private String performance_for_id;
+    private String profit_loss;
+    private String buy_sell_closing_price;
+    private String is_active_performance;
+    private String is_call_for_paid_customer;
 
-
-    String is_active_performance;
-    String is_call_for_paid_customer;
+    public CallModel() {
+    }
 
     public String getProfit_loss() {
         return profit_loss;
@@ -53,11 +54,6 @@ public class CallModel {
     public void setIs_call_for_paid_customer(String is_call_for_paid_customer) {
         this.is_call_for_paid_customer = is_call_for_paid_customer;
     }
-
-
-    public CallModel() {
-    }
-
 
     public String getPerformance_for() {
         return performance_for;

@@ -5,33 +5,21 @@
             <!-- SHADOW -->
             <item>
                 <shape>
-                    <solid android:color="@color/colorAccent"/>
+                    <solid android:color="@color/colorAccent" />
                     <!-- alttan gölge -->
-                    <corners android:radius="10dp"/>
+                    <corners android:radius="10dp" />
                 </shape>
             </item>
             <!-- BUTTON alttan gölge
               android:right="5px" to make it round-->
-            <item
-                android:bottom="3px"
-                android:top="3px"
-                android:left="3px"
-                android:right="3px"
-                >
+            <item android:bottom="3px" android:left="3px" android:right="3px" android:top="3px">
                 <shape>
-                    <padding android:bottom="5dp"/>
-                    <gradient
-                        android:startColor="@color/white"
-                        android:endColor="@color/white"
+                    <padding android:bottom="5dp" />
+                    <gradient android:angle="270" android:endColor="@color/white"
 
-                        android:angle="270" />
-                    <corners
-                        android:radius="10dp"/>
-                    <padding
-                        android:left="8dp"
-                        android:top="8dp"
-                        android:right="8dp"
-                        android:bottom="8dp"/>
+                        android:startColor="@color/white" />
+                    <corners android:radius="10dp" />
+                    <padding android:bottom="8dp" android:left="8dp" android:right="8dp" android:top="8dp" />
                 </shape>
             </item>
         </layer-list>
@@ -42,26 +30,18 @@
             <!-- SHADOW -->
             <item>
                 <shape>
-                    <solid android:color="#102746"/>
-                    <corners android:radius="19dp"/>
+                    <solid android:color="#102746" />
+                    <corners android:radius="19dp" />
 
                 </shape>
             </item>
             <!-- BUTTON -->
             <item android:bottom="5px">
                 <shape>
-                    <padding android:bottom="5dp"/>
-                    <gradient
-                        android:startColor="@color/wetland_logo_color"
-                        android:endColor="@color/wetland_logo_color"
-                        android:angle="270" />
-                    <corners
-                        android:radius="19dp"/>
-                    <padding
-                        android:left="8dp"
-                        android:top="8dp"
-                        android:right="8dp"
-                        android:bottom="8dp"/>
+                    <padding android:bottom="5dp" />
+                    <gradient android:angle="270" android:endColor="@color/wetland_logo_color" android:startColor="@color/wetland_logo_color" />
+                    <corners android:radius="19dp" />
+                    <padding android:bottom="8dp" android:left="8dp" android:right="8dp" android:top="8dp" />
                 </shape>
             </item>
         </layer-list>

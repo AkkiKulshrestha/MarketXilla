@@ -5,30 +5,23 @@
             <!-- SHADOW -->
             <item>
                 <shape>
-                    <solid android:color="@color/white"/>
+                    <solid android:color="@color/white" />
                     <!-- alttan gölge -->
 
                 </shape>
             </item>
             <!-- BUTTON alttan gölge
               android:right="5px" to make it round-->
-            <item
-                android:bottom="2px"
+            <item android:bottom="2px"
 
                 >
                 <shape>
-                    <padding android:bottom="5dp"/>
-                    <gradient
-                        android:startColor="@color/colorAccent"
-                        android:endColor="@color/colorAccent"
+                    <padding android:bottom="5dp" />
+                    <gradient android:angle="270" android:endColor="@color/colorAccent"
 
-                        android:angle="270" />
+                        android:startColor="@color/colorAccent" />
 
-                    <padding
-                        android:left="5dp"
-                        android:top="5dp"
-                        android:right="5dp"
-                        android:bottom="5dp"/>
+                    <padding android:bottom="5dp" android:left="5dp" android:right="5dp" android:top="5dp" />
                 </shape>
             </item>
         </layer-list>
@@ -39,7 +32,7 @@
             <!-- SHADOW -->
             <item>
                 <shape>
-                    <solid android:color="@color/white"/>
+                    <solid android:color="@color/white" />
 
 
                 </shape>
@@ -47,18 +40,10 @@
             <!-- BUTTON -->
             <item android:bottom="1px">
                 <shape>
-                    <padding android:bottom="5dp"/>
-                    <gradient
-                        android:startColor="@color/colorPrimary"
-                        android:endColor="@color/colorPrimary"
-                        android:angle="270" />
-                    <corners
-                        android:radius="19dp"/>
-                    <padding
-                        android:left="15dp"
-                        android:top="10dp"
-                        android:right="5dp"
-                        android:bottom="10dp"/>
+                    <padding android:bottom="5dp" />
+                    <gradient android:angle="270" android:endColor="@color/colorPrimary" android:startColor="@color/colorPrimary" />
+                    <corners android:radius="19dp" />
+                    <padding android:bottom="10dp" android:left="15dp" android:right="5dp" android:top="10dp" />
                 </shape>
             </item>
         </layer-list>

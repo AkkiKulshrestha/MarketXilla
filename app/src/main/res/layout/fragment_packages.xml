@@ -1,53 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorAccent">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="true"
         android:layout_marginTop="60sp"
-        >
+        android:fitsSystemWindows="true">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginEnd="10sp"
-        android:layout_marginStart="10sp"
-        android:padding="5dp"
-        >
-        <TextView
-            android:id="@+id/tv_text"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Packages"
-            android:layout_marginTop="5sp"
-            android:textSize="16sp"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:visibility="gone"
-            android:layout_marginStart="5sp"
+            android:layout_marginStart="10sp"
             android:layout_marginEnd="10sp"
-            android:layout_marginBottom="5dp"
-            android:textColor="@color/colorPrimary"/>
+            android:orientation="vertical"
+            android:padding="5dp">
 
+            <TextView
+                android:id="@+id/tv_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="5sp"
+                android:layout_marginTop="5sp"
+                android:layout_marginEnd="10sp"
+                android:layout_marginBottom="5dp"
+                android:gravity="center"
+                android:text="Packages"
+                android:textColor="@color/colorPrimary"
+                android:textSize="16sp"
+                android:visibility="gone" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerSmartPlan"
-            android:layout_width="match_parent"
-            android:visibility="visible"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerSmartPlan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="visible" />
 
-            android:layout_height="wrap_content"/>
-
-
-
-
-    </LinearLayout>
+        </LinearLayout>
 
     </ScrollView>
 

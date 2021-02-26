@@ -11,12 +11,9 @@ public class AppController extends Application {
 
     public static final String TAG = AppController.class
             .getSimpleName();
-
-    private RequestQueue mRequestQueue;
-
     private static AppController mInstance;
     private static boolean activityVisible;
-
+    private RequestQueue mRequestQueue;
 
     public static boolean isHomeActivityRunning() {
         return activityVisible;
@@ -24,7 +21,6 @@ public class AppController extends Application {
 
     public static void activityOnCreated() {
         activityVisible = true;
-
     }
 
     public static void activityResumed() {
@@ -39,21 +35,20 @@ public class AppController extends Application {
         activityVisible = false;
     }
 
+    public static synchronized AppController getInstance() {
+        return mInstance;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
         mInstance = this;
     }
 
-    public static synchronized AppController getInstance() {
-        return mInstance;
-    }
-
     public RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
             mRequestQueue = Volley.newRequestQueue(getApplicationContext());
         }
-
         return mRequestQueue;
     }
 

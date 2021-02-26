@@ -13,10 +13,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SMSBroadcastReceiver extends BroadcastReceiver {
-    Pattern p;
-    Matcher matcher;
-
+    private Matcher matcher;
     private OTPReceiveListener otpReceiveListener;
+
+    public SMSBroadcastReceiver(OTPReceiveListener receiveListener) {
+        otpReceiveListener = receiveListener;
+    }
+
+    public SMSBroadcastReceiver() {
+    }
 
     public OTPReceiveListener getOtpReceiveListener() {
         return otpReceiveListener;
@@ -26,30 +31,18 @@ public class SMSBroadcastReceiver extends BroadcastReceiver {
         this.otpReceiveListener = otpReceiveListener;
     }
 
-    public SMSBroadcastReceiver(OTPReceiveListener receiveListener) {
-        otpReceiveListener = receiveListener;
-    }
-
-    public interface OTPReceiveListener {
-        void onSuccessOtp(String otp);
-    }
-
-    public SMSBroadcastReceiver() {
-    }
-
     @Override
     public void onReceive(Context context, Intent intent) {
         if (SmsRetriever.SMS_RETRIEVED_ACTION.equals(intent.getAction())) {
-            Bundle extras = intent.getExtras();
-            Status status = (Status) extras.get(SmsRetriever.EXTRA_STATUS);
+            final Bundle extras = intent.getExtras();
+            final Status status = (Status) extras.get(SmsRetriever.EXTRA_STATUS);
 
             if (status != null) {
                 switch (status.getStatusCode()) {
                     case CommonStatusCodes.SUCCESS:
-                        // Get SMS message contents
                         String message = (String) extras.get(SmsRetriever.EXTRA_SMS_MESSAGE);
                         if (message != null) {
-                            p = Pattern.compile(".*?(\\d{6}).*?");
+                            Pattern p = Pattern.compile(".*?(\\d{6}).*?");
                             matcher = p.matcher(message);
                         }
 
@@ -58,15 +51,15 @@ public class SMSBroadcastReceiver extends BroadcastReceiver {
                                 otpReceiveListener.onSuccessOtp(matcher.group(1));
                             }
                         }
-                        // Extract one-time code from the message and complete verification
-                        // by sending the code back to your server.
                         break;
                     case CommonStatusCodes.TIMEOUT:
-                        // Waiting for SMS timed out (5 minutes)
-                        // Handle the error ...
                         break;
                 }
             }
         }
+    }
+
+    public interface OTPReceiveListener {
+        void onSuccessOtp(String otp);
     }
 }

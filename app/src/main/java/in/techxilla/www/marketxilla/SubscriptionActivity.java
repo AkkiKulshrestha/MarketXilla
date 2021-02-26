@@ -1,3 +1,4 @@
+/*
 package in.techxilla.www.marketxilla;
 
 import android.annotation.SuppressLint;
@@ -48,38 +49,41 @@ import static in.techxilla.www.marketxilla.utils.CommonMethods.DisplaySnackBar;
 import static in.techxilla.www.marketxilla.webservices.RestClient.ROOT_URL;
 
 public class SubscriptionActivity extends AppCompatActivity {
-
-    ProgressDialog myDialog;
-    TextView tv_title;
-    ImageView iv_back;
-    TextView tv_silver_1, tv_silver_2, tv_silver_3;
-    TextView tv_gold_1, tv_gold_2, tv_gold_3;
-    TextView tv_platinum_1, tv_platinum_2, tv_platinum_3;
-    TextView tv_fs_1, tv_fs_2, tv_fs_3;
-    TextView tv_os_1, tv_os_2, tv_os_3;
-    TextView tv_cs_1, tv_cs_2, tv_cs_3;
-
-    Spinner Spn_Package, Spn_Plan;
-
-    ArrayList<String> planList = new ArrayList<String>();
-    ArrayList<Double> planAmountList = new ArrayList<Double>();
-
-    String StrPackage = "", StrPlanSelected = "";
-    Double StrPlanAmount = 0.0;
-    String StrUpiAccountId = "", StrUPI_MerchantName = "", StrSubscrptionAmount = "",status;
     final int UPI_PAYMENT = 0;
+    private ProgressDialog myDialog;
+    private TextView tv_title;
+    private ImageView iv_back;
+    private TextView tv_silver_1, tv_silver_2, tv_silver_3;
+    private TextView tv_gold_1, tv_gold_2, tv_gold_3;
+    private TextView tv_platinum_1, tv_platinum_2, tv_platinum_3;
+    private TextView tv_fs_1, tv_fs_2, tv_fs_3;
+    private TextView tv_os_1, tv_os_2, tv_os_3;
+    private TextView tv_cs_1, tv_cs_2, tv_cs_3;
+    private Spinner Spn_Package, Spn_Plan;
+    private ArrayList<String> planList = new ArrayList<String>();
+    private ArrayList<Double> planAmountList = new ArrayList<Double>();
+    private String StrPackage, StrPlanSelected;
+    private double StrPlanAmount = 0.0;
+    private String StrUpiAccountId = "", StrUPI_MerchantName = "", StrSubscrptionAmount = "", status;
+    private Button btnSubscribe;
+    private ViewGroup viewGroup;
+    private String GOOGLE_PAY_PACKAGE_NAME = "com.google.android.apps.nbu.paisa.user";
+    private int GOOGLE_PAY_REQUEST_CODE = 123;
+    private Uri uri;
 
-    Button btnSubscribe;
-    ViewGroup viewGroup;
-    String GOOGLE_PAY_PACKAGE_NAME = "com.google.android.apps.nbu.paisa.user";
-    int GOOGLE_PAY_REQUEST_CODE = 123;
-    Uri uri;
+    private static boolean isAppInstalled(Context context, String packageName) {
+        try {
+            context.getPackageManager().getApplicationInfo(packageName, 0);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subscriptions);
-
 
 
         viewGroup = (ViewGroup) ((ViewGroup) this
@@ -178,24 +182,25 @@ public class SubscriptionActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-               // if (isValidSubcription())
+                // if (isValidSubcription())
                 {
                     //CommonMethods.DisplayToastInfo(getApplicationContext(), ""+StrPackage + "-->"+StrPlanSelected + "-->" +StrPlanAmount);
 
-                    StrSubscrptionAmount ="1.00"; //String.format("%.2f", StrPlanAmount);
+                    StrSubscrptionAmount = "1.00"; //String.format("%.2f", StrPlanAmount);
 
 
                     uri = new Uri.Builder()
-                                    .scheme("upi")
-                                    .authority("pay")
-                                    .appendQueryParameter("pa", StrUpiAccountId)       // virtual ID
-                                    .appendQueryParameter("pn", StrUPI_MerchantName)          // name
-                                    .appendQueryParameter("am", StrSubscrptionAmount)           // amount
-                                    .appendQueryParameter("cu", "INR")                         // currency
-                                    .build();
+                            .scheme("upi")
+                            .authority("pay")
+                            .appendQueryParameter("pa", StrUpiAccountId)       // virtual ID
+                            .appendQueryParameter("pn", StrUPI_MerchantName)          // name
+                            .appendQueryParameter("am", StrSubscrptionAmount)           // amount
+                            .appendQueryParameter("cu", "INR")                         // currency
+                            .build();
 
                     payWithGPay();
-                   /* Intent upiPayIntent = new Intent(Intent.ACTION_VIEW);
+                   */
+/* Intent upiPayIntent = new Intent(Intent.ACTION_VIEW);
                     upiPayIntent.setData(uri);
                     Intent chooser = Intent.createChooser(upiPayIntent, "Pay with");
                     if (null != chooser.resolveActivity(getPackageManager())) {
@@ -204,7 +209,8 @@ public class SubscriptionActivity extends AppCompatActivity {
                         //CommonMethods.DisplayToastWarning(getApplicationContext(),"No UPI app found, please install one to continue");
                         DisplaySnackBar(viewGroup, "No UPI app found, please install one to continue", "WARNING");
 
-                    }*/
+                    }*//*
+
                 }
             }
         });
@@ -212,18 +218,6 @@ public class SubscriptionActivity extends AppCompatActivity {
         fetchPlans(1);
 
     }
-
-
-
-    private static boolean isAppInstalled(Context context, String packageName) {
-        try {
-            context.getPackageManager().getApplicationInfo(packageName, 0);
-            return true;
-        } catch (PackageManager.NameNotFoundException e) {
-            return false;
-        }
-    }
-
 
     private void payWithGPay() {
         if (isAppInstalled(SubscriptionActivity.this, GOOGLE_PAY_PACKAGE_NAME)) {
@@ -513,3 +507,4 @@ public class SubscriptionActivity extends AppCompatActivity {
 
 
 }
+*/

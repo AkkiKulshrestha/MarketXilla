@@ -17,9 +17,7 @@ import in.techxilla.www.marketxilla.R;
 public class ProgressDialogFragment extends DialogFragment {
 
     public static ProgressDialogFragment newInstance() {
-
         Bundle args = new Bundle();
-
         ProgressDialogFragment fragment = new ProgressDialogFragment();
         fragment.setArguments(args);
         return fragment;
@@ -43,10 +41,6 @@ public class ProgressDialogFragment extends DialogFragment {
         setStyle(DialogFragment.STYLE_NO_FRAME, android.R.style.Theme);
     }
 
-
-
-    public void hideProgressDialog(FragmentManager fragmentManager){
-
-
+    public void hideProgressDialog(FragmentManager fragmentManager) {
     }
 }

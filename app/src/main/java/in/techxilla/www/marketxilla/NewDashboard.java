@@ -15,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -25,9 +24,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
-
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -39,9 +35,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
-import com.littlemango.stacklayoutmanager.StackLayoutManager;
-import com.smarteist.autoimageslider.SliderView;
-import com.takusemba.multisnaprecyclerview.MultiSnapHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,21 +42,17 @@ import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import in.techxilla.www.marketxilla.adaptor.ImageSliderAdapter;
-import in.techxilla.www.marketxilla.adaptor.SmartPlanAdapter;
-import in.techxilla.www.marketxilla.fragment.HomeFragment;
 import in.techxilla.www.marketxilla.fragment.HolidayFragment;
+import in.techxilla.www.marketxilla.fragment.HomeFragment;
 import in.techxilla.www.marketxilla.fragment.PackageFragment;
 import in.techxilla.www.marketxilla.fragment.PaidUserFragment;
-import in.techxilla.www.marketxilla.model.CallModel;
-import in.techxilla.www.marketxilla.model.SmartPlanModel;
 import in.techxilla.www.marketxilla.utils.CommonMethods;
 import in.techxilla.www.marketxilla.utils.ConnectionDetector;
+import in.techxilla.www.marketxilla.utils.PayUMoneyAppPreference;
 import in.techxilla.www.marketxilla.utils.UtilitySharedPreferences;
 
 import static in.techxilla.www.marketxilla.utils.CommonMethods.DisplayToastError;
@@ -72,47 +61,17 @@ import static in.techxilla.www.marketxilla.webservices.RestClient.ROOT_URL;
 
 public class NewDashboard extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, BottomNavigationView.OnNavigationItemSelectedListener {
 
-
-    String StrMemberId, StrMemberName, StrMemberEmailId, StrMemberMobile, StrMemberUserName;
+    String StrMemberId, StrMemberName, StrMemberEmailId, StrMemberMobile;
     ProgressDialog myDialog;
-    TextView TV_NameTxt, TV_Day_TimeDisplayingTxt;
-    String greeting;
-    private ActionBarDrawerToggle mDrawerToggle;
-    private static ViewPager mPager;
-    private static int currentPage = 0;
-    private static int NUM_PAGES = 0;
-    private static final Integer[] IMAGES = {R.drawable.slider1, R.drawable.slider2, R.drawable.slider3,
-            R.drawable.slider4, R.drawable.slider5, R.drawable.slider6};
-    private ArrayList<Integer> ImagesArray = new ArrayList<Integer>();
-    TextView Tv_DisplayGolu;
-    SliderView sliderView;
-    ImageSliderAdapter adapter;
     int notifications_count = 0;
-    LinearLayout ll_parent_calls;
-
-    private RecyclerView recyclerSmartCalls;
-
-    private int mStackCount = 30;
     ImageView iv_notification;
-    private int mRandomPosition;
-
-    private StackLayoutManager mStackLayoutManager;
-    // SwipeRefreshLayout refreshLayout;
-
-    ArrayList<CallModel> callModel_list = new ArrayList<>();
-    CallModel callListModel;
-    MainActivity.StackLayoutAdapter stackLayoutAdapter;
-    private String[] selectItems;
-    RecyclerView recyclerSmartPlan;
-    RecyclerView.LayoutManager layoutManager;
-    SmartPlanAdapter smartPlanAdapter;
     ViewGroup viewGroup;
-    private static ArrayList<SmartPlanModel> smartPlanModelArrayList;
-    MultiSnapHelper multiSnapHelper;
     int loader_position = 0;
     Fragment fragment = null;
     TextView badge_new_notification;
     boolean isPaidUser = false;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private int mStackCount = 30;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,9 +83,7 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
             loader_position = 0;
         }
         setBottomNavigation();
-
-        viewGroup = (ViewGroup) ((ViewGroup) this
-                .findViewById(android.R.id.content)).getChildAt(0);
+        viewGroup = (ViewGroup) ((ViewGroup) this.findViewById(android.R.id.content)).getChildAt(0);
 
         myDialog = new ProgressDialog(this);
         myDialog.setMessage("Please wait...");
@@ -137,7 +94,6 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
     }
 
     private boolean loadFragment(Fragment fragment) {
-
         if (fragment != null) {
             getSupportFragmentManager()
                     .beginTransaction()
@@ -154,8 +110,12 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
         StrMemberName = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberName");
         StrMemberEmailId = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberEmailId");
         StrMemberMobile = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberMobile");
-        StrMemberUserName = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberUsername");
 
+        PayUMoneyAppPreference appPreference = new PayUMoneyAppPreference();
+        appPreference.setUserEmail(StrMemberEmailId);
+        appPreference.setUserId(StrMemberId);
+        appPreference.setUserMobile(StrMemberMobile);
+        appPreference.setUserFullName(StrMemberName);
 
         iv_notification = findViewById(R.id.iv_notification);
         iv_notification.setOnClickListener(new View.OnClickListener() {
@@ -164,54 +124,41 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
                 Intent intent = new Intent(getApplicationContext(), NotificationActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.animator.move_left, R.animator.move_right);
-
             }
         });
         getPlanDetail();
         fetchNotificationList();
-
-
-
     }
 
-    public void setBottomNavigation(){
-
+    public void setBottomNavigation() {
         BottomNavigationView navigation = findViewById(R.id.navigation);
         Menu nav_Menu = navigation.getMenu();
-        if(isPaidUser) {
+        if (isPaidUser) {
             nav_Menu.findItem(R.id.navigation_paid_user).setVisible(true);
-        }else {
+        } else {
             nav_Menu.findItem(R.id.navigation_paid_user).setVisible(false);
         }
-
         if (loader_position == 0) {
             navigation.setSelectedItemId(R.id.navigation_home);
             fragment = new HomeFragment();
-
-        }else  if (loader_position == 1) {
+        } else if (loader_position == 1) {
             navigation.setSelectedItemId(R.id.navigation_holiday);
             fragment = new HolidayFragment();
-
-        }else if (loader_position == 2) {
+        } else if (loader_position == 2) {
             navigation.setSelectedItemId(R.id.navigation_package);
             fragment = new PackageFragment();
-
-        }else{
+        } else {
             navigation.setSelectedItemId(R.id.navigation_home);
             fragment = new HomeFragment();
         }
-
         loadFragment(fragment);
         navigation.setOnNavigationItemSelectedListener(this);
-
     }
 
     private void getPlanDetail() {
-
-
         String Uiid_id = UUID.randomUUID().toString();
         String StrMemberId = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberId");
-        final String get_plan_details_info = ROOT_URL + "get_user_subscription_details.php?"+Uiid_id+"&user_id=" + StrMemberId;
+        final String get_plan_details_info = ROOT_URL + "get_user_subscription_details.php?" + Uiid_id + "&user_id=" + StrMemberId;
         Log.d("URL --->", get_plan_details_info);
         try {
             ConnectionDetector cd = new ConnectionDetector(getApplicationContext());
@@ -222,25 +169,17 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
                     public void onResponse(String response) {
                         try {
                             Log.d("Response", "" + response);
-
                             JSONObject obj = new JSONObject(response);
-
-
                             boolean status = obj.getBoolean("status");
                             String Message = obj.getString("message");
                             JSONArray m_jArry = obj.getJSONArray("data");
                             mStackCount = m_jArry.length();
-
-                            if (mStackCount == 0)
-                            {
+                            if (mStackCount == 0) {
                                 isPaidUser = false;
-                                Log.d("PaidUser","No");
-
-                            }else {
+                                Log.d("PaidUser", "No");
+                            } else {
                                 for (int i = 0; i < m_jArry.length(); i++) {
-
                                     JSONObject jo_data = m_jArry.getJSONObject(i);
-
                                     String StrPlanId = jo_data.getString("plan_id");
                                     String plan_name = jo_data.getString("plan_name");
                                     String subscribed_till = jo_data.getString("subscribed_till");
@@ -253,23 +192,19 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
                                             newSubscriptedTilldate = sdf.parse(subscribed_till);
                                             sdf21 = new SimpleDateFormat("dd/MM/yyyy");
                                             String mSubscribed_till = sdf21.format(newSubscriptedTilldate);
-                                            if (i == 0 && !CommonMethods.isDateExpired(mSubscribed_till)) {
+                                            if (i == 0 && CommonMethods.isDateExpired(mSubscribed_till)) {
                                                 isPaidUser = true;
-                                                Log.d("PaidUser","Yes");
-                                            }else{
+                                                Log.d("PaidUser", "Yes");
+                                            } else {
                                                 isPaidUser = false;
-                                                Log.d("PaidUser","No");
+                                                Log.d("PaidUser", "No");
                                             }
                                         } catch (ParseException e) {
                                             e.printStackTrace();
                                         }
                                     }
-
-
                                 }
-
                             }
-
                             setBottomNavigation();
                         } catch (Exception e) {
                             Log.d("Exception", e.toString());
@@ -296,15 +231,13 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
-
     }
+
     private void navigationView() {
         StrMemberId = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberId");
         StrMemberName = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberName");
         StrMemberEmailId = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberEmailId");
         StrMemberMobile = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberMobile");
-        StrMemberUserName = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberUsername");
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -327,7 +260,6 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
         };
         drawer.setDrawerListener(mDrawerToggle);
         View hView = navigationView.getHeaderView(0);
-
 
         TextView nav_header_userName = (TextView) hView.findViewById(R.id.nav_header_userName);
         TextView nav_user_email = (TextView) hView.findViewById(R.id.nav_Email);
@@ -384,8 +316,6 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
-
         navigationView.setNavigationItemSelectedListener(this);
     }
 
@@ -414,7 +344,6 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
         Fragment fragment = null;
-
         switch (item.getItemId()) {
             case R.id.navigation_home:
                 fragment = new HomeFragment();
@@ -439,14 +368,14 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
             case R.id.nav_my_subscription:
                 Intent intent_subscription = new Intent(NewDashboard.this, MySubscriptionPlanActivity.class);
                 startActivity(intent_subscription);
-                overridePendingTransition(R.animator.move_left,R.animator.move_right);
+                overridePendingTransition(R.animator.move_left, R.animator.move_right);
                 finish();
                 break;
 
-            case R.id.nav_calc :
+            case R.id.nav_calc:
                 Intent intent_calc = new Intent(NewDashboard.this, CalculatorActivity.class);
                 startActivity(intent_calc);
-                overridePendingTransition(R.animator.move_left,R.animator.move_right);
+                overridePendingTransition(R.animator.move_left, R.animator.move_right);
                 finish();
                 break;
 
@@ -460,25 +389,24 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
                 Intent intent_contact_us = new Intent(Intent.ACTION_VIEW);
                 intent_contact_us.setData(Uri.parse("https://marketxilla.com/contact-us"));
                 startActivity(intent_contact_us);
-
                 break;
+
             case R.id.nav_disclaimer:
                 Intent int_disclaimer = new Intent(Intent.ACTION_VIEW);
                 int_disclaimer.setData(Uri.parse("https://marketxilla.com/disclaimer"));
                 startActivity(int_disclaimer);
-
                 break;
+
             case R.id.nav_terms_n_condition:
                 Intent intent_tnc = new Intent(Intent.ACTION_VIEW);
                 intent_tnc.setData(Uri.parse("https://marketxilla.com/terms-and-conditions"));
                 startActivity(intent_tnc);
-
                 break;
+
             case R.id.nav_privacy_policy:
                 Intent intent_pp = new Intent(Intent.ACTION_VIEW);
                 intent_pp.setData(Uri.parse("https://marketxilla.com/privacy-policy"));
                 startActivity(intent_pp);
-
                 break;
 
             case R.id.nav_rate_us:
@@ -503,11 +431,10 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
                 sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.putExtra(Intent.EXTRA_TEXT, "Greetings, \n\n" +
                         "Welcome To Marketxilla, \n" +
-                        "\"An Intraday Research Service Providing App For NSE Future And Options, and Commodity\" \n\n\n\n" +
-                        "Marketxilla App is Specially Designed For Intraday Traders. Our Research is Based On Dynamic Data And Technical Analysis. For Consistent Profit and Hassle-Free Trading, You Can Study Our Live Research Recommendations.\n" +
-                        "Marketxilla App Is Now Available for Andriod On Google Play Store. Download MarketXilla -  https://play.google.com/store/apps/details?id=" + appPackageName);
+                        "\"An Intra Day Research Service Providing App For NSE Future And Options, and Commodity\" \n\n\n\n" +
+                        "MarketXilla App is Specially Designed For Intra Day Traders. Our Research is Based On Dynamic Data And Technical Analysis. For Consistent Profit and Hassle-Free Trading, You Can Study Our Live Research Recommendations.\n" +
+                        "MarketXilla App Is Now Available for Android On Google Play Store. Download MarketXilla -  https://play.google.com/store/apps/details?id=" + appPackageName);
                 sendIntent.setType("text/plain");
-
                 context.startActivity(sendIntent);
                 break;
 
@@ -518,8 +445,6 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
                 overridePendingTransition(R.animator.left_right, R.animator.right_left);
                 finish();
                 break;
-
-
         }
 
         return loadFragment(fragment);
@@ -543,11 +468,7 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
     }
 
     private void fetchNotificationList() {
-
-
         String Uiid_id = UUID.randomUUID().toString();
-
-
         ConnectionDetector cd = new ConnectionDetector(getApplicationContext());
         boolean isInternetPresent = cd.isConnectingToInternet();
         if (isInternetPresent) {
@@ -558,35 +479,25 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
                 @Override
                 public void onResponse(String response) {
                     try {
-
-
                         Log.d("URL Response", "--> " + response);
-
                         JSONObject jsonresponse = new JSONObject(response);
-
                         boolean status = jsonresponse.getBoolean("status");
                         if (status) {
                             String result = jsonresponse.getString("data");
                             JSONArray resultArry = new JSONArray(result);
-
                             notifications_count = resultArry.length();
-
                             SetNotificationBadge();
-
                         } else {
                             notifications_count = 0;
                             SetNotificationBadge();
                         }
-
                     } catch (JSONException e) {
-
                         e.printStackTrace();
                     }
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError volleyError) {
-
                     volleyError.printStackTrace();
                     DisplayToastError(getApplicationContext(), "Something goes wrong. Please try again");
                 }
@@ -594,20 +505,13 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
             RequestQueue requestQueue = Volley.newRequestQueue(this);
             postrequest.setRetryPolicy(new DefaultRetryPolicy(0, -1, 0));
             requestQueue.add(postrequest);
-
         } else {
             DisplayToastWarning(getApplicationContext(), "No Internet Connection");
-
         }
-
-
     }
 
     private void SetNotificationBadge() {
-
         badge_new_notification = findViewById(R.id.badge_new_notification);
         badge_new_notification.setText(String.format("%02d", notifications_count));
     }
-
-
 }

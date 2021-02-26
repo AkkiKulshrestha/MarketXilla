@@ -8,26 +8,22 @@ import java.util.List;
 
 public class PrinterUtils {
     // UNICODE 0x23 = #
-    public static final byte[] UNICODE_TEXT = new byte[] {0x23, 0x23, 0x23,
-            0x23, 0x23, 0x23,0x23, 0x23, 0x23,0x23, 0x23, 0x23,0x23, 0x23, 0x23,
-            0x23, 0x23, 0x23,0x23, 0x23, 0x23,0x23, 0x23, 0x23,0x23, 0x23, 0x23,
+    public static final byte[] UNICODE_TEXT = new byte[]{0x23, 0x23, 0x23,
+            0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23,
+            0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23,
             0x23, 0x23, 0x23};
 
     private static String hexStr = "0123456789ABCDEF";
-    private static String[] binaryArray = { "0000", "0001", "0010", "0011",
+    private static String[] binaryArray = {"0000", "0001", "0010", "0011",
             "0100", "0101", "0110", "0111", "1000", "1001", "1010", "1011",
-            "1100", "1101", "1110", "1111" };
+            "1100", "1101", "1110", "1111"};
 
-
-
-    public static byte[] decodeBitmap(Bitmap bmp){
+    public static byte[] decodeBitmap(Bitmap bmp) {
         int bmpWidth = bmp.getWidth();
         int bmpHeight = bmp.getHeight();
 
         List<String> list = new ArrayList<String>(); //binaryString list
         StringBuffer sb;
-
-
         int bitLen = bmpWidth / 8;
         int zeroCount = bmpWidth % 8;
 
@@ -83,26 +79,24 @@ public class PrinterUtils {
         heightHexString = heightHexString + "00";
 
         List<String> commandList = new ArrayList<String>();
-        commandList.add(commandHexString+widthHexString+heightHexString);
+        commandList.add(commandHexString + widthHexString + heightHexString);
         commandList.addAll(bmpHexList);
-
         return hexList2Byte(commandList);
     }
 
     public static List<String> binaryListToHexStringList(List<String> list) {
         List<String> hexList = new ArrayList<String>();
         for (String binaryStr : list) {
+
             StringBuffer sb = new StringBuffer();
             for (int i = 0; i < binaryStr.length(); i += 8) {
                 String str = binaryStr.substring(i, i + 8);
-
                 String hexString = myBinaryStrToHexString(str);
                 sb.append(hexString);
             }
             hexList.add(sb.toString());
         }
         return hexList;
-
     }
 
     public static String myBinaryStrToHexString(String binaryStr) {
@@ -117,13 +111,11 @@ public class PrinterUtils {
             if (b4.equals(binaryArray[i]))
                 hex += hexStr.substring(i, i + 1);
         }
-
         return hex;
     }
 
     public static byte[] hexList2Byte(List<String> list) {
         List<byte[]> commandList = new ArrayList<byte[]>();
-
         for (String hexStr : list) {
             commandList.add(hexStringToBytes(hexStr));
         }

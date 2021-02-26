@@ -4,11 +4,7 @@ public class SliderItem {
 
     private String description;
     private String imageUrl;
-
-
-
     private int drawableImage;
-
 
     public int getDrawableImage() {
         return drawableImage;

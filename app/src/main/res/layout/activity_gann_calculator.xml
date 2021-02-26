@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
     android:orientation="vertical">
 
@@ -37,7 +36,6 @@
                 android:textColor="@color/colorPrimary"
                 android:textSize="14sp" />
 
-
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -54,14 +52,13 @@
                     android:hint="Last Traded Price"
                     android:imeOptions="actionDone"
                     android:inputType="numberDecimal"
+                    android:maxLength="10"
                     android:minHeight="48dp"
                     android:textColor="@color/black"
                     android:textColorHint="@color/grey"
-                    android:textSize="14sp"
-                    android:maxLength="10"/>
+                    android:textSize="14sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
-
 
             <Button
                 android:id="@+id/btn_Calc"
@@ -81,7 +78,6 @@
                 android:padding="4dp"
                 android:stretchColumns="*"
                 android:visibility="visible">
-
 
                 <TableRow
                     android:layout_width="match_parent"
@@ -112,8 +108,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/white"
-                        android:textSize="10sp"
-                        />
+                        android:textSize="10sp" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -137,8 +132,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/white"
-                        android:textSize="10sp"
-                        />
+                        android:textSize="10sp" />
 
 
                 </TableRow>
@@ -172,8 +166,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="10sp"
-                        />
+                        android:textSize="10sp" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -197,8 +190,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="10sp"
-                        />
+                        android:textSize="10sp" />
 
 
                 </TableRow>
@@ -232,8 +224,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="10sp"
-                        />
+                        android:textSize="10sp" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -257,8 +248,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="10sp"
-                        />
+                        android:textSize="10sp" />
 
 
                 </TableRow>
@@ -292,8 +282,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="10sp"
-                        />
+                        android:textSize="10sp" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -317,8 +306,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="10sp"
-                        />
+                        android:textSize="10sp" />
 
 
                 </TableRow>
@@ -352,8 +340,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="10sp"
-                        />
+                        android:textSize="10sp" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -377,8 +364,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="10sp"
-                        />
+                        android:textSize="10sp" />
 
 
                 </TableRow>
@@ -412,8 +398,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="10sp"
-                        />
+                        android:textSize="10sp" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -437,8 +422,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="10sp"
-                        />
+                        android:textSize="10sp" />
 
 
                 </TableRow>
@@ -470,12 +454,9 @@
                         android:background="@color/red_close"
                         android:gravity="center"
                         android:padding="8dp"
-
-
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/white"
-                        android:textSize="10sp"
-                        />
+                        android:textSize="10sp" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -499,8 +480,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/white"
-                        android:textSize="10sp"
-                        />
+                        android:textSize="10sp" />
 
 
                 </TableRow>
@@ -513,9 +493,7 @@
                 android:layout_marginVertical="8dp"
                 android:padding="4dp"
                 android:stretchColumns="*"
-                android:visibility="visible"
-               >
-
+                android:visibility="visible">
 
                 <TableRow
                     android:layout_width="match_parent"
@@ -546,8 +524,7 @@
                         android:text="Res 2"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="10sp"
-                        />
+                        android:textSize="10sp" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -571,8 +548,7 @@
                         android:text="Res 4"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="10sp"
-                         />
+                        android:textSize="10sp" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -584,10 +560,7 @@
                         android:text="Res 5"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="10sp"
-                         />
-
-
+                        android:textSize="10sp" />
                 </TableRow>
 
                 <TableRow
@@ -619,8 +592,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/white"
-                        android:textSize="10sp"
-                        />
+                        android:textSize="10sp" />
 
                     <TextView
                         android:id="@+id/res3"
@@ -644,8 +616,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/white"
-                        android:textSize="10sp"
-                        />
+                        android:textSize="10sp" />
 
                     <TextView
                         android:id="@+id/res5"
@@ -657,10 +628,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/white"
-                        android:textSize="10sp"
-                        />
-
-
+                        android:textSize="10sp" />
                 </TableRow>
 
                 <TableRow
@@ -692,8 +660,7 @@
                         android:text="Sup 2"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="10sp"
-                         />
+                        android:textSize="10sp" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -717,8 +684,7 @@
                         android:text="Sup 4"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="10sp"
-                        />
+                        android:textSize="10sp" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -730,10 +696,7 @@
                         android:text="Sup 5"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="10sp"
-                        />
-
-
+                        android:textSize="10sp" />
                 </TableRow>
 
                 <TableRow
@@ -741,7 +704,6 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="center"
-
                     android:weightSum="5">
 
                     <TextView
@@ -766,8 +728,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/white"
-                        android:textSize="10sp"
-                        />
+                        android:textSize="10sp" />
 
                     <TextView
                         android:id="@+id/sup3"
@@ -791,8 +752,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/white"
-                        android:textSize="10sp"
-                        />
+                        android:textSize="10sp" />
 
                     <TextView
                         android:id="@+id/sup5"
@@ -804,12 +764,8 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/white"
-                        android:textSize="10sp"
-                        />
-
-
+                        android:textSize="10sp" />
                 </TableRow>
-
             </TableLayout>
 
             <TableLayout
@@ -820,7 +776,6 @@
                 android:padding="4dp"
                 android:stretchColumns="*"
                 android:visibility="visible">
-
 
                 <TableRow
                     android:layout_width="match_parent"
@@ -852,8 +807,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
+                        android:textSize="7sp" />
 
                     <TextView
                         android:id="@+id/box3"
@@ -878,8 +832,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
+                        android:textSize="7sp" />
 
                     <TextView
                         android:id="@+id/box5"
@@ -891,8 +844,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
+                        android:textSize="7sp" />
 
                     <TextView
                         android:id="@+id/box6"
@@ -904,8 +856,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
+                        android:textSize="7sp" />
 
                     <TextView
                         android:id="@+id/box7"
@@ -917,10 +868,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
-
-
+                        android:textSize="7sp" />
                 </TableRow>
 
                 <TableRow
@@ -952,8 +900,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
+                        android:textSize="7sp" />
 
                     <TextView
                         android:id="@+id/box10"
@@ -977,8 +924,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
+                        android:textSize="7sp" />
 
                     <TextView
                         android:id="@+id/box12"
@@ -990,8 +936,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
+                        android:textSize="7sp" />
 
                     <TextView
                         android:id="@+id/box13"
@@ -1003,8 +948,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
+                        android:textSize="7sp" />
 
                     <TextView
                         android:id="@+id/box14"
@@ -1016,11 +960,11 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
+                        android:textSize="7sp" />
 
 
                 </TableRow>
+
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -1050,8 +994,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
+                        android:textSize="7sp" />
 
                     <TextView
                         android:id="@+id/box17"
@@ -1075,8 +1018,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
+                        android:textSize="7sp" />
 
                     <TextView
                         android:id="@+id/box19"
@@ -1088,8 +1030,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
+                        android:textSize="7sp" />
 
                     <TextView
                         android:id="@+id/box20"
@@ -1101,8 +1042,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
+                        android:textSize="7sp" />
 
                     <TextView
                         android:id="@+id/box21"
@@ -1114,11 +1054,11 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
+                        android:textSize="7sp" />
 
 
                 </TableRow>
+
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -1148,8 +1088,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
+                        android:textSize="7sp" />
 
                     <TextView
                         android:id="@+id/box24"
@@ -1173,8 +1112,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/white"
-                        android:textSize="7sp"
-                        />
+                        android:textSize="7sp" />
 
                     <TextView
                         android:id="@+id/box26"
@@ -1186,8 +1124,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
+                        android:textSize="7sp" />
 
                     <TextView
                         android:id="@+id/box27"
@@ -1199,8 +1136,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
+                        android:textSize="7sp" />
 
                     <TextView
                         android:id="@+id/box28"
@@ -1212,11 +1148,9 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
-
-
+                        android:textSize="7sp" />
                 </TableRow>
+
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -1246,8 +1180,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
+                        android:textSize="7sp" />
 
                     <TextView
                         android:id="@+id/box31"
@@ -1271,8 +1204,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
+                        android:textSize="7sp" />
 
                     <TextView
                         android:id="@+id/box33"
@@ -1284,8 +1216,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
+                        android:textSize="7sp" />
 
                     <TextView
                         android:id="@+id/box34"
@@ -1297,8 +1228,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
+                        android:textSize="7sp" />
 
                     <TextView
                         android:id="@+id/box35"
@@ -1310,11 +1240,9 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
-
-
+                        android:textSize="7sp" />
                 </TableRow>
+
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -1344,8 +1272,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
+                        android:textSize="7sp" />
 
                     <TextView
                         android:id="@+id/box38"
@@ -1369,8 +1296,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
+                        android:textSize="7sp" />
 
                     <TextView
                         android:id="@+id/box40"
@@ -1382,8 +1308,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
+                        android:textSize="7sp" />
 
                     <TextView
                         android:id="@+id/box41"
@@ -1395,8 +1320,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
+                        android:textSize="7sp" />
 
                     <TextView
                         android:id="@+id/box42"
@@ -1408,11 +1332,9 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
-
-
+                        android:textSize="7sp" />
                 </TableRow>
+
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -1442,8 +1364,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
+                        android:textSize="7sp" />
 
                     <TextView
                         android:id="@+id/box45"
@@ -1467,8 +1388,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
+                        android:textSize="7sp" />
 
                     <TextView
                         android:id="@+id/box47"
@@ -1480,8 +1400,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
+                        android:textSize="7sp" />
 
                     <TextView
                         android:id="@+id/box48"
@@ -1493,8 +1412,7 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
+                        android:textSize="7sp" />
 
                     <TextView
                         android:id="@+id/box49"
@@ -1506,15 +1424,10 @@
                         android:padding="8dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
-                        android:textSize="7sp"
-                        />
-
-
+                        android:textSize="7sp" />
                 </TableRow>
 
             </TableLayout>
-
-
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView android:id="@+id/CardSchemeName"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/CardSchemeName"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="10dp"
     android:layout_marginTop="5dp"
-    android:layout_marginBottom="15dp"
     android:layout_marginEnd="10dp"
-    app:cardUseCompatPadding="true"
+    android:layout_marginBottom="15dp"
     app:cardCornerRadius="10sp"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    app:cardUseCompatPadding="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,59 +17,41 @@
         android:background="@drawable/cw_shadow_bg"
         android:orientation="vertical">
 
-
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="vertical">
 
-
             <TextView
                 android:id="@+id/tv_id"
-                android:textColor="@color/primary_light_blue"
-                android:textStyle="bold"
-                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="14sp" />
-
+                android:textColor="@color/primary_light_blue"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/tv_row_date_time"
-                android:textColor="@color/primary_light_blue"
-                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center|start"
                 android:layout_margin="5dp"
                 android:gravity="center|start"
-                android:textSize="16sp" />
+                android:textColor="@color/primary_light_blue"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
-
-
-
-                <TextView
-                    android:id="@+id/row_notification"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:textStyle="bold"
-                    android:layout_weight="5"
-                    android:textSize="14sp"
-                    android:textColor="@color/black"
-                    />
-
-
-
-
-
-
-
-
-
-
+            <TextView
+                android:id="@+id/row_notification"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="5"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 

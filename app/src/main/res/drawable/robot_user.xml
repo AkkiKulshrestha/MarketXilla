@@ -6,14 +6,17 @@
          android:width="2dp"
          android:color="#232526" >
      </stroke>-->
-    <size android:height="50sp" android:width="200sp"/>
+    <size
+        android:width="200sp"
+        android:height="50sp" />
 
-    <solid android:color="#98b9a59f"
-        android:padding="10sp"/>
+    <solid
+        android:color="#98b9a59f"
+        android:padding="10sp" />
 
-    <corners android:bottomRightRadius="20dp"
-        android:topRightRadius="20dp"
-        android:topLeftRadius="20dp"
+    <corners
         android:bottomLeftRadius="20dp"
-        />
+        android:bottomRightRadius="20dp"
+        android:topLeftRadius="20dp"
+        android:topRightRadius="20dp" />
 </shape>

@@ -23,17 +23,9 @@ import in.techxilla.www.marketxilla.model.CallModel;
 import in.techxilla.www.marketxilla.utils.CommonMethods;
 
 public class StackLayoutAdapter extends RecyclerView.Adapter<StackLayoutAdapter.StackHolder> {
-    private ArrayList<CallModel> callArrayList;
-    Context mCtx;
-    int mStackCount;
-
-    @NonNull
-    @Override
-    public StackLayoutAdapter.StackHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.row_daily_calls, viewGroup, false);
-        return new StackLayoutAdapter.StackHolder(view);
-    }
+    private final Context mCtx;
+    private final int mStackCount;
+    private final ArrayList<CallModel> callArrayList;
 
     public StackLayoutAdapter(Context mCtx, ArrayList<CallModel> callArrayList) {
         this.mCtx = mCtx;
@@ -41,7 +33,14 @@ public class StackLayoutAdapter extends RecyclerView.Adapter<StackLayoutAdapter.
         mStackCount = callArrayList.size();
     }
 
-    @SuppressLint({"UseCompatLoadingForDrawables", "SetTextI18n"})
+    @NonNull
+    @Override
+    public StackLayoutAdapter.StackHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.row_daily_calls, viewGroup, false);
+        return new StackHolder(view);
+    }
+
+    @SuppressLint({"UseCompatLoadingForDrawables", "SetTextI18n", "SimpleDateFormat"})
     @Override
     public void onBindViewHolder(@NonNull final StackLayoutAdapter.StackHolder viewHolder, int position) {
         int res;
@@ -53,9 +52,7 @@ public class StackLayoutAdapter extends RecyclerView.Adapter<StackLayoutAdapter.
         try {
             date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(callArrayList.get(position).getDate());
             String convertDate = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss").format(date);
-
             viewHolder.tv_date_time.setText(convertDate);
-
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -82,18 +79,14 @@ public class StackLayoutAdapter extends RecyclerView.Adapter<StackLayoutAdapter.
             viewHolder.tv_sell_buy.setBackground(mCtx.getDrawable(R.drawable.cw_button_shadow_red));
             viewHolder.iv_up_down.setImageDrawable(mCtx.getDrawable(R.drawable.down));
             viewHolder.iv_up_down.setImageTintList(ColorStateList.valueOf(mCtx.getResources().getColor(R.color.mpn_red)));
-
         }
-
 
         if (callArrayList.get(position).getCe_pe() != null && callArrayList.get(position).getCe_pe().equalsIgnoreCase("1")) {
             viewHolder.tv_strike_ce.setText("STRIKE " + CommonMethods.DecimalNumberDisplayFormattingWithComma(callArrayList.get(position).getStrike()) + " CE");
             viewHolder.tv_strike_ce.setVisibility(View.VISIBLE);
-
         } else if (callArrayList.get(position).getCe_pe() != null && callArrayList.get(position).getCe_pe().equalsIgnoreCase("2")) {
             viewHolder.tv_strike_ce.setText("STRIKE " + CommonMethods.DecimalNumberDisplayFormattingWithComma(callArrayList.get(position).getStrike()) + " PE");
             viewHolder.tv_strike_ce.setVisibility(View.VISIBLE);
-
         } else {
             viewHolder.tv_strike_ce.setVisibility(View.INVISIBLE);
         }
@@ -111,11 +104,10 @@ public class StackLayoutAdapter extends RecyclerView.Adapter<StackLayoutAdapter.
         } catch (NumberFormatException nfe) {
             nfe.printStackTrace();
         }
-        try
-        {
+
+        try {
             String mProfit_loss;
             mProfit_loss = String.format("%2.7s", callArrayList.get(position).getProfit_loss());
-
             System.out.println(mProfit_loss);
             if (callArrayList.get(position).getProfit_loss() != null && !callArrayList.get(position).getProfit_loss().equalsIgnoreCase("")) {
                 if ((Double.parseDouble(String.valueOf(callArrayList.get(position).getProfit_loss()))) > 0) {
@@ -133,22 +125,11 @@ public class StackLayoutAdapter extends RecyclerView.Adapter<StackLayoutAdapter.
             iae.printStackTrace();
         }
 
-        viewHolder.tv_target1.setText("\u20B9 " + callArrayList.get(position).
-
-                getTarget1());
-        viewHolder.tv_target2.setText("\u20B9 " + callArrayList.get(position).
-
-                getTarget2());
-        viewHolder.tv_target3.setText("\u20B9 " + callArrayList.get(position).
-
-                getTarget3());
-        viewHolder.tv_stop_loss.setText("\u20B9 " + callArrayList.get(position).
-
-                getStop_loss());
-        viewHolder.tv_closingprice.setText("\u20B9 " + callArrayList.get(position).
-
-                getBuy_sell_closing_price());
-
+        viewHolder.tv_target1.setText("\u20B9 " + callArrayList.get(position).getTarget1());
+        viewHolder.tv_target2.setText("\u20B9 " + callArrayList.get(position).getTarget2());
+        viewHolder.tv_target3.setText("\u20B9 " + callArrayList.get(position).getTarget3());
+        viewHolder.tv_stop_loss.setText("\u20B9 " + callArrayList.get(position).getStop_loss());
+        viewHolder.tv_closingprice.setText("\u20B9 " + callArrayList.get(position).getBuy_sell_closing_price());
     }
 
     @Override
@@ -156,16 +137,15 @@ public class StackLayoutAdapter extends RecyclerView.Adapter<StackLayoutAdapter.
         return mStackCount;
     }
 
-    public class StackHolder extends RecyclerView.ViewHolder {
-        View itemView;
-        ImageView iv_up_down;
-        TextView tv_performance_for,TvStockName, tv_date_time, tv_above_below, tv_sell_buy, tv_strike_ce, tv_target1, tv_target2, tv_target3, tv_stop_loss, tv_closingprice, tv_profit_loss;
-        LinearLayout linear_closinglayout;
+    public static class StackHolder extends RecyclerView.ViewHolder {
+        private final View itemView;
+        private final ImageView iv_up_down;
+        private final TextView tv_performance_for, TvStockName, tv_date_time, tv_above_below, tv_sell_buy, tv_strike_ce, tv_target1, tv_target2, tv_target3, tv_stop_loss, tv_closingprice, tv_profit_loss;
+        private final LinearLayout linear_closinglayout;
 
         StackHolder(@NonNull View itemView) {
             super(itemView);
             this.itemView = itemView;
-
             linear_closinglayout = (LinearLayout) itemView.findViewById(R.id.row_linear_closinglayout);
             tv_performance_for = (TextView) itemView.findViewById(R.id.tv_performance_for);
             TvStockName = (TextView) itemView.findViewById(R.id.TvStockName);
@@ -180,8 +160,6 @@ public class StackLayoutAdapter extends RecyclerView.Adapter<StackLayoutAdapter.
             tv_stop_loss = (TextView) itemView.findViewById(R.id.tv_stop_loss);
             tv_profit_loss = (TextView) itemView.findViewById(R.id.tv_profit_loss);
             tv_closingprice = (TextView) itemView.findViewById(R.id.tv_closingprice);
-
-
         }
     }
 }

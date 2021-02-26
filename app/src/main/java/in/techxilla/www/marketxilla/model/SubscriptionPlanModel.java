@@ -2,6 +2,17 @@ package in.techxilla.www.marketxilla.model;
 
 public class SubscriptionPlanModel {
 
+    private String id;
+    private String user_id;
+    private String plan_id;
+    private String subscribed_on;
+    private String subscribed_till;
+    private String payment_detail;
+    private String plan_name;
+    private String plan_amount;
+    private String package_id;
+    private String status;
+
     public String getId() {
         return id;
     }
@@ -81,16 +92,4 @@ public class SubscriptionPlanModel {
     public void setStatus(String status) {
         this.status = status;
     }
-
-    String id;
-    String user_id;
-    String plan_id;
-    String subscribed_on;
-    String subscribed_till;
-    String payment_detail;
-    String plan_name;
-    String plan_amount;
-    String package_id;
-    String status;
-
 }

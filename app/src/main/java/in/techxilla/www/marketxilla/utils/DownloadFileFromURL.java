@@ -43,7 +43,7 @@ public class DownloadFileFromURL extends AsyncTask<String, String, String> {
                 total += count;
                 // publishing the progress....
                 // After this onProgressUpdate will be called
-                publishProgress(""+(int)((total*100)/lenghtOfFile));
+                publishProgress("" + (int) ((total * 100) / lenghtOfFile));
 
                 // writing data to file
                 output.write(data, 0, count);
@@ -59,8 +59,6 @@ public class DownloadFileFromURL extends AsyncTask<String, String, String> {
         } catch (Exception e) {
             Log.e("Error: ", e.getMessage());
         }
-
         return null;
-
     }
 }

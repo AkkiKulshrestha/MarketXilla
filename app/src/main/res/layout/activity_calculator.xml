@@ -97,7 +97,6 @@
                 android:gravity="center"
                 android:minHeight="48dp"
                 android:paddingHorizontal="16dp"
-
                 android:paddingVertical="8dp"
                 android:text="@string/fibonacci_pivot" />
 
@@ -115,7 +114,6 @@
                 android:minHeight="48dp"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
-
                 android:text="@string/camerilla_pivot" />
 
             <View
@@ -132,7 +130,6 @@
                 android:minHeight="48dp"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
-
                 android:text="@string/forex_pivot" />
 
             <View
@@ -149,7 +146,6 @@
                 android:minHeight="48dp"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
-
                 android:text="@string/woodie_s_pivot" />
 
             <View

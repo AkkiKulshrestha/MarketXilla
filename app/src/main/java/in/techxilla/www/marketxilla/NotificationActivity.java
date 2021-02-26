@@ -3,21 +3,15 @@ package in.techxilla.www.marketxilla;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -42,35 +36,28 @@ import java.util.UUID;
 import in.techxilla.www.marketxilla.utils.CommonMethods;
 import in.techxilla.www.marketxilla.utils.ConnectionDetector;
 
-import static in.techxilla.www.marketxilla.utils.CommonMethods.DisplaySnackBar;
 import static in.techxilla.www.marketxilla.webservices.RestClient.ROOT_URL;
 
 public class NotificationActivity extends AppCompatActivity {
-
-
-    ProgressDialog myDialog;
-    TextView tv_title;
-    ImageView iv_back;
-
-    LinearLayout ll_parent_notification;
-    ViewGroup viewGroup;
+    private ProgressDialog myDialog;
+    private LinearLayout ll_parent_notification;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification);
-        //viewGroup = (ViewGroup) ((ViewGroup) this.findViewById(android.R.id.content)).getChildAt(0);
         init();
     }
 
+    @SuppressLint("SetTextI18n")
     private void init() {
         myDialog = new ProgressDialog(this);
         myDialog.setMessage("Please wait...");
         myDialog.setCancelable(false);
         myDialog.setCanceledOnTouchOutside(false);
 
-        tv_title = (TextView)findViewById(R.id.tv_title);
-        iv_back = (ImageView)findViewById(R.id.back_btn_toolbar);
+        final TextView tv_title = (TextView) findViewById(R.id.tv_title);
+        final ImageView iv_back = (ImageView) findViewById(R.id.back_btn_toolbar);
 
         tv_title.setText("NOTIFICATIONS");
         iv_back.setOnClickListener(new View.OnClickListener() {
@@ -81,99 +68,72 @@ public class NotificationActivity extends AppCompatActivity {
         });
         ll_parent_notification = (LinearLayout) findViewById(R.id.ll_parent_notification);
         fetchNotificationList();
-
     }
 
+    @SuppressLint({"UseCompatLoadingForDrawables", "SimpleDateFormat"})
     private void fetchNotificationList() {
-
-
-        if(myDialog!=null && !myDialog.isShowing()) myDialog.show();
-
-        if(ll_parent_notification!=null && ll_parent_notification.getChildCount()>0){
+        if (myDialog != null && !myDialog.isShowing()) myDialog.show();
+        if (ll_parent_notification != null && ll_parent_notification.getChildCount() > 0) {
             ll_parent_notification.removeAllViews();
         }
-
-        String Uiid_id = UUID.randomUUID().toString();
-
-
+        final String Uiid_id = UUID.randomUUID().toString();
         ConnectionDetector cd = new ConnectionDetector(this);
         boolean isInternetPresent = cd.isConnectingToInternet();
         if (isInternetPresent) {
             String URL = ROOT_URL + "get_notifications_list.php?_" + Uiid_id;
             Log.d("URL", "--> " + URL);
             StringRequest postrequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
-                @SuppressLint({"UseCompatLoadingForDrawables", "SimpleDateFormat"})
                 @Override
-                public void onResponse(String response) {
+                public void onResponse(final String response) {
                     try {
                         if (myDialog != null && myDialog.isShowing()) {
                             myDialog.dismiss();
                         }
                         Log.d("URL Response", "--> " + response);
-
-                        JSONObject jsonResponse = new JSONObject(response);
-
-                        boolean status = jsonResponse.getBoolean("status");
-                        if(status) {
-                            String result = jsonResponse.getString("data");
-                            JSONArray resultArry = new JSONArray(result);
+                        final JSONObject jsonResponse = new JSONObject(response);
+                        final boolean status = jsonResponse.getBoolean("status");
+                        if (status) {
+                            final String result = jsonResponse.getString("data");
+                            final JSONArray resultArry = new JSONArray(result);
                             if (resultArry.length() > 0) {
-
-
                                 for (int i = 0; i < resultArry.length(); i++) {
-
-                                    JSONObject customer_inspect_obj = resultArry.getJSONObject(i);
-
-                                    String id = customer_inspect_obj.getString("id");
-                                    String text_message = customer_inspect_obj.getString("text_message");
-                                    String created_at = customer_inspect_obj.getString("created_at");
-
+                                    final JSONObject customer_inspect_obj = resultArry.getJSONObject(i);
+                                    final String id = customer_inspect_obj.getString("id");
+                                    final String text_message = customer_inspect_obj.getString("text_message");
+                                    final String created_at = customer_inspect_obj.getString("created_at");
 
                                     LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                                     final View rowView = Objects.requireNonNull(inflater).inflate(R.layout.row_notification_info, null);
                                     rowView.setPadding(10, 10, 10, 10);
 
-                                    TextView tv_id = (TextView) rowView.findViewById(R.id.tv_id);
-                                    TextView tv_row_date_time = (TextView) rowView.findViewById(R.id.tv_row_date_time);
-                                    TextView row_notification = (TextView) rowView.findViewById(R.id.row_notification);
-
+                                    final TextView tv_id = (TextView) rowView.findViewById(R.id.tv_id);
+                                    final TextView tv_row_date_time = (TextView) rowView.findViewById(R.id.tv_row_date_time);
+                                    final TextView row_notification = (TextView) rowView.findViewById(R.id.row_notification);
                                     tv_id.setText(id);
                                     row_notification.setText(text_message.toUpperCase());
-
-                                    Date date= null;
+                                    Date date = null;
                                     try {
                                         date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(created_at);
-                                        String convertDate = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss").format(date);
-
+                                        final String convertDate = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss").format(date);
                                         tv_row_date_time.setText(convertDate);
-
                                     } catch (ParseException e) {
                                         e.printStackTrace();
                                     }
-
-
-
-
                                     ll_parent_notification.addView(rowView);
                                 }
-
                             } else {
-                                String message = jsonResponse.getString("message");
-
-                                TextView textView = new TextView(getApplicationContext());
+                                final String message = jsonResponse.getString("message");
+                                final TextView textView = new TextView(getApplicationContext());
                                 textView.setText(message);
                                 textView.setBackground(getResources().getDrawable(R.drawable.cw_button_shadow_red));
                                 textView.setTextColor(getResources().getColor(R.color.white));
                                 textView.setGravity(Gravity.CENTER);
                                 textView.setPadding(30, 30, 30, 30);
                                 textView.setAllCaps(true);
-
                                 ll_parent_notification.addView(textView);
-
                             }
-                        }else {
-                            String message = jsonResponse.getString("message");
-
+                        } else {
+                            final String message = jsonResponse.getString("message");
                             TextView textView = new TextView(getApplicationContext());
                             textView.setText(message);
                             textView.setBackground(getResources().getDrawable(R.drawable.cw_button_shadow_red));
@@ -181,10 +141,8 @@ public class NotificationActivity extends AppCompatActivity {
                             textView.setGravity(Gravity.CENTER);
                             textView.setAllCaps(true);
                             textView.setPadding(30, 30, 30, 30);
-
                             ll_parent_notification.addView(textView);
                         }
-
                     } catch (JSONException e) {
                         if (myDialog != null && myDialog.isShowing()) {
                             myDialog.dismiss();
@@ -199,32 +157,24 @@ public class NotificationActivity extends AppCompatActivity {
                         myDialog.dismiss();
                     }
                     volleyError.printStackTrace();
-                    DisplaySnackBar(viewGroup,"Something goes wrong. Please try again","WARNING");
-
-                    //Toast.makeText(getApplicationContext(), volleyError.toString(), Toast.LENGTH_LONG).show();
+                    CommonMethods.DisplayToastWarning(getApplicationContext(), "Something goes wrong. Please try again");
                 }
-            }) ;
+            });
             int socketTimeout = 50000; //30 seconds - change to what you want
             RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
             postrequest.setRetryPolicy(policy);
             // RequestQueue requestQueue = Volley.newRequestQueue(this, new HurlStack(null, getSocketFactory()));
             RequestQueue requestQueue = Volley.newRequestQueue(this);
             requestQueue.add(postrequest);
-        }else {
-            DisplaySnackBar(viewGroup,"No Internet Connection","WARNING");
-
+        } else {
+            CommonMethods.DisplayToastInfo(getApplicationContext(), "No Internet Connection");
         }
-
-
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.animator.left_right,R.animator.right_left);
+        overridePendingTransition(R.animator.left_right, R.animator.right_left);
         finish();
     }
-
-
-
 }

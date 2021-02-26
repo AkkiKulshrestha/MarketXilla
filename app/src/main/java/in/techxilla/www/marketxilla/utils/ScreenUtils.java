@@ -2,17 +2,9 @@ package in.techxilla.www.marketxilla.utils;
 
 import android.content.Context;
 
-/**
- * Author       wildma
- * Github       https://github.com/wildma
- * Date         2018/12/30
- * Desc	        ${屏幕相关工具类}
- */
 public class ScreenUtils {
 
     /**
-     * 获取屏幕宽度（px）
-     *
      * @param context
      * @return
      */
@@ -20,10 +12,7 @@ public class ScreenUtils {
         return context.getResources().getDisplayMetrics().widthPixels;
     }
 
-
     /**
-     * 获取屏幕高度（px）
-     *
      * @param context
      * @return
      */

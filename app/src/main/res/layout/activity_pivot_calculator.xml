@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
@@ -28,40 +26,37 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
+                android:layout_gravity="end"
+                android:layout_marginEnd="16dp"
                 android:background="?android:attr/selectableItemBackground"
                 android:gravity="center_vertical"
-                android:layout_marginEnd="16dp"
-                android:padding="16dp"
-                android:textSize="14sp"
-                android:layout_gravity="end"
-                android:text="RESET"
                 android:onClick="OnResetClicked"
-                android:textColor="@color/colorPrimary" />
-
-
+                android:padding="16dp"
+                android:text="RESET"
+                android:textColor="@color/colorPrimary"
+                android:textSize="14sp" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_PreviousHigh"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-               android:layout_marginTop="16dp"
-                android:layout_marginBottom="8dp"
                 android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
                 android:textColorHint="@color/colorPrimary">
 
                 <EditText
                     android:id="@+id/Edt_PreviousHigh"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:hint="Previous High"
-                    android:minHeight="48dp"
                     android:imeOptions="actionNext"
                     android:inputType="numberDecimal"
+                    android:minHeight="48dp"
                     android:textColor="@color/black"
                     android:textColorHint="@color/grey"
-                    android:textSize="14sp"
-                    />
+                    android:textSize="14sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -69,15 +64,15 @@
                 android:id="@+id/til_PreviousLow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="8dp"
                 android:layout_marginHorizontal="16dp"
+                android:layout_marginVertical="8dp"
                 android:textColorHint="@color/colorPrimary">
 
                 <EditText
                     android:id="@+id/Edt_PreviousLow"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:hint="Previous Low"
                     android:imeOptions="actionNext"
                     android:inputType="numberDecimal"
@@ -91,15 +86,15 @@
                 android:id="@+id/til_PreviousClose"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="8dp"
                 android:layout_marginHorizontal="16dp"
+                android:layout_marginVertical="8dp"
                 android:textColorHint="@color/colorPrimary">
 
                 <EditText
                     android:id="@+id/Edt_PreviousClose"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:hint="Previous Close"
                     android:imeOptions="actionDone"
                     android:inputType="numberDecimal"
@@ -109,28 +104,25 @@
                     android:textSize="14sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
-
-
-                <Button
-                    android:id="@+id/btn_Calc"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/cw_shadow_black"
-                    android:layout_weight="5"
-                    android:text="CALCULATE"
-                    android:textColor="@color/white"
-                    android:layout_marginHorizontal="16dp"/>
+            <Button
+                android:id="@+id/btn_Calc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_weight="5"
+                android:background="@drawable/cw_shadow_black"
+                android:text="CALCULATE"
+                android:textColor="@color/white" />
 
             <TableLayout
                 android:id="@+id/result_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginVertical="8dp"
                 android:layout_marginHorizontal="16dp"
+                android:layout_marginVertical="8dp"
                 android:padding="4dp"
                 android:stretchColumns="*"
                 android:visibility="visible">
-
 
                 <TableRow
                     android:id="@+id/resistance4"
@@ -169,7 +161,7 @@
 
                 </TableRow>
 
-               <TableRow
+                <TableRow
                     android:id="@+id/resistance3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -197,14 +189,13 @@
                         android:background="@drawable/border"
                         android:gravity="center"
                         android:padding="8dp"
-
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
                         android:textSize="12sp"
                         android:textStyle="bold" />
 
-
                 </TableRow>
+
                 <TableRow
                     android:id="@+id/resistance2"
                     android:layout_width="match_parent"
@@ -233,14 +224,13 @@
                         android:background="@drawable/border"
                         android:gravity="center"
                         android:padding="8dp"
-
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
                         android:textSize="12sp"
                         android:textStyle="bold" />
 
-
                 </TableRow>
+
                 <TableRow
                     android:id="@+id/resistance1"
                     android:layout_width="match_parent"
@@ -269,31 +259,30 @@
                         android:background="@drawable/border"
                         android:gravity="center"
                         android:padding="8dp"
-
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
                         android:textSize="12sp"
                         android:textStyle="bold" />
 
-
                 </TableRow>
+
                 <TableRow
                     android:id="@+id/pivot_point"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:gravity="center"
                     android:background="@drawable/border"
+                    android:gravity="center"
                     android:weightSum="2">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:background="@color/mpn_yellow"
                         android:gravity="center"
                         android:padding="8dp"
                         android:text="Pivot Point"
-                        android:background="@color/mpn_yellow"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/white"
                         android:textSize="12sp" />
@@ -306,14 +295,13 @@
                         android:background="@color/mpn_yellow"
                         android:gravity="center"
                         android:padding="8dp"
-
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/white"
                         android:textSize="12sp"
                         android:textStyle="bold" />
 
-
                 </TableRow>
+
                 <TableRow
                     android:id="@+id/support1"
                     android:layout_width="match_parent"
@@ -342,14 +330,13 @@
                         android:background="@drawable/border"
                         android:gravity="center"
                         android:padding="8dp"
-
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
                         android:textSize="12sp"
                         android:textStyle="bold" />
 
-
                 </TableRow>
+
                 <TableRow
                     android:id="@+id/support2"
                     android:layout_width="match_parent"
@@ -378,14 +365,13 @@
                         android:background="@drawable/border"
                         android:gravity="center"
                         android:padding="8dp"
-
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
                         android:textSize="12sp"
                         android:textStyle="bold" />
 
-
                 </TableRow>
+
                 <TableRow
                     android:id="@+id/support3"
                     android:layout_width="match_parent"
@@ -414,14 +400,13 @@
                         android:background="@drawable/border"
                         android:gravity="center"
                         android:padding="8dp"
-
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
                         android:textSize="12sp"
                         android:textStyle="bold" />
 
-
                 </TableRow>
+
                 <TableRow
                     android:id="@+id/support4"
                     android:layout_width="match_parent"
@@ -451,21 +436,17 @@
                         android:background="@drawable/border"
                         android:gravity="center"
                         android:padding="8dp"
-
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/black"
                         android:textSize="12sp"
                         android:textStyle="bold" />
 
-
                 </TableRow>
 
             </TableLayout>
 
-
-
-
-
         </LinearLayout>
+
     </ScrollView>
+
 </RelativeLayout>

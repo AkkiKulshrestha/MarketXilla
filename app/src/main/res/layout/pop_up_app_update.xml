@@ -6,70 +6,70 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
         android:layout_marginLeft="10sp"
         android:layout_marginRight="10sp"
-        android:gravity="center"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true">
+        android:gravity="center">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="40sp"
-                android:orientation="horizontal"
                 android:background="@color/colorPrimaryBlue"
+                android:orientation="horizontal"
                 android:weightSum="10">
 
                 <TextView
+                    android:id="@+id/title"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_weight="9"
+                    android:cursorVisible="false"
+                    android:editable="false"
                     android:gravity="center_vertical"
                     android:paddingLeft="10dp"
-                    android:editable="false"
-                    android:cursorVisible="false"
+                    android:text="Update Available"
                     android:textColor="@color/white"
-                    android:textSize="17dp"
-                    android:layout_weight="9"
-                    android:id="@+id/title"
-                    android:text="Update Available"/>
-
+                    android:textSize="17dp" />
 
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/linear"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:id="@+id/linear"
-                android:background="@color/white" >
+                android:background="@color/white"
+                android:orientation="vertical">
+
                 <ScrollView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_above="@+id/linear"
-                    android:gravity="start"
+                    android:fillViewport="true"
                     android:fitsSystemWindows="true"
-                    android:fillViewport="true">
+                    android:gravity="start">
+
                     <LinearLayout
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        >
+                        android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/Upgrade_text"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_gravity="start"
-                            android:layout_marginEnd="5sp"
                             android:layout_marginStart="5sp"
                             android:layout_marginTop="5sp"
+                            android:layout_marginEnd="5sp"
                             android:cursorVisible="false"
                             android:editable="false"
                             android:padding="5sp"
@@ -78,32 +78,32 @@
                             android:textColor="@color/black"
                             android:textSize="15sp" />
 
-
                         <TextView
                             android:id="@+id/tv_ok"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:textSize="17sp"
-                            android:textColor="@color/colorPrimaryBlue"
-                            android:editable="false"
-                            android:cursorVisible="false"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginStart="5sp"
                             android:layout_gravity="end"
-                            android:gravity="end"
-                            android:textStyle="bold"
-                            android:text="UPDATE"
+                            android:layout_marginStart="5sp"
+                            android:layout_marginTop="5dp"
                             android:layout_marginEnd="20sp"
                             android:layout_marginBottom="20sp"
-                            android:padding="5sp"/>
+                            android:cursorVisible="false"
+                            android:editable="false"
+                            android:gravity="end"
+                            android:padding="5sp"
+                            android:text="UPDATE"
+                            android:textColor="@color/colorPrimaryBlue"
+                            android:textSize="17sp"
+                            android:textStyle="bold" />
 
                     </LinearLayout>
+
                 </ScrollView>
 
-
             </LinearLayout>
-        </LinearLayout>
-    </RelativeLayout>
 
+        </LinearLayout>
+
+    </RelativeLayout>
 
 </RelativeLayout>

@@ -6,10 +6,10 @@
         android:icon="@drawable/home"
         android:title="@string/title_home" />
 
-   <!-- <item
-        android:id="@+id/navigation_market"
-        android:icon="@drawable/marketing"
-        android:title="@string/title_market" />-->
+    <!-- <item
+         android:id="@+id/navigation_market"
+         android:icon="@drawable/marketing"
+         android:title="@string/title_market" />-->
 
     <item
         android:id="@+id/navigation_holiday"
@@ -19,13 +19,10 @@
     <item
         android:id="@+id/navigation_package"
         android:icon="@drawable/icons_cart"
-        android:title="@string/title_package"   />
+        android:title="@string/title_package" />
 
     <item
         android:id="@+id/navigation_paid_user"
         android:icon="@drawable/icons_user"
         android:title="@string/title_paid_user" />
-    
-
-
 </menu>

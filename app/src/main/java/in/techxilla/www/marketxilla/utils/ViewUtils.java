@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.animation.AccelerateInterpolator;
@@ -14,112 +13,103 @@ import android.view.animation.Interpolator;
 import androidx.annotation.Nullable;
 
 public class ViewUtils {
-  private static final float INTERPOLATOR_FACTOR = 2.0f;
+    private static final float INTERPOLATOR_FACTOR = 2.0f;
 
-  private ViewUtils() {
-    throw new AssertionError();
-  }
-
-  @SuppressWarnings("deprecation")
-  public static void setBackground(View view, Drawable drawable) {
-    if (Build.VERSION.SDK_INT >= 16) {
-      view.setBackground(drawable);
-    } else {
-      view.setBackgroundDrawable(drawable);
+    private ViewUtils() {
+        throw new AssertionError();
     }
-  }
 
-  public static boolean isGone(View view) {
-    return view.getVisibility() == View.GONE;
-  }
-
-  public static void setViewHeight(View view, int height, boolean layout) {
-    view.getLayoutParams().height = height;
-    if (layout) {
-      view.requestLayout();
+    @SuppressWarnings("deprecation")
+    public static void setBackground(View view, Drawable drawable) {
+        view.setBackground(drawable);
     }
-  }
 
-  public static Animator toggleViewFade(
-      final View target, final boolean show, int duration,
-      @Nullable final Runnable startRunnable, @Nullable final Runnable endRunnable) {
+    public static boolean isGone(View view) {
+        return view.getVisibility() == View.GONE;
+    }
 
-    Animator animator;
-    float alpha = show ? 1.0f : 0.0f;
-    animator = ObjectAnimator.ofFloat(target, "alpha", alpha);
-    animator.setDuration(duration);
+    public static void setViewHeight(View view, int height, boolean layout) {
+        view.getLayoutParams().height = height;
+        if (layout) {
+            view.requestLayout();
+        }
+    }
 
-    animator.addListener(new AnimatorListenerAdapter() {
-      @Override public void onAnimationStart(Animator animation) {
+    public static Animator toggleViewFade(
+            final View target, final boolean show, int duration,
+            @Nullable final Runnable startRunnable, @Nullable final Runnable endRunnable) {
+
+        Animator animator;
+        float alpha = show ? 1.0f : 0.0f;
+        animator = ObjectAnimator.ofFloat(target, "alpha", alpha);
+        animator.setDuration(duration);
+
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                if (show) {
+                    target.setVisibility(View.VISIBLE);
+                    if (startRunnable != null) {
+                        startRunnable.run();
+                    }
+                }
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (!show) {
+                    target.setVisibility(View.GONE);
+                }
+                if (endRunnable != null) {
+                    endRunnable.run();
+                }
+            }
+        });
+        return animator;
+    }
+
+    public static Animator toggleViewCircular(View source, final View target, final boolean show,
+                                              float radius, int duration, @Nullable final Runnable startRunnable, @Nullable final Runnable endRunnable) {
+
+        Animator animator;
+        // get the center for the clipping circle
+        int cx = (source.getLeft() + source.getRight()) / 2;
+        int cy = (source.getTop() + (int) source.getTranslationY() + source.getBottom());
+        float radiusStart = show ? 0 : radius;
+        float radiusEnd = show ? radius : 0;
+
+        animator = ViewAnimationUtils.createCircularReveal(target, cx, cy, radiusStart, radiusEnd);
+        animator.setDuration(duration);
+        animator.setInterpolator(createInterpolator(show));
+
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                if (show) {
+                    target.setVisibility(View.VISIBLE);
+                    if (startRunnable != null) {
+                        startRunnable.run();
+                    }
+                }
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (!show) {
+                    target.setVisibility(View.GONE);
+                }
+                if (endRunnable != null) {
+                    endRunnable.run();
+                }
+            }
+        });
+        return animator;
+    }
+
+    private static Interpolator createInterpolator(boolean show) {
         if (show) {
-          target.setVisibility(View.VISIBLE);
-
-          if (startRunnable != null) {
-            startRunnable.run();
-          }
+            return new AccelerateInterpolator(INTERPOLATOR_FACTOR);
         }
-      }
-
-      @Override public void onAnimationEnd(Animator animation) {
-        if (!show) {
-          target.setVisibility(View.GONE);
-        }
-
-        if (endRunnable != null) {
-          endRunnable.run();
-        }
-      }
-    });
-
-    return animator;
-  }
-
-  public static Animator toggleViewCircular(View source, final View target, final boolean show,
-                                            float radius, int duration, @Nullable final Runnable startRunnable, @Nullable final Runnable endRunnable) {
-
-    Animator animator;
-
-    // get the center for the clipping circle
-    int cx = (source.getLeft() + source.getRight()) / 2;
-    int cy = (source.getTop() + (int) source.getTranslationY() + source.getBottom());
-
-    float radiusStart = show ? 0 : radius;
-    float radiusEnd = show ? radius : 0;
-
-    animator = ViewAnimationUtils.createCircularReveal(target, cx, cy, radiusStart, radiusEnd);
-    animator.setDuration(duration);
-    animator.setInterpolator(createInterpolator(show));
-
-    animator.addListener(new AnimatorListenerAdapter() {
-      @Override public void onAnimationStart(Animator animation) {
-        if (show) {
-          target.setVisibility(View.VISIBLE);
-
-          if (startRunnable != null) {
-            startRunnable.run();
-          }
-        }
-      }
-
-      @Override public void onAnimationEnd(Animator animation) {
-        if (!show) {
-          target.setVisibility(View.GONE);
-        }
-
-        if (endRunnable != null) {
-          endRunnable.run();
-        }
-      }
-    });
-
-    return animator;
-  }
-
-  private static Interpolator createInterpolator(boolean show) {
-    if (show) {
-      return new AccelerateInterpolator(INTERPOLATOR_FACTOR);
+        return new DecelerateInterpolator(INTERPOLATOR_FACTOR);
     }
-
-    return new DecelerateInterpolator(INTERPOLATOR_FACTOR);
-  }
 }

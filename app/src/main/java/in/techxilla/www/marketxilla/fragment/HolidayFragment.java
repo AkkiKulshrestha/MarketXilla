@@ -31,45 +31,34 @@ import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.UUID;
 
 import in.techxilla.www.marketxilla.NewDashboard;
 import in.techxilla.www.marketxilla.R;
-import in.techxilla.www.marketxilla.model.CallModel;
 import in.techxilla.www.marketxilla.utils.CommonMethods;
 import in.techxilla.www.marketxilla.utils.ConnectionDetector;
 
-import static in.techxilla.www.marketxilla.utils.CommonMethods.DisplaySnackBar;
 import static in.techxilla.www.marketxilla.webservices.RestClient.ROOT_URL;
 
 public class HolidayFragment extends Fragment {
-
-
-    View rootView;
-    Context mContext;
-    LinearLayout ll_parent_holiday;
-    Toolbar toolbar;
-    ProgressDialog myDialog;
-
+    private View rootView;
+    private Context mContext;
+    private LinearLayout ll_parent_holiday;
+    private Toolbar toolbar;
+    private ProgressDialog myDialog;
 
     @SuppressLint("InflateParams")
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootView =inflater.inflate(R.layout.fragment_holiday, null);
-
+        rootView = inflater.inflate(R.layout.fragment_holiday, null);
         initUI();
         return rootView;
-
-
     }
 
     private void initUI() {
-
         mContext = getContext();
         myDialog = new ProgressDialog(mContext);
         myDialog.setMessage("Please wait...");
@@ -80,11 +69,9 @@ public class HolidayFragment extends Fragment {
         if (activity != null) {
             toolbar = activity.findViewById(R.id.toolbar);
             activity.setSupportActionBar(toolbar);
-
         }
 
-
-        ImageView iv_refresh = (ImageView) toolbar.findViewById(R.id.iv_refresh);
+        final ImageView iv_refresh = (ImageView) toolbar.findViewById(R.id.iv_refresh);
         iv_refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,108 +79,79 @@ public class HolidayFragment extends Fragment {
             }
         });
 
-        ll_parent_holiday = (LinearLayout)rootView.findViewById(R.id.ll_parent_holiday);
-
+        ll_parent_holiday = (LinearLayout) rootView.findViewById(R.id.ll_parent_holiday);
         fetchHolidayData();
     }
 
-
-
-
+    @SuppressLint({"UseCompatLoadingForDrawables", "SimpleDateFormat"})
     private void fetchHolidayData() {
-        if(ll_parent_holiday!=null && ll_parent_holiday.getChildCount()>0){
+        if (ll_parent_holiday != null && ll_parent_holiday.getChildCount() > 0) {
             ll_parent_holiday.removeAllViews();
         }
-
         if (myDialog != null && !myDialog.isShowing()) {
             myDialog.show();
         }
-
-        String Uiid_id = UUID.randomUUID().toString();
-        String URL_GetHolidayList = ROOT_URL+"holiday_list.php?_"+Uiid_id;
-
-
+        final String Uiid_id = UUID.randomUUID().toString();
+        final String URL_GetHolidayList = ROOT_URL + "holiday_list.php?_" + Uiid_id;
         try {
-            Log.d("URL",URL_GetHolidayList);
-
+            Log.d("URL", URL_GetHolidayList);
             ConnectionDetector cd = new ConnectionDetector(mContext);
             boolean isInternetPresent = cd.isConnectingToInternet();
             if (isInternetPresent) {
 
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, URL_GetHolidayList,
                         new Response.Listener<String>() {
-                            @SuppressLint({"UseCompatLoadingForDrawables", "SimpleDateFormat"})
                             @Override
-                            public void onResponse(String response) {
-                                Log.d("Response",response);
-
+                            public void onResponse(final String response) {
+                                Log.d("Response", response);
                                 try {
+                                    final JSONObject jobj = new JSONObject(response);
+                                    final JSONArray data = jobj.getJSONArray("data");
+                                    for (int k = 0; k < data.length(); k++) {
+                                        final JSONObject jsonObject = data.getJSONObject(k);
+                                        final String id = jsonObject.getString("id");
+                                        final String holiday = jsonObject.getString("holiday");
+                                        final String date = jsonObject.getString("date");
+                                        final String day = jsonObject.getString("day");
+                                        final String year = jsonObject.getString("year");
+                                        final Object is_national_holiday = jsonObject.get("is_national_holiday");
+                                        final Object is_active = jsonObject.get("is_active");
 
-                                    JSONObject jobj = new JSONObject(response);
-
-                                    JSONArray data = jobj.getJSONArray("data");
-
-
-                                    for(int k = 0; k< data.length();k++) {
-                                        JSONObject jsonObject = data.getJSONObject(k);
-                                        Log.d("jobj", "" + jsonObject);
-                                        Log.d("jobj", "" + jsonObject);
-                                        String id = jsonObject.getString("id");
-                                        String holiday = jsonObject.getString("holiday");
-                                        String date = jsonObject.getString("date");
-                                        String day = jsonObject.getString("day");
-                                        String year = jsonObject.getString("year");
-                                        Object is_national_holiday = jsonObject.get("is_national_holiday");
-                                        Object is_active = jsonObject.get("is_active");
-
-
-                                        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                        final LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                                         final View rowView1 = inflater.inflate(R.layout.row_holiday_info, null);
                                         rowView1.setPadding(10, 10, 10, 10);
 
-                                        RelativeLayout relativeDate = rowView1.findViewById(R.id.relativeDate);
-                                        TextView tv_date = (TextView) rowView1.findViewById(R.id.tv_date);
-                                        TextView tv_holiday_name = (TextView) rowView1.findViewById(R.id.tv_holiday_name);
-                                        TextView tv_day = (TextView) rowView1.findViewById(R.id.tv_day);
+                                        final RelativeLayout relativeDate = rowView1.findViewById(R.id.relativeDate);
+                                        final TextView tv_date = (TextView) rowView1.findViewById(R.id.tv_date);
+                                        final TextView tv_holiday_name = (TextView) rowView1.findViewById(R.id.tv_holiday_name);
+                                        final TextView tv_day = (TextView) rowView1.findViewById(R.id.tv_day);
 
-                                        if(is_national_holiday.equals("1")){
+                                        if (is_national_holiday.equals("1")) {
                                             relativeDate.setBackgroundColor(mContext.getResources().getColor(R.color.mpn_red));
-                                        }else{
+                                        } else {
                                             relativeDate.setBackgroundColor(mContext.getResources().getColor(R.color.colorPrimary));
                                         }
 
-                                        //String date="Mar 10, 2016";
-                                        @SuppressLint("SimpleDateFormat")
-                                        //SimpleDateFormat spf=new SimpleDateFormat("M dd,yyyy");
-                                        DateFormat format = new SimpleDateFormat("MMMM d,yyyy", Locale.ENGLISH);
-
-                                        Date newDate= format.parse(date);
-                                        DateFormat format1 = new SimpleDateFormat("dd \nMMM");
-                                        String FormatedDate = format1.format(newDate);
-
-                                        Log.d("FormattedDate",""+FormatedDate);
-                                        tv_date.setText(FormatedDate.toUpperCase());
+                                        final DateFormat format = new SimpleDateFormat("MMMM d,yyyy", Locale.ENGLISH);
+                                        Date newDate = format.parse(date);
+                                        final DateFormat format1 = new SimpleDateFormat("dd \nMMM");
+                                        final String FormattedDate = format1.format(newDate);
+                                        tv_date.setText(FormattedDate.toUpperCase());
                                         tv_holiday_name.setText(holiday);
                                         tv_day.setText(day);
                                         ll_parent_holiday.addView(rowView1);
-
                                     }
                                     if (myDialog != null && myDialog.isShowing()) {
                                         myDialog.dismiss();
                                     }
                                 } catch (Exception e) {
-
                                     e.printStackTrace();
-
                                     if (myDialog != null && myDialog.isShowing()) {
                                         myDialog.dismiss();
                                     }
-
                                 }
-
                             }
                         }, new Response.ErrorListener() {
-
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         VolleyLog.d("volley", "Error: " + error.getMessage());
@@ -201,27 +159,16 @@ public class HolidayFragment extends Fragment {
                         if (myDialog != null && myDialog.isShowing()) {
                             myDialog.dismiss();
                         }
-
                     }
                 });
-
                 RequestQueue requestQueue = Volley.newRequestQueue(mContext);
                 stringRequest.setRetryPolicy(new DefaultRetryPolicy(0, -1, 0));
                 requestQueue.add(stringRequest);
-
-
             } else {
-                CommonMethods.DisplayToastInfo(mContext,"No Internet Connection");
-
+                CommonMethods.DisplayToastInfo(mContext, "No Internet Connection");
             }
         } catch (Exception e) {
-
             e.printStackTrace();
-
         }
-
-
     }
-
-
 }

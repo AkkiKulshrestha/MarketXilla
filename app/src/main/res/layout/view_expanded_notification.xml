@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="8dp">
 
     <RelativeLayout
@@ -28,7 +28,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Marketxilla"
-                android:textColor="@color/colorPrimary"/>
+                android:textColor="@color/colorPrimary" />
 
             <TextView
                 android:id="@+id/content_text"
@@ -36,7 +36,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Expand me to see a detailed message!"
-                android:textColor="@color/white"/>
+                android:textColor="@color/white" />
+
         </LinearLayout>
 
 
@@ -44,15 +45,14 @@
             android:id="@+id/icon_container1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            >
+            android:layout_alignParentRight="true">
 
             <ImageView
                 android:id="@+id/big_icon2"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:scaleType="fitXY"
-                android:src="@drawable/m_logo"/>
+                android:src="@drawable/m_logo" />
 
         </RelativeLayout>
 
@@ -72,8 +72,7 @@
             android:layout_height="80dp"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
-            app:lottie_rawRes="@raw/m_logo"
-            />
+            app:lottie_rawRes="@raw/m_logo" />
 
         <TextView
             android:id="@+id/notification_message"
@@ -81,7 +80,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="8"
-            android:textAppearance="@style/TextAppearance.Compat.Notification.Info"/>
+            android:textAppearance="@style/TextAppearance.Compat.Notification.Info" />
     </LinearLayout>
 
     <LinearLayout
@@ -90,24 +89,24 @@
         android:layout_below="@id/notification_info"
         android:layout_centerInParent="true">
 
-
         <Button
             android:id="@+id/view_button"
             style="@style/Widget.Compat.NotificationActionContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="View"
-            android:textAppearance="@style/Widget.Compat.NotificationActionText"/>
+            android:textAppearance="@style/Widget.Compat.NotificationActionText" />
+
     </LinearLayout>
 
     <TextView
         android:id="@+id/timestamp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:paddingRight="3.5dp"
+        android:layout_alignParentRight="true"
         android:paddingTop="8dp"
-        android:textAppearance="@style/TextAppearance.Compat.Notification.Title"/>
+        android:paddingRight="3.5dp"
+        android:textAppearance="@style/TextAppearance.Compat.Notification.Title" />
 
 </RelativeLayout>

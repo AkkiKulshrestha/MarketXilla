@@ -1,23 +1,35 @@
 package in.techxilla.www.marketxilla.model;
 
 public class SubscritPlanModel {
-     String sPlan;
-    String sPlanName;
-    String sDetails;
-    boolean sStock_Future;
-    boolean sStock_Options;
-    boolean sIndex_Future;
-    boolean sIndex_Options;
-    boolean sCommodity;
-    boolean sTelegram_Updates;
-    String Amount1Month;
-    String Amount2Months;
-    String Amount3Months;
-    String Id;
+    int image_green;
+    private String sPlan;
+    private String sPlanName;
+    private String sDetails;
+    private boolean sStock_Future;
+    private boolean sStock_Options;
+    private boolean sIndex_Future;
+    private boolean sIndex_Options;
+    private boolean sCommodity;
+    private boolean sTelegram_Updates;
+    private String Amount1Month;
+    private String Amount2Months;
+    private String Amount3Months;
+    private String Id;
 
-    public SubscritPlanModel(String sPlan, String sPlanName, String sDetails,
-                             boolean sStock_Future, boolean sStock_Options, boolean sIndex_Future, boolean sIndex_Options, boolean sCommodity, boolean sTelegram_Updates,
-                             String Amount1Month,  String Amount2Months,String Amount3Months,String Id ) {
+    public SubscritPlanModel(final String sPlan,
+                             final String sPlanName,
+                             final String sDetails,
+                             final boolean sStock_Future,
+                             final boolean sStock_Options,
+                             final boolean sIndex_Future,
+                             final boolean sIndex_Options,
+                             final boolean sCommodity,
+                             final boolean sTelegram_Updates,
+                             final String Amount1Month,
+                             final String Amount2Months,
+                             final String Amount3Months,
+                             final String Id) {
+
         this.sPlan = sPlan;
         this.sPlanName = sPlanName;
         this.sDetails = sDetails;
@@ -31,15 +43,10 @@ public class SubscritPlanModel {
         this.Amount2Months = Amount2Months;
         this.Amount3Months = Amount3Months;
         this.Id = Id;
-
     }
 
-    public  SubscritPlanModel(){
-
+    public SubscritPlanModel() {
     }
-
-
-    int image_green;
 
     public String getAmount1Month() {
         return Amount1Month;
@@ -72,7 +79,6 @@ public class SubscritPlanModel {
     public void setId(String Id) {
         this.Id = Id;
     }
-
 
     public String getsPlan() {
         return sPlan;

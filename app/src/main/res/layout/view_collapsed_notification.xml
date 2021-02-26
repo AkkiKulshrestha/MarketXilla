@@ -15,10 +15,9 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:scaleType="fitXY"
-            android:src="@mipmap/ic_launcher"/>
+            android:src="@mipmap/ic_launcher" />
 
     </RelativeLayout>
-
 
     <LinearLayout
         android:id="@+id/notification_main"
@@ -37,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Marketxilla"
-            android:textColor="@color/colorPrimary"/>
+            android:textColor="@color/colorPrimary" />
 
         <TextView
             android:id="@+id/content_text"
@@ -45,7 +44,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Expand me to see a detailed message!"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white" />
+
     </LinearLayout>
 
     <TextView
@@ -53,23 +53,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:paddingRight="3.5dp"
         android:paddingTop="8dp"
-        android:visibility="gone"/>
+        android:paddingRight="3.5dp"
+        android:visibility="gone" />
 
     <RelativeLayout
         android:id="@+id/icon_container1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        >
+        android:layout_alignParentRight="true">
 
         <ImageView
             android:id="@+id/big_icon2"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:scaleType="fitXY"
-            android:src="@drawable/m_logo"/>
+            android:src="@drawable/m_logo" />
 
     </RelativeLayout>
 

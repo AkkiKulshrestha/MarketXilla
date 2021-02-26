@@ -2,16 +2,12 @@ package in.techxilla.www.marketxilla.model;
 
 public class SmartPlanModel {
 
-    String planname;
-    String planDescription;
-    int image;
+    private String planname;
+    private String planDescription;
+    private int image;
+    private int color;
 
-
-
-    int color;
-
-
-    public SmartPlanModel(String planname, String planDescription, int image, int color) {
+    public SmartPlanModel(final String planname, final String planDescription, final int image, final int color) {
         this.planname = planname;
         this.planDescription = planDescription;
         this.image = image;

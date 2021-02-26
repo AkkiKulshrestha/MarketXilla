@@ -13,76 +13,67 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        app:headerLayout="@layout/nav_header_main"
+        app:menu="@menu/activity_main_drawer">
 
+        <RelativeLayout
+            android:id="@+id/ll_navigation_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-            <com.google.android.material.navigation.NavigationView
-                android:id="@+id/nav_view"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="start"
-                android:fitsSystemWindows="true"
-                android:scrollbarAlwaysDrawVerticalTrack="true"
-                app:headerLayout="@layout/nav_header_main"
-                app:menu="@menu/activity_main_drawer"
-                >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginTop="50dp"
+                android:gravity="center"
+                android:minHeight="70sp"
+                android:orientation="horizontal"
+                android:weightSum="10">
 
-                <RelativeLayout
-                    android:id="@+id/ll_navigation_bottom"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/iv_facebook"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:src="@drawable/facebook_new" />
 
+                <ImageView
+                    android:id="@+id/iv_twitter"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:src="@drawable/twitter_quared" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:layout_marginTop="50dp"
-                        android:gravity="center"
-                        android:minHeight="70sp"
-                        android:orientation="horizontal"
-                        android:weightSum="10">
+                <ImageView
+                    android:id="@+id/iv_linked_in"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:src="@drawable/linkedin" />
 
+                <ImageView
+                    android:id="@+id/iv_telegram"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:src="@drawable/telegram" />
 
-                        <ImageView
-                            android:id="@+id/iv_facebook"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:layout_gravity="center"
-                            android:layout_margin="5dp"
-                            android:src="@drawable/facebook_new" />
+            </LinearLayout>
 
-                        <ImageView
-                            android:id="@+id/iv_twitter"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:layout_gravity="center"
-                            android:layout_margin="5dp"
-                            android:src="@drawable/twitter_quared" />
+        </RelativeLayout>
 
-                        <ImageView
-                            android:id="@+id/iv_linked_in"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:layout_gravity="center"
-                            android:layout_margin="5dp"
-                            android:src="@drawable/linkedin" />
-
-                        <ImageView
-                            android:id="@+id/iv_telegram"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:layout_gravity="center"
-                            android:layout_margin="5dp"
-                            android:src="@drawable/telegram" />
-
-
-                    </LinearLayout>
-
-                </RelativeLayout>
-
-
-            </com.google.android.material.navigation.NavigationView>
-
-
+    </com.google.android.material.navigation.NavigationView>
 
 </androidx.drawerlayout.widget.DrawerLayout>

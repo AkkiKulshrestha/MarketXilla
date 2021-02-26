@@ -2,10 +2,11 @@ package in.techxilla.www.marketxilla.adaptor;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +16,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
@@ -27,17 +27,17 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-
+import com.payumoney.core.PayUmoneySdkInitializer;
+import com.payumoney.core.entity.TransactionResponse;
+import com.payumoney.sdkui.ui.utils.PayUmoneyFlowManager;
+import com.payumoney.sdkui.ui.utils.ResultModel;
 import com.squareup.picasso.Picasso;
-import com.wangsun.upi.payment.UpiPayment;
-import com.wangsun.upi.payment.model.PaymentDetail;
-import com.wangsun.upi.payment.model.TransactionDetails;
 
-
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -47,21 +47,20 @@ import java.util.Map;
 
 import in.techxilla.www.marketxilla.R;
 import in.techxilla.www.marketxilla.model.SubscritPlanModel;
+import in.techxilla.www.marketxilla.utils.AppEnvironment;
 import in.techxilla.www.marketxilla.utils.CommonMethods;
 import in.techxilla.www.marketxilla.utils.ConnectionDetector;
+import in.techxilla.www.marketxilla.utils.PayUMoneyAppPreference;
 import in.techxilla.www.marketxilla.utils.UtilitySharedPreferences;
 
+import static android.app.Activity.RESULT_OK;
 import static in.techxilla.www.marketxilla.webservices.RestClient.ROOT_URL;
 
-public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPlanAdapter.PlanViewHolder>  {
+public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPlanAdapter.PlanViewHolder> {
 
+    private final Context context;
     public ArrayList<SubscritPlanModel> smartPlanModelsList;
-    String GOOGLE_PAY_PACKAGE_NAME = "com.google.android.apps.nbu.paisa.user";
-    int GOOGLE_PAY_REQUEST_CODE = 123;
-    Uri uri;
-    String mUserId, mPlan_id, mSubscripbed_on, mPayment_detail, mPackage_id, msubscribed_till;
-    private Context context;
-   // PaymentDetail payment;
+    private String mUserId, mPlan_id, mSubscripbed_on, mPayment_detail, mPackage_id, msubscribed_till;
 
     public SubscriptionPlanAdapter(ArrayList<SubscritPlanModel> smartPlanModelsList, Context context) {
         this.smartPlanModelsList = smartPlanModelsList;
@@ -77,23 +76,37 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
         }
     }
 
+    public static String hashCal(String type, String hashString) {
+        StringBuilder hash = new StringBuilder();
+        MessageDigest messageDigest = null;
+        try {
+            messageDigest = MessageDigest.getInstance(type);
+            messageDigest.update(hashString.getBytes());
+            byte[] mdbytes = messageDigest.digest();
+            for (byte hashByte : mdbytes) {
+                hash.append(Integer.toString((hashByte & 0xff) + 0x100, 16).substring(1));
+            }
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return hash.toString();
+    }
+
     @NonNull
     @Override
     public SubscriptionPlanAdapter.PlanViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.plan_slide1, parent, false);
 
-        return new SubscriptionPlanAdapter.PlanViewHolder(itemView);
+        return new PlanViewHolder(itemView);
     }
 
-    @SuppressLint("UseCompatLoadingForDrawables")
+    @SuppressLint({"UseCompatLoadingForDrawables", "SetTextI18n"})
     @Override
     public void onBindViewHolder(@NonNull SubscriptionPlanAdapter.PlanViewHolder holder, int position) {
 
         final SubscritPlanModel smartPlanModel = smartPlanModelsList.get(position);
-
         mUserId = smartPlanModel.getId();
-
         holder.img_green.setText(smartPlanModel.getsPlan());
         holder.tv_title.setText(smartPlanModel.getsPlanName());
         holder.tv_msg1.setText(smartPlanModel.getsDetails());
@@ -101,16 +114,15 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
         holder.tv_two_month.setText("2 Months\n\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(smartPlanModel.getAmount2Months()));
         holder.tv_three_month.setText("3 Months\n\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(smartPlanModel.getAmount3Months()));
 
-
         if (smartPlanModel.issStock_Future()) {
             Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_stk_ftr);
         } else {
             Picasso.with(context).load(R.mipmap.ic_red_close).into(holder.iv_stk_ftr);
-         }
+        }
 
         if (smartPlanModel.issStock_Options()) {
             Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_stk_opt);
-         } else {
+        } else {
             Picasso.with(context).load(R.mipmap.ic_red_close).into(holder.iv_stk_opt);
         }
 
@@ -118,19 +130,19 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
             Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_index_ftr);
         } else {
             Picasso.with(context).load(R.mipmap.ic_red_close).into(holder.iv_index_ftr);
-         }
+        }
 
         if (smartPlanModel.issIndex_Options()) {
             Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_index_opt);
-       } else {
+        } else {
             Picasso.with(context).load(R.mipmap.ic_red_close).into(holder.iv_index_opt);
         }
 
         if (smartPlanModel.issCommodity()) {
             Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_commodity);
-         } else {
+        } else {
             Picasso.with(context).load(R.mipmap.ic_red_close).into(holder.iv_commodity);
-          }
+        }
 
         if (smartPlanModel.issTelegram_Updates()) {
             Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_telegram_update);
@@ -141,8 +153,7 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
         holder.tv_one_month.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PayUsing_googlepay(smartPlanModel.getId(), smartPlanModel.getAmount1Month(), "1",holder.tv_title.getText().toString().trim());
-             //   payWithGPay();
+                PayUMoneySdk(smartPlanModel.getId(), smartPlanModel.getAmount1Month(), "1", holder.tv_title.getText().toString().trim());
                 ((Activity) context).overridePendingTransition(R.animator.move_left, R.animator.move_right);
             }
         });
@@ -150,8 +161,7 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
         holder.tv_two_month.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PayUsing_googlepay(smartPlanModel.getId(), smartPlanModel.getAmount2Months(), "2",holder.tv_title.getText().toString().trim());
-               // payWithGPay();
+                PayUMoneySdk(smartPlanModel.getId(), smartPlanModel.getAmount2Months(), "2", holder.tv_title.getText().toString().trim());
                 ((Activity) context).overridePendingTransition(R.animator.move_left, R.animator.move_right);
             }
         });
@@ -159,72 +169,85 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
         holder.tv_three_month.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                PayUsing_googlepay(smartPlanModel.getId(), smartPlanModel.getAmount3Months(), "3",holder.tv_title.getText().toString().trim());
-               // payWithGPay();
+                PayUMoneySdk(smartPlanModel.getId(), smartPlanModel.getAmount3Months(), "3", holder.tv_title.getText().toString().trim());
                 ((Activity) context).overridePendingTransition(R.animator.move_left, R.animator.move_right);
             }
         });
-
     }
 
-    private void PayUsing_googlepay(String PlanId, String Amount, String Package_id,String PlanName) {
-            mPlan_id = PlanId;
-            mPackage_id = Package_id;
-
-            mSubscripbed_on = CommonMethods.DisplayCurrentDate();
-
-            Calendar calendar = Calendar.getInstance();
-
-            if (mPackage_id.equalsIgnoreCase("1")) {
-                calendar.add(Calendar.MONTH, 1);
-                System.out.println("Current Date = " + calendar.getTime());
-            } else if (mPackage_id.equalsIgnoreCase("2")) {
-                calendar.add(Calendar.MONTH, 2);
-                System.out.println("Current Date = " + calendar.getTime());
-            } else if (mPackage_id.equalsIgnoreCase("3")) {
-                calendar.add(Calendar.MONTH, 3);
-                System.out.println("Current Date = " + calendar.getTime());
-            }
-            SimpleDateFormat formDate = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+    @SuppressLint({"SimpleDateFormat","DefaultLocale"})
+    private void PayUMoneySdk(String PlanId, String Amount, String Package_id, String PlanName) {
+        mPlan_id = PlanId;
+        mPackage_id = Package_id;
+        mSubscripbed_on = CommonMethods.DisplayCurrentDate();
+        Calendar calendar = Calendar.getInstance();
+        if (mPackage_id.equalsIgnoreCase("1")) {
+            calendar.add(Calendar.MONTH, 1);
+            System.out.println("Current Date = " + calendar.getTime());
+        } else if (mPackage_id.equalsIgnoreCase("2")) {
+            calendar.add(Calendar.MONTH, 2);
+            System.out.println("Current Date = " + calendar.getTime());
+        } else if (mPackage_id.equalsIgnoreCase("3")) {
+            calendar.add(Calendar.MONTH, 3);
+            System.out.println("Current Date = " + calendar.getTime());
+        }
+         SimpleDateFormat formDate = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
 
         msubscribed_till = formDate.format(new Date(calendar.getTimeInMillis())); //
         System.out.println("msubscribed_till Date = " + msubscribed_till);
 
-        String StrSubscrptionAmount= String.format("%.2f",Double.parseDouble(Amount));
-        String transactionId = "TID" + System.currentTimeMillis();
-        String StrUpiAccountId = UtilitySharedPreferences.getPrefs(context, "UpiAccountId");
-        String StrUPI_MerchantName = UtilitySharedPreferences.getPrefs(context, "UpiMerchantName");
+        final String StrSubscrptionAmount = String.format("%.2f", Double.parseDouble(Amount));
+        final String transactionId = "TID" + System.currentTimeMillis();
+        final String StrUpiAccountId = UtilitySharedPreferences.getPrefs(context, "UpiAccountId");
+        final String StrUPI_MerchantName = UtilitySharedPreferences.getPrefs(context, "UpiMerchantName");
+        final String MemberEmailId = UtilitySharedPreferences.getPrefs(context, "MemberEmailId");
+        final String MemberId = UtilitySharedPreferences.getPrefs(context, "MemberId");
+        final String MemberName = UtilitySharedPreferences.getPrefs(context, "MemberName");
+        final String MemberMobile = UtilitySharedPreferences.getPrefs(context, "MemberMobile");
 
-        ArrayList<String> existingApps = UpiPayment.getExistingUpiApps(context);
-
-        PaymentDetail paymentDetail = new PaymentDetail(StrUpiAccountId,StrUPI_MerchantName,"",transactionId,PlanName,StrSubscrptionAmount);
-        new UpiPayment((FragmentActivity) context)
-                .setPaymentDetail(paymentDetail)
-                .setUpiApps(UpiPayment.getUPI_APPS())
-                .setCallBackListener(new UpiPayment.OnUpiPaymentListener() {
-
-
-                    @Override
-                    public void onSubmitted(@NotNull TransactionDetails data) {
-                        Toast.makeText(context, "transaction pending: " + data, Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void onError(@NotNull String message) {
-                        Toast.makeText(context, "transaction failed: " + message, Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void onSuccess(@NotNull TransactionDetails data) {
-                        Toast.makeText(context, "transaction success: " + data.toString(), Toast.LENGTH_LONG).show();
-                        onTransactionSuccess(data.toString());
-                    }
-                }).pay();
+        PayUMoneyAppPreference appPreference = new PayUMoneyAppPreference();
+        appPreference.setUserEmail(MemberEmailId);
+        appPreference.setUserId(MemberId);
+        appPreference.setUserMobile(MemberMobile);
+        appPreference.setUserFullName(MemberName);
+        appPreference.setPaymentAmount(StrSubscrptionAmount);
+        appPreference.setProductInfo(PlanName);
+        appPreference.setPlanId(mPlan_id);
 
 
+        AppEnvironment appEnvironment = AppEnvironment.SANDBOX;
 
+        String hashSequence = appEnvironment.merchant_Key() + "|" + transactionId + "|" + appPreference.getPaymentAmount() + "|" + appPreference.getProductInfo() + "|" + appPreference.getUserFullName() + "|" + appPreference.getUserEmail() + "|" + appPreference.getUserId() + "|" + appPreference.getUserMobile() + "|||||||||" + appEnvironment.salt();
+        String serverGeneratedHash = hashCal("SHA-512", hashSequence);
+
+
+        PayUmoneySdkInitializer.PaymentParam.Builder builder = new
+                PayUmoneySdkInitializer.PaymentParam.Builder();
+        builder.setAmount(StrSubscrptionAmount)
+                // Payment amount
+                .setTxnId(transactionId)                          // Transaction ID
+                .setPhone(appPreference.getUserMobile())          // User Phone number
+                .setProductName(appPreference.getProductInfo())   // Product Name or description
+                .setFirstName(appPreference.getUserFullName())    // User First name
+                .setEmail(appPreference.getUserEmail())           // User Email ID
+                .setsUrl(appEnvironment.surl())                   // Success URL (surl)
+                .setfUrl(appEnvironment.furl())                   //Failure URL (furl)
+                .setUdf1(appPreference.getUserId())
+                .setUdf2(appPreference.getPlanId())
+                .setIsDebug(appEnvironment.debug())               // Integration environment - true (Debug)/ false(Production)
+                .setKey(appEnvironment.merchant_Key())            // Merchant key
+                .setMerchantId(appEnvironment.merchant_ID());     // Merchant ID
+
+        PayUmoneySdkInitializer.PaymentParam paymentParam = null;
+        try {
+            paymentParam = builder.build();
+            paymentParam.setMerchantHash(serverGeneratedHash);  //set the hash
+            PayUmoneyFlowManager.startPayUMoneyFlow(paymentParam, (Activity) context, R.style.AppTheme_default, appPreference.isOverrideResultScreen());
+
+        } catch (Exception e) {
+            Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
     private void onTransactionSuccess(String TransactionDetails) {
@@ -251,26 +274,13 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
         return smartPlanModelsList.size();
     }
 
-    private void payWithGPay() {
-        if (isAppInstalled(context, GOOGLE_PAY_PACKAGE_NAME)) {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(uri);
-            intent.setPackage(GOOGLE_PAY_PACKAGE_NAME);
-            ((Activity) context).startActivityForResult(intent, GOOGLE_PAY_REQUEST_CODE);
-        } else {
-            Toast.makeText(context, "Please Install GPay", Toast.LENGTH_SHORT).show();
-        }
-    }
-
     private void AddUserSubscriptionDetailApi(String transactionDetails) {
-
 
         String API_AddUserSubscriptionDetail = ROOT_URL + "add_user_subscription_detail.php";
         try {
 
             ConnectionDetector cd = new ConnectionDetector(context);
             boolean isInternetPresent = cd.isConnectingToInternet();
-
 
             if (isInternetPresent) {
 
@@ -284,13 +294,13 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
 
                                 try {
                                     JSONObject jsonObject = new JSONObject(response);
-                                    System.out.println("Add User Subscription response"+response);
+                                    System.out.println("Add User Subscription response" + response);
                                     boolean status = jsonObject.getBoolean("status");
                                     if (status) {
 
                                         JSONObject dataObj = jsonObject.getJSONObject("data");
                                         String message = jsonObject.getString("message");
-                                        CommonMethods.DisplayToastSuccess(context,message);
+                                        CommonMethods.DisplayToastSuccess(context, message);
                                     }
 
 
@@ -320,7 +330,7 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
                         params.put("user_id", mUserId);
                         params.put("plan_id", mPlan_id);
                         params.put("subscribed_on", mSubscripbed_on);
-                        params.put("payment_detail", ""+transactionDetails);
+                        params.put("payment_detail", "" + transactionDetails);
                         params.put("package_id", mPackage_id);
                         params.put("subscribed_till", msubscribed_till);
                         Log.d("ParrasRegister", params.toString());
@@ -350,25 +360,48 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
 
     }
 
-    /*public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (data != null) {
-            status = data.getStringExtra("Status").toLowerCase();
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PayUmoneyFlowManager.REQUEST_CODE_PAYMENT && resultCode == RESULT_OK && data != null) {
+            TransactionResponse transactionResponse = data.getParcelableExtra(PayUmoneyFlowManager.INTENT_EXTRA_TRANSACTION_RESPONSE);
+            ResultModel resultModel = data.getParcelableExtra(PayUmoneyFlowManager.ARG_RESULT);
+
+            if (transactionResponse != null && transactionResponse.getPayuResponse() != null) {
+
+                if (transactionResponse.getTransactionStatus().equals(TransactionResponse.TransactionStatus.SUCCESSFUL)) {
+                    //Success Transaction
+                } else {
+                    //Failure Transaction
+                }
+
+                // Response from Payumoney
+                String payuResponse = transactionResponse.getPayuResponse();
+
+                // Response from SURl and FURL
+                String merchantResponse = transactionResponse.getTransactionDetails();
+                new AlertDialog.Builder(context)
+                        .setCancelable(false)
+                        .setMessage("Payu's Data : " + payuResponse + "\n\n\n Merchant's Data: " + merchantResponse)
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                dialog.dismiss();
+                            }
+                        }).show();
+
+            } else if (resultModel != null && resultModel.getError() != null) {
+                //CommonMethods.DisplayToastError(context, + resultCode.getError().getTransactionResponse());
+            } else {
+                Log.d("TAG", "Both objects are null!");
+            }
         }
 
-        if ((RESULT_OK == resultCode) && status.equals("success")) {
-            Toast.makeText(context, "Transaction Successful", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(context, "Transaction Failed", Toast.LENGTH_SHORT).show();
-        }
-    }*/
+    }
 
-    public class PlanViewHolder extends RecyclerView.ViewHolder {
+    public static class PlanViewHolder extends RecyclerView.ViewHolder {
 
-        TextView  tv_title,tv_msg1;
-        TextView tv_one_month, tv_two_month, tv_three_month;
-        TextView img_green;
-        ImageView iv_stk_ftr, iv_stk_opt, iv_index_ftr, iv_index_opt, iv_commodity, iv_telegram_update;
+        private final TextView tv_title, tv_msg1;
+        private final TextView tv_one_month, tv_two_month, tv_three_month;
+        private final TextView img_green;
+        private final ImageView iv_stk_ftr, iv_stk_opt, iv_index_ftr, iv_index_opt, iv_commodity, iv_telegram_update;
 
         public PlanViewHolder(View view) {
             super(view);
@@ -386,6 +419,4 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
             tv_three_month = (TextView) view.findViewById(R.id.tv_three_month);
         }
     }
-
-
 }
