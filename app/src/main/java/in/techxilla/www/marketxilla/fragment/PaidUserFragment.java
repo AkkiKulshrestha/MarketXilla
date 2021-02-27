@@ -38,7 +38,7 @@ import java.util.UUID;
 
 import in.techxilla.www.marketxilla.NewDashboard;
 import in.techxilla.www.marketxilla.R;
-import in.techxilla.www.marketxilla.adaptor.StackLayoutAdapter;
+import in.techxilla.www.marketxilla.adaptor.CallsAdapter;
 import in.techxilla.www.marketxilla.model.CallModel;
 import in.techxilla.www.marketxilla.utils.CommonMethods;
 import in.techxilla.www.marketxilla.utils.ConnectionDetector;
@@ -53,7 +53,7 @@ public class PaidUserFragment extends Fragment {
     private RecyclerView recycler_list;
     private ArrayList<CallModel> callModel_list = new ArrayList<>();
     private CallModel callListModel;
-    private StackLayoutAdapter stackLayoutAdapter;
+    private CallsAdapter callsAdapter;
     private TextView tv_title_plan, tv_valid_till;
     private String StrPlanId, mSubscribed_till;
     private View rootView;
@@ -249,11 +249,11 @@ public class PaidUserFragment extends Fragment {
                                                 callListModel.setIs_call_for_paid_customer(is_call_for_paid_customer);
                                                 callModel_list.add(callListModel);
                                             }
-                                            stackLayoutAdapter = new StackLayoutAdapter(mContext, callModel_list);
+                                            callsAdapter = new CallsAdapter(mContext, callModel_list);
                                             recycler_list.setVisibility(View.VISIBLE);
                                             tv_noRecordFound.setVisibility(View.GONE);
-                                            recycler_list.setAdapter(stackLayoutAdapter);
-                                            stackLayoutAdapter.notifyDataSetChanged();
+                                            recycler_list.setAdapter(callsAdapter);
+                                            callsAdapter.notifyDataSetChanged();
                                         }
                                     } else {
                                         tv_noRecordFound.setVisibility(View.VISIBLE);

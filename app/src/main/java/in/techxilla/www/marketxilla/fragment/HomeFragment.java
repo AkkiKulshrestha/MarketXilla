@@ -51,8 +51,8 @@ import java.util.UUID;
 import in.techxilla.www.marketxilla.CalculatorActivity;
 import in.techxilla.www.marketxilla.NewDashboard;
 import in.techxilla.www.marketxilla.R;
+import in.techxilla.www.marketxilla.adaptor.CallsAdapter;
 import in.techxilla.www.marketxilla.adaptor.ImageSliderAdapter;
-import in.techxilla.www.marketxilla.adaptor.StackLayoutAdapter;
 import in.techxilla.www.marketxilla.model.CallModel;
 import in.techxilla.www.marketxilla.model.SliderItem;
 import in.techxilla.www.marketxilla.utils.CommonMethods;
@@ -70,12 +70,12 @@ public class HomeFragment extends Fragment {
     private RecyclerView.LayoutManager layoutManager;
     private ArrayList<CallModel> callModel_list = new ArrayList<>();
     private CallModel callListModel;
-    private StackLayoutAdapter stackLayoutAdapter;
-    private Spinner SpnCallTenure, SpnMonthwisePerformance;
+    private CallsAdapter callsAdapter;
+    private Spinner SpnCallTenure, SpnMonthwisePerformance, SpnSegment;
     private View rootView;
     private Context mContext;
     private List<String> MonthsList = new ArrayList<>();
-    private String SelectedMonth;
+    private String SelectedMonth, SelectedSegment;
     private TextView tv_netProfitLoss;
     private Double netProfitLoss = 0.0;
 
@@ -176,6 +176,21 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        SpnSegment = (Spinner) rootView.findViewById(R.id.SpnSegment);
+        SpnSegment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(final AdapterView<?> parent, final View view, final int position, final long id) {
+                if (position > 0) {
+                    SelectedSegment = parent.getItemAtPosition(position).toString();
+                    filterSearch();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
         tv_netProfitLoss = (TextView) rootView.findViewById(R.id.tv_netProfitLoss);
         recycler_list = rootView.findViewById(R.id.recycler_list);
         recycler_list.setHasFixedSize(true);
@@ -188,62 +203,6 @@ public class HomeFragment extends Fragment {
         fetchMonthList();
         fetchCallData();
         SpnMonthwisePerformance.setVisibility(View.GONE);
-    }
-
-    private void fetchMonthList() {
-        final String Uiid_id = UUID.randomUUID().toString();
-        final String URL_GetCallList = ROOT_URL + "getMonthList.php?_" + Uiid_id;
-        try {
-            Log.d("URL", URL_GetCallList);
-            ConnectionDetector cd = new ConnectionDetector(mContext);
-            boolean isInternetPresent = cd.isConnectingToInternet();
-            if (isInternetPresent) {
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, URL_GetCallList,
-                        new Response.Listener<String>() {
-                            @SuppressLint("UseCompatLoadingForDrawables")
-                            @Override
-                            public void onResponse(final String response) {
-                                Log.d("Response", response);
-                                try {
-                                    final JSONObject jobj = new JSONObject(response);
-                                    final JSONArray data = jobj.getJSONArray("data");
-                                    MonthsList = new ArrayList<>();
-                                    MonthsList.add("Select Month");
-                                    for (int k = 0; k < data.length(); k++) {
-                                        final JSONObject jsonObject = data.getJSONObject(k);
-                                        final String month = jsonObject.getString("month");
-                                        MonthsList.add(month);
-                                    }
-                                    final ArrayAdapter<String> adp = new ArrayAdapter<String>(mContext, android.R.layout.simple_spinner_dropdown_item, MonthsList);
-                                    SpnMonthwisePerformance.setAdapter(adp);
-                                    if (myDialog != null && myDialog.isShowing()) {
-                                        myDialog.dismiss();
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                    if (myDialog != null && myDialog.isShowing()) {
-                                        myDialog.dismiss();
-                                    }
-                                }
-                            }
-                        }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
-                        if (myDialog != null && myDialog.isShowing()) {
-                            myDialog.dismiss();
-                        }
-                    }
-                });
-                RequestQueue requestQueue = Volley.newRequestQueue(mContext);
-                stringRequest.setRetryPolicy(new DefaultRetryPolicy(0, -1, 0));
-                requestQueue.add(stringRequest);
-            } else {
-                CommonMethods.DisplayToastInfo(mContext, "No Internet Connection");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private void SocialNetworkingLinks() {
@@ -318,10 +277,69 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    private void fetchMonthList() {
+        final String Uiid_id = UUID.randomUUID().toString();
+        final String URL_GetCallList = ROOT_URL + "getMonthList.php?_" + Uiid_id;
+        try {
+            Log.d("URL", URL_GetCallList);
+            ConnectionDetector cd = new ConnectionDetector(mContext);
+            boolean isInternetPresent = cd.isConnectingToInternet();
+            if (isInternetPresent) {
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, URL_GetCallList,
+                        new Response.Listener<String>() {
+                            @SuppressLint("UseCompatLoadingForDrawables")
+                            @Override
+                            public void onResponse(final String response) {
+                                Log.d("Response", response);
+                                try {
+                                    final JSONObject jobj = new JSONObject(response);
+                                    final JSONArray data = jobj.getJSONArray("data");
+                                    MonthsList = new ArrayList<>();
+                                    MonthsList.add("Select Month");
+                                    for (int k = 0; k < data.length(); k++) {
+                                        final JSONObject jsonObject = data.getJSONObject(k);
+                                        final String month = jsonObject.getString("month");
+                                        MonthsList.add(month);
+                                    }
+                                    final ArrayAdapter<String> adp = new ArrayAdapter<String>(mContext, android.R.layout.simple_spinner_dropdown_item, MonthsList);
+                                    SpnMonthwisePerformance.setAdapter(adp);
+                                    if (myDialog != null && myDialog.isShowing()) {
+                                        myDialog.dismiss();
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    if (myDialog != null && myDialog.isShowing()) {
+                                        myDialog.dismiss();
+                                    }
+                                }
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                        if (myDialog != null && myDialog.isShowing()) {
+                            myDialog.dismiss();
+                        }
+                    }
+                });
+                RequestQueue requestQueue = Volley.newRequestQueue(mContext);
+                stringRequest.setRetryPolicy(new DefaultRetryPolicy(0, -1, 0));
+                requestQueue.add(stringRequest);
+            } else {
+                CommonMethods.DisplayToastInfo(mContext, "No Internet Connection");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @SuppressLint({"UseCompatLoadingForDrawables", "SetTextI18n", "DefaultLocale"})
     private void fetchCallData() {
         if (callModel_list != null && callModel_list.size() > 0) {
             callModel_list = new ArrayList<>();
+            callsAdapter = new CallsAdapter(mContext, callModel_list);
+            recycler_list.setAdapter(callsAdapter);
+            callsAdapter.notifyDataSetChanged();
         }
         if (myDialog != null && !myDialog.isShowing()) {
             myDialog.show();
@@ -385,12 +403,12 @@ public class HomeFragment extends Fragment {
                                         double profit_loss_dou = profit_loss != null && !profit_loss.equalsIgnoreCase("") ? Double.parseDouble(profit_loss) : 0.0;
                                         netProfitLoss += profit_loss_dou;
                                     }
-
                                     tv_netProfitLoss.setText("Net Profit / Loss: \u20B9 " + CommonMethods.DecimalNumberDisplayFormattingWithComma(String.format("%.2f", netProfitLoss)));
                                     tv_netProfitLoss.setVisibility(View.VISIBLE);
-                                    stackLayoutAdapter = new StackLayoutAdapter(mContext, callModel_list);
-                                    recycler_list.setAdapter(stackLayoutAdapter);
-                                    stackLayoutAdapter.notifyDataSetChanged();
+                                    callsAdapter = new CallsAdapter(mContext, callModel_list);
+                                    recycler_list.setAdapter(callsAdapter);
+                                    callsAdapter.notifyDataSetChanged();
+                                    filterSearch();
                                     if (myDialog != null && myDialog.isShowing()) {
                                         myDialog.dismiss();
                                     }
@@ -426,6 +444,9 @@ public class HomeFragment extends Fragment {
     private void fetchPastPerformance() {
         if (callModel_list != null && callModel_list.size() > 0) {
             callModel_list = new ArrayList<>();
+            callsAdapter = new CallsAdapter(mContext, callModel_list);
+            recycler_list.setAdapter(callsAdapter);
+            callsAdapter.notifyDataSetChanged();
         }
         if (myDialog != null && !myDialog.isShowing()) {
             myDialog.show();
@@ -492,9 +513,10 @@ public class HomeFragment extends Fragment {
 
                                     tv_netProfitLoss.setText("Net Profit / Loss: \u20B9 " + CommonMethods.DecimalNumberDisplayFormattingWithComma(String.format("%.2f", netProfitLoss)));
                                     tv_netProfitLoss.setVisibility(View.VISIBLE);
-                                    stackLayoutAdapter = new StackLayoutAdapter(mContext, callModel_list);
-                                    recycler_list.setAdapter(stackLayoutAdapter);
-                                    stackLayoutAdapter.notifyDataSetChanged();
+                                    callsAdapter = new CallsAdapter(mContext, callModel_list);
+                                    recycler_list.setAdapter(callsAdapter);
+                                    callsAdapter.notifyDataSetChanged();
+                                    filterSearch();
                                     if (myDialog != null && myDialog.isShowing()) {
                                         myDialog.dismiss();
                                     }
@@ -523,6 +545,12 @@ public class HomeFragment extends Fragment {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void filterSearch() {
+        if (callsAdapter != null && !SelectedSegment.isEmpty()) {
+            callsAdapter.getFilter().filter(SelectedSegment);
         }
     }
 }

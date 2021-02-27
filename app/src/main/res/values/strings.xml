@@ -76,7 +76,17 @@
         <item>Today Calls</item>
         <item>Past Performance</item>
     </string-array>
-    <!-- TODO: Remove or change this placeholder text -->
+
+    <string-array name="spin_item_segments">
+        <item>Select Segment</item>
+        <item>All Segments</item>
+        <item>Stock Future</item>
+        <item>Stock Option</item>
+        <item>Index Future</item>
+        <item>Index Option</item>
+        <item>Commodity</item>
+    </string-array>
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="trade_calculators">TRADE CALCULATORS</string>
     <string name="classic_pivot">CLASSIC / FLOOR PIVOT</string>
