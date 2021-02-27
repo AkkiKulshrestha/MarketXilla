@@ -180,7 +180,7 @@ public class HomeFragment extends Fragment {
         SpnSegment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(final AdapterView<?> parent, final View view, final int position, final long id) {
-                if (position > 0) {
+                if (position > -1) {
                     SelectedSegment = parent.getItemAtPosition(position).toString();
                     filterSearch();
                 }

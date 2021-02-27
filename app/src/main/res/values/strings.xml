@@ -78,7 +78,6 @@
     </string-array>
 
     <string-array name="spin_item_segments">
-        <item>Select Segment</item>
         <item>All Segments</item>
         <item>Stock Future</item>
         <item>Stock Option</item>
