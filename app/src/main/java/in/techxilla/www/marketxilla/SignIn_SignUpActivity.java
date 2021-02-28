@@ -1029,7 +1029,7 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
                     imm.hideSoftInputFromWindow(etConfirmPassword.getWindowToken(), 0);
                 }
                 if ((etNewPassword.getText() != null && etNewPassword.getText().toString().length() != 0) && (etConfirmPassword.getText() != null && etConfirmPassword.getText().toString().length() != 0)) {
-                   String StrNewPassword = etNewPassword.getText().toString();
+                    String StrNewPassword = etNewPassword.getText().toString();
                     String StrConfirmPassword = etConfirmPassword.getText().toString();
                     if (StrNewPassword.equalsIgnoreCase(StrConfirmPassword)) {
                         ResetPasswordApi(StrNewPassword, StrConfirmPassword);
