@@ -202,8 +202,8 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        fetchMonthList();
         fetchCallData();
+        fetchMonthList();
     }
 
     private void SocialNetworkingLinks() {
