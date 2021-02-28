@@ -196,9 +196,14 @@ public class HomeFragment extends Fragment {
         layoutManager = new LinearLayoutManager(c);
         recycler_list.setLayoutManager(layoutManager);
 
+        SpnMonthwisePerformance.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         fetchMonthList();
         fetchCallData();
-        SpnMonthwisePerformance.setVisibility(View.GONE);
     }
 
     private void SocialNetworkingLinks() {

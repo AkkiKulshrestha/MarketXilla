@@ -31,6 +31,7 @@ public class CallsAdapter extends RecyclerView.Adapter<CallsAdapter.CallHolder> 
     private List<CallModel> callArrayList = new ArrayList<>();
     private List<CallModel> tempItemList;
     private List<CallModel> filteredItemList;
+    public double netProfitLoss = 0.0;
 
     public CallsAdapter(Context mCtx, ArrayList<CallModel> callArrayList) {
         this.mCtx = mCtx;
@@ -46,7 +47,17 @@ public class CallsAdapter extends RecyclerView.Adapter<CallsAdapter.CallHolder> 
         if (null != callArrayList) {
             this.filteredItemList.addAll(callArrayList);
         }
+        grandTotal(filteredItemList);
         notifyDataSetChanged();
+    }
+
+    private void grandTotal(List<CallModel> items){
+
+        netProfitLoss = 0.0;
+        for(int i = 0 ; i < items.size(); i++) {
+            double profit_loss_dou = !items.get(i).getProfit_loss().equalsIgnoreCase("") ? Double.parseDouble(items.get(i).getProfit_loss()) : 0.0;
+            netProfitLoss += profit_loss_dou;
+        }
     }
 
     @Override
@@ -59,6 +70,14 @@ public class CallsAdapter extends RecyclerView.Adapter<CallsAdapter.CallHolder> 
     public void onBindViewHolder(final CallsAdapter.CallHolder viewHolder, int position) {
         final CallModel callModel = filteredItemList.get(position);
         viewHolder.setItem(mCtx, callModel, position, filteredItemList.size());
+
+        viewHolder.tv_netProfitLoss.setText("Net Profit / Loss: \u20B9 " + CommonMethods.DecimalNumberDisplayFormattingWithComma(String.format("%.2f",netProfitLoss)));
+
+        if(position==0){
+            viewHolder.tv_netProfitLoss.setVisibility(View.VISIBLE);
+        }else {
+            viewHolder.tv_netProfitLoss.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -99,17 +118,18 @@ public class CallsAdapter extends RecyclerView.Adapter<CallsAdapter.CallHolder> 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
                 filteredItemList = (ArrayList<CallModel>) filterResults.values;
+                grandTotal(filteredItemList);
                 notifyDataSetChanged();
             }
         };
+
+
     }
 
     public static class CallHolder extends RecyclerView.ViewHolder {
         private final ImageView iv_up_down;
         private final TextView tv_netProfitLoss,tv_performance_for, TvStockName, tv_date_time, tv_above_below, tv_sell_buy, tv_strike_ce, tv_target1, tv_target2, tv_target3, tv_stop_loss, tv_closingprice, tv_profit_loss;
         private final LinearLayout linear_closinglayout;
-        private Double netProfitLoss = 0.0;
-        private int sizeOfList;
 
         CallHolder(@NonNull View itemView) {
             super(itemView);
@@ -132,7 +152,6 @@ public class CallsAdapter extends RecyclerView.Adapter<CallsAdapter.CallHolder> 
 
         @SuppressLint({"SimpleDateFormat", "SetTextI18n", "UseCompatLoadingForDrawables", "DefaultLocale"})
         private void setItem(final Context context, final CallModel callModel, final int position, final int size) {
-            sizeOfList = size;
             tv_performance_for.setText(callModel.getPerformance_for());
             TvStockName.setText(callModel.getStock_name());
 
@@ -221,16 +240,9 @@ public class CallsAdapter extends RecyclerView.Adapter<CallsAdapter.CallHolder> 
             tv_target3.setText("\u20B9 " + callModel.getTarget3());
             tv_stop_loss.setText("\u20B9 " + callModel.getStop_loss());
             tv_closingprice.setText("\u20B9 " + callModel.getBuy_sell_closing_price());
-
-            double profit_loss_dou = !callModel.getProfit_loss().equalsIgnoreCase("") ? Double.parseDouble(callModel.getProfit_loss()) : 0.0;
-            netProfitLoss += profit_loss_dou;
-            tv_netProfitLoss.setText("Net Profit / Loss: \u20B9 " + CommonMethods.DecimalNumberDisplayFormattingWithComma(String.format("%.2f", netProfitLoss)));
-
-            if(position==0){
-                tv_netProfitLoss.setVisibility(View.VISIBLE);
-            }else {
-                tv_netProfitLoss.setVisibility(View.GONE);
-            }
         }
+
+
+
     }
 }
