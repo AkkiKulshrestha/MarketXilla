@@ -201,10 +201,16 @@ public class HomeFragment extends Fragment {
         layoutManager = new LinearLayoutManager(c);
         recycler_list.setLayoutManager(layoutManager);
 
-        fetchMonthList();
-        fetchCallData();
+
         SpnMonthwisePerformance.setVisibility(View.GONE);
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        fetchMonthList();
+        fetchCallData();
+    }
+
 
     private void SocialNetworkingLinks() {
         final ImageView iv_gmail = (ImageView) rootView.findViewById(R.id.iv_gmail);
