@@ -15,6 +15,12 @@
             android:iconTint="@color/black"
             android:title="@string/trade_calculators" />
 
+        <item
+            android:id="@+id/nav_reset_password"
+            android:icon="@drawable/icons_lock"
+            android:iconTint="@color/black"
+            android:title="@string/reset_password" />
+
 
         <item
             android:id="@+id/nav_about_us"

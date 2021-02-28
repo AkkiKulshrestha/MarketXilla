@@ -1,12 +1,14 @@
 package in.techxilla.www.marketxilla;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +16,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,16 +31,19 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,6 +52,8 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -52,11 +63,13 @@ import in.techxilla.www.marketxilla.fragment.PackageFragment;
 import in.techxilla.www.marketxilla.fragment.PaidUserFragment;
 import in.techxilla.www.marketxilla.utils.CommonMethods;
 import in.techxilla.www.marketxilla.utils.ConnectionDetector;
+import in.techxilla.www.marketxilla.utils.MyValidator;
 import in.techxilla.www.marketxilla.utils.PayUMoneyAppPreference;
 import in.techxilla.www.marketxilla.utils.UtilitySharedPreferences;
 
 import static in.techxilla.www.marketxilla.utils.CommonMethods.DisplayToastError;
 import static in.techxilla.www.marketxilla.utils.CommonMethods.DisplayToastWarning;
+import static in.techxilla.www.marketxilla.utils.CommonMethods.md5;
 import static in.techxilla.www.marketxilla.webservices.RestClient.ROOT_URL;
 
 public class NewDashboard extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, BottomNavigationView.OnNavigationItemSelectedListener {
@@ -72,6 +85,8 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
     boolean isPaidUser = false;
     private ActionBarDrawerToggle mDrawerToggle;
     private int mStackCount = 30;
+    private Dialog dialogResetPassword;
+    private EditText etCurrentPassword, etNewPassword, etConfirmPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -379,6 +394,10 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
                 finish();
                 break;
 
+            case R.id.nav_reset_password:
+                pop_up_reset_password();
+                break;
+
             case R.id.nav_about_us:
                 Intent intent_about_us = new Intent(Intent.ACTION_VIEW);
                 intent_about_us.setData(Uri.parse("https://marketxilla.com/about-us"));
@@ -439,11 +458,7 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.nav_logout:
-                UtilitySharedPreferences.clearPref(getApplicationContext());
-                Intent i = new Intent(getApplicationContext(), SplashActivity.class);
-                startActivity(i);
-                overridePendingTransition(R.animator.left_right, R.animator.right_left);
-                finish();
+                logout();
                 break;
         }
 
@@ -514,4 +529,167 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
         badge_new_notification = findViewById(R.id.badge_new_notification);
         badge_new_notification.setText(String.format("%02d", notifications_count));
     }
+
+    private void pop_up_reset_password() {
+
+        dialogResetPassword = new Dialog(this);
+        dialogResetPassword.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialogResetPassword.setCanceledOnTouchOutside(false);
+        dialogResetPassword.setCancelable(true);
+        dialogResetPassword.setContentView(R.layout.custom_dialog_for_reset_password);
+        dialogResetPassword.getWindow().setBackgroundDrawable(
+                new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        dialogResetPassword.show();
+
+        TextView tv_registered_mobile_no = (TextView) dialogResetPassword.findViewById(R.id.tv_registered_mobile_no);
+        tv_registered_mobile_no.setText(StrMemberEmailId);
+
+        TextInputLayout etCurrentPasswordLayout = (TextInputLayout) dialogResetPassword.findViewById(R.id.etCurrentPasswordLayout);
+        etCurrentPasswordLayout.setVisibility(View.VISIBLE);
+        etCurrentPassword = (EditText) dialogResetPassword.findViewById(R.id.etCurrentPassword);
+        etNewPassword = (EditText) dialogResetPassword.findViewById(R.id.etNewPassword);
+        etConfirmPassword = (EditText) dialogResetPassword.findViewById(R.id.etConfirmPassword);
+
+        ImageView iv_close = (ImageView) dialogResetPassword.findViewById(R.id.iv_close);
+        iv_close.setVisibility(View.VISIBLE);
+        iv_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogResetPassword.dismiss();
+            }
+        });
+
+
+        Button btn_reset = (Button) dialogResetPassword.findViewById(R.id.btn_reset);
+        btn_reset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (validateResetPassword()) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        imm.hideSoftInputFromWindow(etConfirmPassword.getWindowToken(), 0);
+                    }
+                    if ((etNewPassword.getText() != null && etNewPassword.getText().toString().length() != 0) && (etConfirmPassword.getText() != null && etConfirmPassword.getText().toString().length() != 0)) {
+                        String StrNewPassword = etNewPassword.getText().toString();
+                        String StrConfirmPassword = etConfirmPassword.getText().toString();
+                        if (StrNewPassword.equalsIgnoreCase(StrConfirmPassword)) {
+                            ResetPasswordApi(StrNewPassword, StrConfirmPassword);
+                        } else {
+                            etConfirmPassword.setError("New Password & Confirm Password does not Match.");
+                        }
+
+                    }
+                }
+            }
+        });
+    }
+
+    private boolean validateResetPassword() {
+        boolean result = true;
+
+        if (!MyValidator.isValidPassword(etCurrentPassword)) {
+            etCurrentPassword.requestFocus();
+            CommonMethods.DisplayToastWarning(getApplicationContext(), "Please Enter Valid Current Password");
+            result = false;
+        }
+
+        if (!MyValidator.isValidPassword(etNewPassword)) {
+            etNewPassword.requestFocus();
+            CommonMethods.DisplayToastWarning(getApplicationContext(), "Please Enter Valid New Password");
+            result = false;
+        }
+
+        if (!MyValidator.isValidPassword(etConfirmPassword)) {
+            etConfirmPassword.requestFocus();
+            CommonMethods.DisplayToastWarning(getApplicationContext(), "Please Re-Enter New Password");
+            result = false;
+        }
+
+        return result;
+    }
+
+    private void ResetPasswordApi(final String strNewPassword, String strConfirmPassword) {
+
+        String StrCurrentPassword = etCurrentPassword.getText().toString();
+        myDialog.show();
+        String Uiid_id = UUID.randomUUID().toString();
+        String URL_ResetPassword = ROOT_URL + "reset_password.php?_" + Uiid_id;
+        try {
+            Log.d("URL_ResetPassword", URL_ResetPassword);
+            ConnectionDetector cd = new ConnectionDetector(getApplicationContext());
+            boolean isInternetPresent = cd.isConnectingToInternet();
+            if (isInternetPresent) {
+                final StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_ResetPassword,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                if (myDialog != null && myDialog.isShowing()) {
+                                    myDialog.dismiss();
+                                }
+                                Log.d("mainResponse", response);
+                                try {
+                                    JSONObject jObj = new JSONObject(response);
+                                    boolean status = jObj.getBoolean("status");
+                                    if (status) {
+                                        String message = jObj.getString("message");
+                                        CommonMethods.DisplayToastSuccess(getApplicationContext(), message);
+                                        if (dialogResetPassword != null && dialogResetPassword.isShowing()) {
+                                            dialogResetPassword.dismiss();
+                                        }
+                                        logout();
+                                    } else {
+                                        String message = jObj.getString("message");
+                                        CommonMethods.DisplayToastError(getApplicationContext(), message);
+                                    }
+
+                                } catch (JSONException e) {
+                                    if (myDialog != null && myDialog.isShowing()) {
+                                        myDialog.dismiss();
+                                    }
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (myDialog != null && myDialog.isShowing()) {
+                            myDialog.dismiss();
+                        }
+                        VolleyLog.d("volley", "Error: " + error.getMessage());
+                        error.printStackTrace();
+                    }
+                }) {
+                    @Override
+                    public Map<String, String> getParams() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<String, String>();
+                        params.put("user_id", StrMemberId);
+                        params.put("current_password", md5(StrCurrentPassword));
+                        params.put("new_password", md5(strNewPassword));
+                        Log.d("ParrasResetPassword", params.toString());
+                        return params;
+                    }
+                };
+                RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+                stringRequest.setRetryPolicy(new DefaultRetryPolicy(0, -1, 0));
+                requestQueue.add(stringRequest);
+            } else {
+                if (myDialog != null && myDialog.isShowing()) {
+                    myDialog.dismiss();
+                }
+                CommonMethods.DisplayToast(getApplicationContext(), "Please check your internet connection");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void logout() {
+        UtilitySharedPreferences.clearPref(getApplicationContext());
+        Intent i = new Intent(getApplicationContext(), SplashActivity.class);
+        startActivity(i);
+        overridePendingTransition(R.animator.left_right, R.animator.right_left);
+        finish();
+    }
+
 }

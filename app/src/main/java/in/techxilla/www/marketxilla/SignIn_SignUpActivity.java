@@ -3,14 +3,18 @@ package in.techxilla.www.marketxilla;
 import android.app.ActionBar;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -44,6 +48,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import in.techxilla.www.marketxilla.service.SMSBroadcastReceiver;
 import in.techxilla.www.marketxilla.utils.CommonMethods;
@@ -56,6 +61,7 @@ import static in.techxilla.www.marketxilla.utils.CommonMethods.md5;
 import static in.techxilla.www.marketxilla.webservices.RestClient.ROOT_URL;
 
 public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroadcastReceiver.OTPReceiveListener {
+    private final ViewGroup nullParent = null;
     boolean emailOtpVerified = false;
     boolean mobileOtpVerified = false;
     private LinearLayout ll_parent_sign_in, ll_parent_sign_up;
@@ -71,6 +77,10 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
     private Dialog dialog11;
     private SMSBroadcastReceiver smsBroadcastReceiver;
     private String verificationID;
+    private TextView tv_forgot_password;
+    private Dialog dialogForgotPassword, dialogEnteringOtp, dialogResetPassword;
+    private EditText edt_verification_number;
+    private String str_registered_mobile_no = "", StrEmailMobile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +94,7 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
         myDialog.setMessage("Please wait...");
         myDialog.setCancelable(false);
         myDialog.setCanceledOnTouchOutside(false);
+
         FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(this, instanceIdResult -> {
             String newToken = instanceIdResult.getToken();
             Log.e("newToken", newToken);
@@ -146,6 +157,14 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
                 if (isValidRegister()) {
                     RegisterApi();
                 }
+            }
+        });
+
+        tv_forgot_password = (TextView) findViewById(R.id.tv_forgot_password);
+        tv_forgot_password.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popUpForgotPassword();
             }
         });
     }
@@ -500,7 +519,6 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
         });
     }
 
-
     private void resendMobilePin() {
         myDialog.show();
         final String URL_Resend_Mobile_Pin = ROOT_URL + "resendMobilePin.php";
@@ -547,7 +565,6 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
         requestQueue.add(strReq);
     }
 
-
     private void resendEmailPin() {
         myDialog.show();
         final String URL_Resend_Email_Pin = ROOT_URL + "resendEmailPin.php";
@@ -592,7 +609,6 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
         strReq.setRetryPolicy(new DefaultRetryPolicy(0, -1, 0));
         requestQueue.add(strReq);
     }
-
 
     private void VerifyEmailPin(final String EmailPin) {
         final String URL_EMAIL_VERIFY = ROOT_URL + "verifyUserEmail.php";
@@ -702,7 +718,6 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
         requestQueue.add(strReq);
     }
 
-
     private void RESET() {
         Edt_SU_Fullname.setText("");
         Edt_SU_EmailId.setText("");
@@ -747,5 +762,352 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
             LocalBroadcastManager.getInstance(this).unregisterReceiver(smsBroadcastReceiver);
         }
         edt_Check_Mobile_Otp.setText(otp);
+    }
+
+    private void popUpForgotPassword() {
+        dialogForgotPassword = new Dialog(SignIn_SignUpActivity.this);
+        dialogForgotPassword.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialogForgotPassword.setCanceledOnTouchOutside(false);
+        dialogForgotPassword.setCancelable(false);
+        dialogForgotPassword.setContentView(R.layout.pop_up_forget_password);
+        dialogForgotPassword.getWindow().setBackgroundDrawable(
+                new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        dialogForgotPassword.show();
+
+        EditText edtEmail_Mobile = (EditText) dialogForgotPassword.findViewById(R.id.edtEmail_Mobile);
+
+        ImageView iv_close = (ImageView) dialogForgotPassword.findViewById(R.id.iv_close);
+        iv_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogForgotPassword.dismiss();
+            }
+        });
+
+        Button btn_get_otp = (Button) dialogForgotPassword.findViewById(R.id.btn_get_otp);
+        btn_get_otp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!MyValidator.isValidEmailMobile(edtEmail_Mobile)) {
+                    edtEmail_Mobile.requestFocus();
+                    edtEmail_Mobile.setError("Please Enter Registered Email Id or Mobile No.");
+                    CommonMethods.DisplayToastWarning(getApplicationContext(), "Please enter Registered Email Id or Mobile No");
+                } else {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        imm.hideSoftInputFromWindow(edtEmail_Mobile.getWindowToken(), 0);
+                    }
+                    StrEmailMobile = edtEmail_Mobile.getText().toString();
+                    GetAPI_ForgotPassword();
+                }
+            }
+        });
+    }
+
+    private void GetAPI_ForgotPassword() {
+        myDialog.show();
+        String Uiid_id = UUID.randomUUID().toString();
+        String URL_SendPasswordOTP = ROOT_URL + "send_password_otp.php?_" + Uiid_id;
+        try {
+            Log.d("URL_SendPasswordOTP", URL_SendPasswordOTP);
+            ConnectionDetector cd = new ConnectionDetector(getApplicationContext());
+            boolean isInternetPresent = cd.isConnectingToInternet();
+            if (isInternetPresent) {
+                final StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_SendPasswordOTP,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                if (myDialog != null && myDialog.isShowing()) {
+                                    myDialog.dismiss();
+                                }
+                                try {
+                                    if (response != null) {
+                                        JSONObject resObj = new JSONObject(response);
+                                        boolean status = resObj.getBoolean("status");
+                                        String message = resObj.getString("message");
+                                        if (status) {
+                                            if (dialogForgotPassword != null && dialogForgotPassword.isShowing()) {
+                                                dialogForgotPassword.dismiss();
+                                            }
+                                            JSONObject jsonObject = resObj.getJSONObject("data");
+                                            ClientId = jsonObject.getString("id");
+                                            CommonMethods.DisplayToastSuccess(getApplicationContext(), message);
+                                            pop_up_otp_verification(true);
+                                        } else {
+                                            CommonMethods.DisplayToastError(getApplicationContext(), message);
+                                        }
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (myDialog != null && myDialog.isShowing()) {
+                            myDialog.dismiss();
+                        }
+                        VolleyLog.d("volley", "Error: " + error.getMessage());
+                        error.printStackTrace();
+                    }
+                }) {
+                    @Override
+                    public Map<String, String> getParams() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<String, String>();
+                        params.put("email_mobile", StrEmailMobile);
+                        Log.d("ParrasUserRegi", params.toString());
+                        return params;
+                    }
+                };
+                RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+                stringRequest.setRetryPolicy(new DefaultRetryPolicy(0, -1, 0));
+                requestQueue.add(stringRequest);
+            } else {
+                if (myDialog != null && myDialog.isShowing()) {
+                    myDialog.dismiss();
+                }
+                CommonMethods.DisplayToast(getApplicationContext(), "Please check your internet connection");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void pop_up_otp_verification(boolean showPopupResetPassword) {
+        dialogEnteringOtp = new Dialog(SignIn_SignUpActivity.this);
+        dialogEnteringOtp.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialogEnteringOtp.setCanceledOnTouchOutside(false);
+        dialogEnteringOtp.setCancelable(true);
+        dialogEnteringOtp.setContentView(R.layout.custom_dialog_for_entering_otp);
+        dialogEnteringOtp.getWindow().setBackgroundDrawable(
+                new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        final TextView til_text = (TextView) dialogEnteringOtp.findViewById(R.id.til_text);
+        til_text.setText("User: " + StrEmailMobile);
+
+        edt_verification_number = (EditText) dialogEnteringOtp.findViewById(R.id.edt_verification_number);
+        final ImageView iv_close = (ImageView) dialogEnteringOtp.findViewById(R.id.iv_close);
+        iv_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (myDialog != null && myDialog.isShowing()) {
+                    myDialog.dismiss();
+                }
+                dialogEnteringOtp.dismiss();
+            }
+        });
+
+        final TextView Verify_otp = (TextView) dialogEnteringOtp.findViewById(R.id.Verify_otp);
+        Verify_otp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(edt_verification_number.getWindowToken(), 0);
+                }
+                String OTP_Entered = edt_verification_number.getText().toString();
+                OtpVerifyApi(OTP_Entered);
+            }
+        });
+        dialogEnteringOtp.show();
+    }
+
+    private void OtpVerifyApi(final String OTP_Entered) {
+
+        String Uiid_id = UUID.randomUUID().toString();
+        String verifyOTP_Api;
+        if (StrEmailMobile != null && StrEmailMobile.length() == 10) {
+            verifyOTP_Api = ROOT_URL + "verifyUserMobile.php?_" + Uiid_id;
+        } else {
+            verifyOTP_Api = ROOT_URL + "verifyUserEmail.php?_" + Uiid_id;
+        }
+        try {
+            Log.d("verifyOTP_Api", verifyOTP_Api);
+            ConnectionDetector cd = new ConnectionDetector(getApplicationContext());
+            boolean isInternetPresent = cd.isConnectingToInternet();
+            if (isInternetPresent) {
+
+                final StringRequest stringRequest = new StringRequest(Request.Method.POST, verifyOTP_Api,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                if (myDialog != null && myDialog.isShowing()) {
+                                    myDialog.dismiss();
+                                }
+                                Log.d("mainResponse", response);
+                                try {
+                                    JSONObject jObj = new JSONObject(response);
+                                    boolean status = jObj.getBoolean("status");
+                                    if (status) {
+                                        edt_verification_number.setError(null);
+                                        if (dialogEnteringOtp != null && dialogEnteringOtp.isShowing()) {
+                                            dialogEnteringOtp.dismiss();
+                                        }
+                                        pop_up_reset_password();
+                                    } else {
+                                        edt_verification_number.setError("Invalid OTP.");
+                                    }
+                                } catch (JSONException e) {
+                                    if (myDialog != null && myDialog.isShowing()) {
+                                        myDialog.dismiss();
+                                    }
+                                    e.printStackTrace();
+                                }
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (myDialog != null && myDialog.isShowing()) {
+                            myDialog.dismiss();
+                        }
+                        VolleyLog.d("volley", "Error: " + error.getMessage());
+                        error.printStackTrace();
+                    }
+                }) {
+                    @Override
+                    public Map<String, String> getParams() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<String, String>();
+                        if (StrEmailMobile.length() == 10) {
+                            params.put("user_id", ClientId);
+                            params.put("Mobile", StrEmailMobile);
+                            params.put("OTP", OTP_Entered);
+                        } else {
+                            params.put("user_id", ClientId);
+                            params.put("Email", StrEmailMobile);
+                            params.put("EmailPin", OTP_Entered);
+                        }
+                        Log.d("ParrasUserRegi", params.toString());
+                        return params;
+                    }
+                };
+                RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+                stringRequest.setRetryPolicy(new DefaultRetryPolicy(0, -1, 0));
+                requestQueue.add(stringRequest);
+            } else {
+                if (myDialog != null && myDialog.isShowing()) {
+                    myDialog.dismiss();
+                }
+                CommonMethods.DisplayToast(getApplicationContext(), "Please check your internet connection");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void pop_up_reset_password() {
+
+        dialogResetPassword = new Dialog(SignIn_SignUpActivity.this);
+        dialogResetPassword.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialogResetPassword.setCanceledOnTouchOutside(false);
+        dialogResetPassword.setCancelable(true);
+        dialogResetPassword.setContentView(R.layout.custom_dialog_for_reset_password);
+        dialogResetPassword.getWindow().setBackgroundDrawable(
+                new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        dialogResetPassword.show();
+        TextView tv_registered_mobile_no = (TextView) dialogResetPassword.findViewById(R.id.tv_registered_mobile_no);
+        tv_registered_mobile_no.setText(str_registered_mobile_no);
+        final EditText etNewPassword = (EditText) dialogResetPassword.findViewById(R.id.etNewPassword);
+        final EditText etConfirmPassword = (EditText) dialogResetPassword.findViewById(R.id.etConfirmPassword);
+        final ImageView iv_close = (ImageView) dialogResetPassword.findViewById(R.id.iv_close);
+        iv_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (myDialog != null && myDialog.isShowing()) {
+                    myDialog.dismiss();
+                }
+                dialogResetPassword.dismiss();
+            }
+        });
+
+
+        final Button btn_reset = (Button) dialogResetPassword.findViewById(R.id.btn_reset);
+        btn_reset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(etConfirmPassword.getWindowToken(), 0);
+                }
+                if ((etNewPassword.getText() != null && etNewPassword.getText().toString().length() != 0) && (etConfirmPassword.getText() != null && etConfirmPassword.getText().toString().length() != 0)) {
+                   String StrNewPassword = etNewPassword.getText().toString();
+                    String StrConfirmPassword = etConfirmPassword.getText().toString();
+                    if (StrNewPassword.equalsIgnoreCase(StrConfirmPassword)) {
+                        ResetPasswordApi(StrNewPassword, StrConfirmPassword);
+                    } else {
+                        etConfirmPassword.setError("New Password & Confirm Password does not Match.");
+                    }
+                }
+            }
+        });
+    }
+
+    private void ResetPasswordApi(final String strNewPassword, String strConfirmPassword) {
+        myDialog.show();
+        String Uiid_id = UUID.randomUUID().toString();
+        String URL_ResetPassword = ROOT_URL + "change_password.php?_" + Uiid_id;
+        try {
+            Log.d("URL_ResetPassword", URL_ResetPassword);
+            ConnectionDetector cd = new ConnectionDetector(getApplicationContext());
+            boolean isInternetPresent = cd.isConnectingToInternet();
+            if (isInternetPresent) {
+                final StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_ResetPassword,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                if (myDialog != null && myDialog.isShowing()) {
+                                    myDialog.dismiss();
+                                }
+                                Log.d("mainResponse", response);
+                                try {
+                                    JSONObject jObj = new JSONObject(response);
+                                    boolean status = jObj.getBoolean("status");
+                                    if (status) {
+                                        String message = jObj.getString("message");
+                                        CommonMethods.DisplayToastSuccess(getApplicationContext(), message);
+                                        if (dialogResetPassword != null && dialogResetPassword.isShowing()) {
+                                            dialogResetPassword.dismiss();
+                                        }
+                                    } else {
+                                        String message = jObj.getString("message");
+                                        CommonMethods.DisplayToastError(getApplicationContext(), message);
+                                    }
+                                } catch (JSONException e) {
+                                    if (myDialog != null && myDialog.isShowing()) {
+                                        myDialog.dismiss();
+                                    }
+                                    e.printStackTrace();
+                                }
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (myDialog != null && myDialog.isShowing()) {
+                            myDialog.dismiss();
+                        }
+                        VolleyLog.d("volley", "Error: " + error.getMessage());
+                        error.printStackTrace();
+                    }
+                }) {
+                    @Override
+                    public Map<String, String> getParams() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<String, String>();
+                        params.put("user_id", ClientId);
+                        params.put("password", md5(strNewPassword));
+                        Log.d("ParrasUserRegi", params.toString());
+                        return params;
+                    }
+                };
+                RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+                stringRequest.setRetryPolicy(new DefaultRetryPolicy(0, -1, 0));
+                requestQueue.add(stringRequest);
+            } else {
+                if (myDialog != null && myDialog.isShowing()) {
+                    myDialog.dismiss();
+                }
+                CommonMethods.DisplayToast(getApplicationContext(), "Please check your internet connection");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

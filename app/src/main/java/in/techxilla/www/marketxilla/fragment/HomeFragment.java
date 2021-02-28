@@ -108,6 +108,7 @@ public class HomeFragment extends Fragment {
                 SpnCallTenure.setSelection(0);
                 SpnMonthwisePerformance.setVisibility(View.GONE);
                 SpnMonthwisePerformance.setSelection(0);
+                SpnSegment.setSelection(0);
             }
         });
 

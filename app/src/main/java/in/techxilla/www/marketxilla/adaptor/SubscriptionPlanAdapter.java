@@ -175,7 +175,7 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
         });
     }
 
-    @SuppressLint({"SimpleDateFormat","DefaultLocale"})
+    @SuppressLint({"SimpleDateFormat", "DefaultLocale"})
     private void PayUMoneySdk(String PlanId, String Amount, String Package_id, String PlanName) {
         mPlan_id = PlanId;
         mPackage_id = Package_id;
@@ -191,13 +191,10 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
             calendar.add(Calendar.MONTH, 3);
             System.out.println("Current Date = " + calendar.getTime());
         }
-         SimpleDateFormat formDate = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-
-
+        SimpleDateFormat formDate = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         msubscribed_till = formDate.format(new Date(calendar.getTimeInMillis())); //
-        System.out.println("msubscribed_till Date = " + msubscribed_till);
 
-        final String StrSubscrptionAmount = String.format("%.2f", Double.parseDouble(Amount));
+        final String StrSubscriptionAmount = String.format("%.2f", Double.parseDouble(Amount));
         final String transactionId = "TID" + System.currentTimeMillis();
         final String StrUpiAccountId = UtilitySharedPreferences.getPrefs(context, "UpiAccountId");
         final String StrUPI_MerchantName = UtilitySharedPreferences.getPrefs(context, "UpiMerchantName");
@@ -211,20 +208,17 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
         appPreference.setUserId(MemberId);
         appPreference.setUserMobile(MemberMobile);
         appPreference.setUserFullName(MemberName);
-        appPreference.setPaymentAmount(StrSubscrptionAmount);
+        appPreference.setPaymentAmount(StrSubscriptionAmount);
         appPreference.setProductInfo(PlanName);
         appPreference.setPlanId(mPlan_id);
 
-
         AppEnvironment appEnvironment = AppEnvironment.SANDBOX;
-
         String hashSequence = appEnvironment.merchant_Key() + "|" + transactionId + "|" + appPreference.getPaymentAmount() + "|" + appPreference.getProductInfo() + "|" + appPreference.getUserFullName() + "|" + appPreference.getUserEmail() + "|" + appPreference.getUserId() + "|" + appPreference.getUserMobile() + "|||||||||" + appEnvironment.salt();
         String serverGeneratedHash = hashCal("SHA-512", hashSequence);
 
-
         PayUmoneySdkInitializer.PaymentParam.Builder builder = new
                 PayUmoneySdkInitializer.PaymentParam.Builder();
-        builder.setAmount(StrSubscrptionAmount)
+        builder.setAmount(StrSubscriptionAmount)
                 // Payment amount
                 .setTxnId(transactionId)                          // Transaction ID
                 .setPhone(appPreference.getUserMobile())          // User Phone number
@@ -244,29 +238,9 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
             paymentParam = builder.build();
             paymentParam.setMerchantHash(serverGeneratedHash);  //set the hash
             PayUmoneyFlowManager.startPayUMoneyFlow(paymentParam, (Activity) context, R.style.AppTheme_default, appPreference.isOverrideResultScreen());
-
         } catch (Exception e) {
             Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
         }
-    }
-
-    private void onTransactionSuccess(String TransactionDetails) {
-        // Payment Success
-        System.out.println("Success");
-        AddUserSubscriptionDetailApi(TransactionDetails);
-
-    }
-
-    private void onTransactionSubmitted() {
-        // Payment Pending
-        System.out.println("Pending | Submitted");
-
-    }
-
-    private void onTransactionFailed() {
-        // Payment Failed
-        System.out.println("Failed");
-
     }
 
     @Override
@@ -274,51 +248,71 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
         return smartPlanModelsList.size();
     }
 
-    private void AddUserSubscriptionDetailApi(String transactionDetails) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PayUmoneyFlowManager.REQUEST_CODE_PAYMENT && resultCode == RESULT_OK && data != null) {
+            TransactionResponse transactionResponse = data.getParcelableExtra(PayUmoneyFlowManager.INTENT_EXTRA_TRANSACTION_RESPONSE);
+            ResultModel resultModel = data.getParcelableExtra(PayUmoneyFlowManager.ARG_RESULT);
 
+            if (transactionResponse != null && transactionResponse.getPayuResponse() != null) {
+                if (transactionResponse.getTransactionStatus().equals(TransactionResponse.TransactionStatus.SUCCESSFUL)) {
+                    AddUserSubscriptionDetailApi(transactionResponse.toString());
+                } else {
+                    CommonMethods.DisplayToastWarning(context,"Something went wrong. Please try again.");
+                }
+
+                // Response from Payumoney
+                String payuResponse = transactionResponse.getPayuResponse();
+                // Response from SURl and FURL
+                String merchantResponse = transactionResponse.getTransactionDetails();
+                new AlertDialog.Builder(context)
+                        .setCancelable(false)
+                        .setMessage("Payu's Data : " + payuResponse + "\n\n\n Merchant's Data: " + merchantResponse)
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                dialog.dismiss();
+                            }
+                        }).show();
+
+            } else if (resultModel != null && resultModel.getError() != null) {
+                CommonMethods.DisplayToastError(context, ""+resultModel.getError().getTransactionResponse().toString());
+            } else {
+                Log.d("TAG", "Both objects are null!");
+            }
+        }
+    }
+
+    private void AddUserSubscriptionDetailApi(String transactionDetails) {
         String API_AddUserSubscriptionDetail = ROOT_URL + "add_user_subscription_detail.php";
         try {
-
             ConnectionDetector cd = new ConnectionDetector(context);
             boolean isInternetPresent = cd.isConnectingToInternet();
-
             if (isInternetPresent) {
-
                 Log.d("URL", API_AddUserSubscriptionDetail);
-
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, API_AddUserSubscriptionDetail,
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
                                 Log.d("Response", response);
-
                                 try {
                                     JSONObject jsonObject = new JSONObject(response);
                                     System.out.println("Add User Subscription response" + response);
                                     boolean status = jsonObject.getBoolean("status");
                                     if (status) {
-
                                         JSONObject dataObj = jsonObject.getJSONObject("data");
                                         String message = jsonObject.getString("message");
                                         CommonMethods.DisplayToastSuccess(context, message);
                                     }
-
-
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-
-
                             }
                         },
                         new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
                                 error.printStackTrace();
-
                             }
                         }) {
-
                     @Override
                     public String getBodyContentType() {
                         return "application/x-www-form-urlencoded; charset=UTF-8";
@@ -334,70 +328,23 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
                         params.put("package_id", mPackage_id);
                         params.put("subscribed_till", msubscribed_till);
                         Log.d("ParrasRegister", params.toString());
-
                         return params;
                     }
-
-
                 };
-
                 int socketTimeout = 50000;//30 seconds - change to what you want
                 RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
                 stringRequest.setRetryPolicy(policy);
                 RequestQueue requestQueue = Volley.newRequestQueue(context);
                 requestQueue.add(stringRequest);
-
-
             } else {
                 CommonMethods.DisplayToastInfo(context, "Please check your internet connection");
             }
         } catch (Exception e) {
-
             e.printStackTrace();
-
         }
-
-
-    }
-
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PayUmoneyFlowManager.REQUEST_CODE_PAYMENT && resultCode == RESULT_OK && data != null) {
-            TransactionResponse transactionResponse = data.getParcelableExtra(PayUmoneyFlowManager.INTENT_EXTRA_TRANSACTION_RESPONSE);
-            ResultModel resultModel = data.getParcelableExtra(PayUmoneyFlowManager.ARG_RESULT);
-
-            if (transactionResponse != null && transactionResponse.getPayuResponse() != null) {
-
-                if (transactionResponse.getTransactionStatus().equals(TransactionResponse.TransactionStatus.SUCCESSFUL)) {
-                    //Success Transaction
-                } else {
-                    //Failure Transaction
-                }
-
-                // Response from Payumoney
-                String payuResponse = transactionResponse.getPayuResponse();
-
-                // Response from SURl and FURL
-                String merchantResponse = transactionResponse.getTransactionDetails();
-                new AlertDialog.Builder(context)
-                        .setCancelable(false)
-                        .setMessage("Payu's Data : " + payuResponse + "\n\n\n Merchant's Data: " + merchantResponse)
-                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                dialog.dismiss();
-                            }
-                        }).show();
-
-            } else if (resultModel != null && resultModel.getError() != null) {
-                //CommonMethods.DisplayToastError(context, + resultCode.getError().getTransactionResponse());
-            } else {
-                Log.d("TAG", "Both objects are null!");
-            }
-        }
-
     }
 
     public static class PlanViewHolder extends RecyclerView.ViewHolder {
-
         private final TextView tv_title, tv_msg1;
         private final TextView tv_one_month, tv_two_month, tv_three_month;
         private final TextView img_green;

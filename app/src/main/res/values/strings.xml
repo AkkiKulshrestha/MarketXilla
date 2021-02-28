@@ -93,6 +93,11 @@
     <string name="camerilla_pivot">CAMERILLA PIVOT</string>
     <string name="forex_pivot">FOREX PIVOT</string>
     <string name="woodie_s_pivot">WOODIE\'s PIVOT</string>
+    <string name="reset_password">RESET PASSWORD</string>
+    <string name="enter_new_password">Enter New Password</string>
+    <string name="re_enter_password">Re Enter Password</string>
+    <string name="current_password">Enter Current Password</string>
+    <string name="check_junk_str">Simply check your mail inbox for the email we have just sent you. If it is not there, please check your junk mail folder and if it is in the junk mail folder, remember to mark the email as \n * Not Junk *.</string>
 
 
 </resources>
