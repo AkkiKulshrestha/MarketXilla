@@ -258,7 +258,9 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        NavigationView navigationView1 = findViewById(R.id.nav_view1);
         NavigationView navigationView = findViewById(R.id.nav_view);
+
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -286,10 +288,10 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
             nav_user_email.setText("Mobile No.: " + StrMemberMobile);
         }
 
-        ImageView iv_facebook = (ImageView) navigationView.findViewById(R.id.iv_facebook);
-        ImageView iv_twitter = (ImageView) navigationView.findViewById(R.id.iv_twitter);
-        ImageView iv_telegram = (ImageView) navigationView.findViewById(R.id.iv_telegram);
-        ImageView iv_linked_in = (ImageView) navigationView.findViewById(R.id.iv_linked_in);
+        ImageView iv_facebook = (ImageView) navigationView1.findViewById(R.id.iv_facebook);
+        ImageView iv_twitter = (ImageView) navigationView1.findViewById(R.id.iv_twitter);
+        ImageView iv_telegram = (ImageView) navigationView1.findViewById(R.id.iv_telegram);
+        ImageView iv_linked_in = (ImageView) navigationView1.findViewById(R.id.iv_linked_in);
 
         iv_facebook.setOnClickListener(new View.OnClickListener() {
             @Override
