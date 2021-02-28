@@ -76,8 +76,7 @@ public class HomeFragment extends Fragment {
     private Context mContext;
     private List<String> MonthsList = new ArrayList<>();
     private String SelectedMonth, SelectedSegment;
-    private TextView tv_netProfitLoss;
-    private Double netProfitLoss = 0.0;
+
 
     @SuppressLint("InflateParams")
     @Nullable
@@ -149,7 +148,6 @@ public class HomeFragment extends Fragment {
                 if (SelectedTenure.equalsIgnoreCase("Today Calls")) {
                     fetchCallData();
                     SpnMonthwisePerformance.setVisibility(View.GONE);
-                    tv_netProfitLoss.setVisibility(View.GONE);
                 } else if (SelectedTenure.equalsIgnoreCase("Past Performance")) {
                     SpnMonthwisePerformance.setVisibility(View.VISIBLE);
                 }
@@ -167,8 +165,6 @@ public class HomeFragment extends Fragment {
                 if (position > 0) {
                     SelectedMonth = parent.getItemAtPosition(position).toString();
                     fetchPastPerformance();
-                } else {
-                    tv_netProfitLoss.setVisibility(View.GONE);
                 }
             }
 
@@ -192,7 +188,6 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        tv_netProfitLoss = (TextView) rootView.findViewById(R.id.tv_netProfitLoss);
         recycler_list = rootView.findViewById(R.id.recycler_list);
         recycler_list.setHasFixedSize(true);
         recycler_list.setNestedScrollingEnabled(false);
@@ -360,7 +355,6 @@ public class HomeFragment extends Fragment {
                                 try {
                                     final JSONObject jobj = new JSONObject(response);
                                     final JSONArray data = jobj.getJSONArray("data");
-                                    netProfitLoss = 0.0;
                                     for (int k = 0; k < data.length(); k++) {
                                         final JSONObject jsonObject = data.getJSONObject(k);
                                         final String id = jsonObject.getString("id");
@@ -401,11 +395,8 @@ public class HomeFragment extends Fragment {
                                         callListModel.setIs_call_for_paid_customer(is_call_for_paid_customer);
                                         callModel_list.add(callListModel);
 
-                                        double profit_loss_dou = profit_loss != null && !profit_loss.equalsIgnoreCase("") ? Double.parseDouble(profit_loss) : 0.0;
-                                        netProfitLoss += profit_loss_dou;
                                     }
-                                    tv_netProfitLoss.setText("Net Profit / Loss: \u20B9 " + CommonMethods.DecimalNumberDisplayFormattingWithComma(String.format("%.2f", netProfitLoss)));
-                                    tv_netProfitLoss.setVisibility(View.VISIBLE);
+
                                     callsAdapter = new CallsAdapter(mContext, callModel_list);
                                     recycler_list.setAdapter(callsAdapter);
                                     callsAdapter.notifyDataSetChanged();
@@ -467,7 +458,6 @@ public class HomeFragment extends Fragment {
                                 try {
                                     final JSONObject jobj = new JSONObject(response);
                                     final JSONArray data = jobj.getJSONArray("data");
-                                    netProfitLoss = 0.0;
                                     for (int k = 0; k < data.length(); k++) {
                                         final JSONObject jsonObject = data.getJSONObject(k);
                                         final String id = jsonObject.getString("id");
@@ -508,12 +498,8 @@ public class HomeFragment extends Fragment {
                                         callListModel.setIs_call_for_paid_customer(is_call_for_paid_customer);
                                         callModel_list.add(callListModel);
 
-                                        double profit_loss_dou = profit_loss != null && !profit_loss.equalsIgnoreCase("") ? Double.parseDouble(profit_loss) : 0.0;
-                                        netProfitLoss += profit_loss_dou;
                                     }
 
-                                    tv_netProfitLoss.setText("Net Profit / Loss: \u20B9 " + CommonMethods.DecimalNumberDisplayFormattingWithComma(String.format("%.2f", netProfitLoss)));
-                                    tv_netProfitLoss.setVisibility(View.VISIBLE);
                                     callsAdapter = new CallsAdapter(mContext, callModel_list);
                                     recycler_list.setAdapter(callsAdapter);
                                     callsAdapter.notifyDataSetChanged();

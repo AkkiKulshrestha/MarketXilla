@@ -1,6 +1,7 @@
 package in.techxilla.www.marketxilla.adaptor;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
@@ -105,12 +106,14 @@ public class CallsAdapter extends RecyclerView.Adapter<CallsAdapter.CallHolder> 
 
     public static class CallHolder extends RecyclerView.ViewHolder {
         private final ImageView iv_up_down;
-        private final TextView tv_performance_for, TvStockName, tv_date_time, tv_above_below, tv_sell_buy, tv_strike_ce, tv_target1, tv_target2, tv_target3, tv_stop_loss, tv_closingprice, tv_profit_loss;
+        private final TextView tv_netProfitLoss,tv_performance_for, TvStockName, tv_date_time, tv_above_below, tv_sell_buy, tv_strike_ce, tv_target1, tv_target2, tv_target3, tv_stop_loss, tv_closingprice, tv_profit_loss;
         private final LinearLayout linear_closinglayout;
         private Double netProfitLoss = 0.0;
+        private int sizeOfList;
 
         CallHolder(@NonNull View itemView) {
             super(itemView);
+            tv_netProfitLoss = (TextView) itemView.findViewById(R.id.tv_netProfitLoss);
             linear_closinglayout = (LinearLayout) itemView.findViewById(R.id.row_linear_closinglayout);
             tv_performance_for = (TextView) itemView.findViewById(R.id.tv_performance_for);
             TvStockName = (TextView) itemView.findViewById(R.id.TvStockName);
@@ -127,13 +130,12 @@ public class CallsAdapter extends RecyclerView.Adapter<CallsAdapter.CallHolder> 
             tv_closingprice = (TextView) itemView.findViewById(R.id.tv_closingprice);
         }
 
-        @SuppressLint({"SimpleDateFormat", "SetTextI18n", "UseCompatLoadingForDrawables"})
+        @SuppressLint({"SimpleDateFormat", "SetTextI18n", "UseCompatLoadingForDrawables", "DefaultLocale"})
         private void setItem(final Context context, final CallModel callModel, final int position, final int size) {
+            sizeOfList = size;
             tv_performance_for.setText(callModel.getPerformance_for());
             TvStockName.setText(callModel.getStock_name());
-            if (position == 0) {
-                netProfitLoss = 0.0;
-            }
+
             Date date = null;
             try {
                 date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(callModel.getDate());
@@ -220,13 +222,15 @@ public class CallsAdapter extends RecyclerView.Adapter<CallsAdapter.CallHolder> 
             tv_stop_loss.setText("\u20B9 " + callModel.getStop_loss());
             tv_closingprice.setText("\u20B9 " + callModel.getBuy_sell_closing_price());
 
-            getTotal(callModel.getProfit_loss());
-        }
-
-        public String getTotal(String profit_loss) {
-            double profit_loss_dou = profit_loss != null && !profit_loss.equalsIgnoreCase("") ? Double.parseDouble(profit_loss) : 0.0;
+            double profit_loss_dou = !callModel.getProfit_loss().equalsIgnoreCase("") ? Double.parseDouble(callModel.getProfit_loss()) : 0.0;
             netProfitLoss += profit_loss_dou;
-            return String.format("%.2f", netProfitLoss);
+            tv_netProfitLoss.setText("Net Profit / Loss: \u20B9 " + CommonMethods.DecimalNumberDisplayFormattingWithComma(String.format("%.2f", netProfitLoss)));
+
+            if(position==0){
+                tv_netProfitLoss.setVisibility(View.VISIBLE);
+            }else {
+                tv_netProfitLoss.setVisibility(View.GONE);
+            }
         }
     }
 }

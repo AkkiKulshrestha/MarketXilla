@@ -176,23 +176,11 @@
                     android:visibility="visible" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/tv_netProfitLoss"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/layout_tenure"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="16dp"
-                android:padding="8dp"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:visibility="gone" />
-
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@+id/tv_netProfitLoss"
+                android:layout_below="@+id/layout_tenure"
                 android:layout_marginVertical="8dp"
                 android:scrollbars="vertical" />
 
