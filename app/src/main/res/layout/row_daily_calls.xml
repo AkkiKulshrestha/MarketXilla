@@ -53,7 +53,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center|start"
-                        android:layout_weight="4"
+                        android:layout_weight="5"
                         android:enabled="false"
                         android:gravity="center|start"
                         android:paddingHorizontal="8dp"
@@ -70,11 +70,11 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginHorizontal="8dp"
-                        android:layout_weight="6"
+                        android:layout_weight="5"
                         android:gravity="center|end"
                         android:paddingVertical="4dp"
                         android:textColor="@color/black"
-                        android:textSize="12sp"
+                        android:textSize="10sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 

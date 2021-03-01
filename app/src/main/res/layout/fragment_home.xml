@@ -163,17 +163,44 @@
 
                 </LinearLayout>
 
-                <Spinner
-                    android:id="@+id/SpnSegment"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="8dp"
-                    android:layout_marginVertical="8dp"
-                    android:layout_weight="5"
-                    android:background="@color/white"
-                    android:entries="@array/spin_item_segments"
-                    android:minHeight="40dp"
-                    android:visibility="visible" />
+                    android:orientation="horizontal"
+                    android:weightSum="10">
+
+                    <Spinner
+                        android:id="@+id/SpnSegment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="8dp"
+                        android:layout_marginVertical="8dp"
+                        android:layout_weight="5"
+                        android:background="@color/white"
+                        android:entries="@array/spin_item_segments"
+                        android:minHeight="40dp"
+                        android:visibility="visible" />
+
+                    <TextView
+                        android:id="@+id/tv_AvailTrail"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginHorizontal="8dp"
+                        android:layout_marginVertical="8dp"
+                        android:layout_weight="5"
+                        android:text="GET TRAIL"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:background="@drawable/cw_button_shadow_primary"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:textSize="16dp"
+                        android:minHeight="50dp"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView

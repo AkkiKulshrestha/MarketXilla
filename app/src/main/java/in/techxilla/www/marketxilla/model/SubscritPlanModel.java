@@ -15,6 +15,7 @@ public class SubscritPlanModel {
     private String Amount2Months;
     private String Amount3Months;
     private String Id;
+    private String tenure;
 
     public SubscritPlanModel(final String sPlan,
                              final String sPlanName,
@@ -25,6 +26,7 @@ public class SubscritPlanModel {
                              final boolean sIndex_Options,
                              final boolean sCommodity,
                              final boolean sTelegram_Updates,
+                             final String tenure,
                              final String Amount1Month,
                              final String Amount2Months,
                              final String Amount3Months,
@@ -39,6 +41,7 @@ public class SubscritPlanModel {
         this.sIndex_Options = sIndex_Options;
         this.sCommodity = sCommodity;
         this.sTelegram_Updates = sTelegram_Updates;
+        this.tenure = tenure;
         this.Amount1Month = Amount1Month;
         this.Amount2Months = Amount2Months;
         this.Amount3Months = Amount3Months;
@@ -46,6 +49,14 @@ public class SubscritPlanModel {
     }
 
     public SubscritPlanModel() {
+    }
+
+    public String getTenure() {
+        return tenure;
+    }
+
+    public void setTenure(String tenure) {
+        this.tenure = tenure;
     }
 
     public String getAmount1Month() {

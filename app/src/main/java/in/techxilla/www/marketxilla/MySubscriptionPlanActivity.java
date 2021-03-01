@@ -176,18 +176,26 @@ public class MySubscriptionPlanActivity extends AppCompatActivity {
                                 final TextView tv_status_text1 = (TextView) rowView1.findViewById(R.id.tv_status_text1);
                                 final Button btn_payment_receipt = (Button) rowView1.findViewById(R.id.btn_payment_receipt);
 
+                                String PlanAmount = "",StrTransactionId="";
+                                if(payment_detail!=null && !payment_detail.isEmpty()) {
+                                    JSONObject transactionObj = new JSONObject(payment_detail);
+                                    StrTransactionId = transactionObj.getString("transaction_id");
+                                    PlanAmount = transactionObj.getString("transaction_amount");
+                                }
                                 btn_payment_receipt.setHint(mPdf_name);
                                 tv_plan_name.setText(plan_name);
 
+
                                 if (package_id.equalsIgnoreCase("1")) {
                                     tv_plan_amount.setText("Amount : \u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(plan_amount1_month));
-                                }
-                                if (package_id.equalsIgnoreCase("2")) {
+                                }else if (package_id.equalsIgnoreCase("2")) {
                                     tv_plan_amount.setText("Amount : \u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(plan_amount2_month));
-                                }
-                                if (package_id.equalsIgnoreCase("3")) {
+                                }else if (package_id.equalsIgnoreCase("3")) {
                                     tv_plan_amount.setText("Amount : \u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(plan_amount3_month));
+                                }else {
+                                    tv_plan_amount.setText("Amount : \u20B9 " + PlanAmount);
                                 }
+
 
                                 SimpleDateFormat sdf, sdf2, sdf21;
                                 Date newSubscriptedTilldate, currentdate2, newSubscriptedOndate;
@@ -202,23 +210,24 @@ public class MySubscriptionPlanActivity extends AppCompatActivity {
                                         final String SubcribedTill_DMY = sdf2.format(newSubscriptedTilldate);
                                         if (new Date().after(newSubscriptedTilldate)) {
                                             tv_Subscripte_till_date.setText(mSubscribed_till);
-                                            tv_status_text.setText("You do not have any active plan.");
+                                            tv_status_text.setText("Your Plan is Expired.");
                                             tv_status_text1.setText("Buy the best plan and enjoy your service");
-                                            btn_payment_receipt.setText("Subscribe Now");
+                                            btn_payment_receipt.setText("Download Transaction Details");
+
                                             btn_payment_receipt.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View v) {
-                                                    final Intent i = new Intent(MySubscriptionPlanActivity.this, NewDashboard.class);
-                                                    i.putExtra("load_fragment", 2);
-                                                    overridePendingTransition(R.animator.move_left, R.animator.move_right);
-                                                    startActivity(i);
-                                                    finish();
+                                                    final String path_link = ROOT_URL + "payment_receipt/" + btn_payment_receipt.getHint().toString().trim();
+                                                    final Intent intent = new Intent(Intent.ACTION_VIEW);
+                                                    intent.setData(Uri.parse(path_link));
+                                                    startActivity(intent);
                                                 }
                                             });
+
                                             tv_status.setText("InActive");
                                             tv_status.setTextColor(getResources().getColor(R.color.md_red_a400));
-                                            btnSubscribe.setVisibility(View.VISIBLE);
-                                        } else {
+                                        }
+                                        else {
                                             tv_Subscripte_till_date.setText(mSubscribed_till);
                                             tv_status_text.setText("Your plan is currently Active.");
                                             tv_status_text1.setText("Enjoy your Service");
@@ -236,17 +245,19 @@ public class MySubscriptionPlanActivity extends AppCompatActivity {
 
                                             tv_status.setText("Active");
                                             tv_status.setTextColor(getResources().getColor(R.color.selected_green));
-                                            btnSubscribe.setVisibility(View.GONE);
                                         }
 
-                                        if (i == 0 && CommonMethods.isDateExpired(SubcribedTill_DMY)) {
-                                            tv_title_plan.setText("Current Plan : " + plan_name);
-                                            tv_valid_till.setVisibility(View.VISIBLE);
-                                            tv_valid_till.setText("Valid Till \n" + mSubscribed_till);
-                                        } else {
-                                            tv_title_plan.setText("NO ACTIVE PLAN");
-                                            tv_valid_till.setVisibility(View.GONE);
-                                            btnSubscribe.setVisibility(View.VISIBLE);
+                                        if (i == 0) {
+                                            if (!CommonMethods.isDateExpired(SubcribedTill_DMY)) {
+                                                tv_title_plan.setText("Current Plan : " + plan_name);
+                                                tv_valid_till.setVisibility(View.VISIBLE);
+                                                tv_valid_till.setText("Valid Till \n" + mSubscribed_till);
+                                                btnSubscribe.setVisibility(View.GONE);
+                                            } else {
+                                                tv_title_plan.setText("NO ACTIVE PLAN");
+                                                tv_valid_till.setVisibility(View.GONE);
+                                                btnSubscribe.setVisibility(View.VISIBLE);
+                                            }
                                         }
                                     } catch (ParseException e) {
                                         e.printStackTrace();
@@ -328,18 +339,26 @@ public class MySubscriptionPlanActivity extends AppCompatActivity {
                                 });
 
                                 date.setText(mShortDate.toString());
-                                tv_planname.setText(plan_name + " - " + package_id + " Months");
-
+                                if(package_id!= null && !package_id.equalsIgnoreCase("0")) {
+                                    tv_planname.setText(plan_name + " - " + package_id + " Months");
+                                }else {
+                                    tv_planname.setText(plan_name + " - 3 Days");
+                                }
                                 if (package_id.equalsIgnoreCase("1")) {
                                     tv_amount.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(plan_amount1_month));
-                                }
-                                if (package_id.equalsIgnoreCase("2")) {
+                                }else if (package_id.equalsIgnoreCase("2")) {
                                     tv_amount.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(plan_amount2_month));
-                                }
-                                if (package_id.equalsIgnoreCase("3")) {
+                                }else if (package_id.equalsIgnoreCase("3")) {
                                     tv_amount.setText("\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(plan_amount3_month));
+                                }else {
+                                    tv_amount.setText("\u20B9 " + PlanAmount);
                                 }
-                                tv_transaction_details.setText("No Available Data");
+
+                                if(!StrTransactionId.isEmpty()){
+                                    tv_transaction_details.setText(StrTransactionId);
+                                }else{
+                                    tv_transaction_details.setText("No Available Data");
+                                }
                                 tv_Subscribed_till.setText(mSubscribed_till.toString());
                                 tv_subscribed_on.setText(mSubscribed_on.toString());
                                 tv_paying_via.setText("No Available Data");

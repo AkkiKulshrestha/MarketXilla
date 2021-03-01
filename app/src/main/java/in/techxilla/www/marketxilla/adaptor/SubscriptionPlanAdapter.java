@@ -3,6 +3,7 @@ package in.techxilla.www.marketxilla.adaptor;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -45,6 +46,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import in.techxilla.www.marketxilla.MySubscriptionPlanActivity;
+import in.techxilla.www.marketxilla.NewDashboard;
 import in.techxilla.www.marketxilla.R;
 import in.techxilla.www.marketxilla.model.SubscritPlanModel;
 import in.techxilla.www.marketxilla.utils.AppEnvironment;
@@ -106,10 +109,49 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
     public void onBindViewHolder(@NonNull SubscriptionPlanAdapter.PlanViewHolder holder, int position) {
 
         final SubscritPlanModel smartPlanModel = smartPlanModelsList.get(position);
-        mUserId = smartPlanModel.getId();
-        holder.img_green.setText(smartPlanModel.getsPlan());
+        mPlan_id = smartPlanModel.getId();
+        holder.tv_plan_type.setText(smartPlanModel.getsPlan() + " PLAN");
         holder.tv_title.setText(smartPlanModel.getsPlanName());
         holder.tv_msg1.setText(smartPlanModel.getsDetails());
+        holder.tv_tenure.setText(smartPlanModel.getTenure());
+
+        if(holder.tv_tenure.getText().toString().contains(",")){
+            String [] tenures = holder.tv_tenure.getText().toString().split(",");
+            {
+                for(String ten : tenures){
+                    if(ten.equalsIgnoreCase("1M")){
+                        holder.tv_one_month.setVisibility(View.VISIBLE);
+                    }
+
+                    if(ten.equalsIgnoreCase("2M")){
+                        holder.tv_two_month.setVisibility(View.VISIBLE);
+                    }
+
+                    if(ten.equalsIgnoreCase("3M")){
+                        holder.tv_three_month.setVisibility(View.VISIBLE);
+                    }
+
+                    holder.tv_custom_tenure.setVisibility(View.GONE);
+                }
+            }
+        }else {
+            holder.tv_one_month.setVisibility(View.GONE);
+            holder.tv_two_month.setVisibility(View.GONE);
+            holder.tv_three_month.setVisibility(View.GONE);
+            holder.tv_custom_tenure.setVisibility(View.VISIBLE);
+                if(holder.tv_tenure.getText().toString().contains("D")){
+                    String [] tenures = holder.tv_tenure.getText().toString().split("D");
+                    {
+                        mSubscripbed_on = CommonMethods.DisplayCurrentDate();
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.add(Calendar.DATE, Integer.parseInt(tenures[0]));
+                        SimpleDateFormat formDate = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                        msubscribed_till = formDate.format(new Date(calendar.getTimeInMillis())); //
+                        holder.tv_custom_tenure.setText(tenures[0] + " Days");
+                    }
+                }
+        }
+
         holder.tv_one_month.setText("1 Month\n\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(smartPlanModel.getAmount1Month()));
         holder.tv_two_month.setText("2 Months\n\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(smartPlanModel.getAmount2Months()));
         holder.tv_three_month.setText("3 Months\n\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(smartPlanModel.getAmount3Months()));
@@ -153,26 +195,116 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
         holder.tv_one_month.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PayUMoneySdk(smartPlanModel.getId(), smartPlanModel.getAmount1Month(), "1", holder.tv_title.getText().toString().trim());
-                ((Activity) context).overridePendingTransition(R.animator.move_left, R.animator.move_right);
+               /* PayUMoneySdk(smartPlanModel.getId(), smartPlanModel.getAmount1Month(), "1", holder.tv_title.getText().toString().trim());
+                ((Activity) context).overridePendingTransition(R.animator.move_left, R.animator.move_right);*/
+                CommonMethods.DisplayToastInfo(context,"Please contact Administrator to Activate this Subscription.");
             }
         });
 
         holder.tv_two_month.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PayUMoneySdk(smartPlanModel.getId(), smartPlanModel.getAmount2Months(), "2", holder.tv_title.getText().toString().trim());
-                ((Activity) context).overridePendingTransition(R.animator.move_left, R.animator.move_right);
+              /*  PayUMoneySdk(smartPlanModel.getId(), smartPlanModel.getAmount2Months(), "2", holder.tv_title.getText().toString().trim());
+                ((Activity) context).overridePendingTransition(R.animator.move_left, R.animator.move_right);*/
+                CommonMethods.DisplayToastInfo(context,"Please contact Administrator to Activate this Subscription.");
             }
         });
 
         holder.tv_three_month.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PayUMoneySdk(smartPlanModel.getId(), smartPlanModel.getAmount3Months(), "3", holder.tv_title.getText().toString().trim());
-                ((Activity) context).overridePendingTransition(R.animator.move_left, R.animator.move_right);
+                /*PayUMoneySdk(smartPlanModel.getId(), smartPlanModel.getAmount3Months(), "3", holder.tv_title.getText().toString().trim());
+                ((Activity) context).overridePendingTransition(R.animator.move_left, R.animator.move_right);*/
+                CommonMethods.DisplayToastInfo(context,"Please contact Administrator to Activate this Subscription.");
             }
         });
+
+        holder.tv_custom_tenure.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ProgressDialog myDialog = new ProgressDialog(context);
+                myDialog.setMessage("Please wait...");
+                myDialog.setCancelable(false);
+                myDialog.setCanceledOnTouchOutside(false);
+                myDialog.show();
+                AddUserTRAILDetailApi(myDialog);
+            }
+        });
+    }
+
+    private void AddUserTRAILDetailApi(ProgressDialog dialog) {
+
+        final String StrSubscriptionAmount = "0.0";
+        final String transactionId = "TID" + System.currentTimeMillis();
+
+        JSONObject transactionObj = new JSONObject();
+        try {
+            transactionObj.put("transaction_id",transactionId);
+            transactionObj.put("transaction_amount",StrSubscriptionAmount);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        final String API_AddUserSubscriptionDetail = ROOT_URL + "add_user_trail_detail.php";
+        try {
+            ConnectionDetector cd = new ConnectionDetector(context);
+            boolean isInternetPresent = cd.isConnectingToInternet();
+            if (isInternetPresent) {
+                Log.d("URL", API_AddUserSubscriptionDetail);
+                StringRequest stringRequest = new StringRequest(Request.Method.POST, API_AddUserSubscriptionDetail,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                Log.d("Response", response);
+                                if (dialog!=null && dialog.isShowing()) {
+                                    dialog.dismiss();
+                                }
+                                try {
+                                    final JSONObject jsonObject = new JSONObject(response);
+                                    final boolean status = jsonObject.getBoolean("status");
+                                    if (status) {
+                                        CommonMethods.DisplayToastSuccess(context, "YOUR TRAIL IS ACTIVATED");
+                                        final Intent i = new Intent(context, NewDashboard.class);
+                                        context.startActivity(i);
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                error.printStackTrace();
+                            }
+                        }) {
+                    @Override
+                    public String getBodyContentType() {
+                        return "application/x-www-form-urlencoded; charset=UTF-8";
+                    }
+
+                    @Override
+                    public Map<String, String> getParams() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<String, String>();
+                        params.put("user_id", UtilitySharedPreferences.getPrefs(context, "MemberId"));
+                        params.put("plan_id", mPlan_id);
+                        params.put("subscribed_on", mSubscripbed_on);
+                        params.put("payment_details",transactionObj.toString());
+                        params.put("subscribed_till", msubscribed_till);
+                        Log.d("ParrasRegister", params.toString());
+                        return params;
+                    }
+                };
+                int socketTimeout = 50000;//30 seconds - change to what you want
+                RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+                stringRequest.setRetryPolicy(policy);
+                RequestQueue requestQueue = Volley.newRequestQueue(context);
+                requestQueue.add(stringRequest);
+            } else {
+                CommonMethods.DisplayToastInfo(context, "Please check your internet connection");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @SuppressLint({"SimpleDateFormat", "DefaultLocale"})
@@ -282,6 +414,7 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
     }
 
     private void AddUserSubscriptionDetailApi(String transactionDetails) {
+
         String API_AddUserSubscriptionDetail = ROOT_URL + "add_user_subscription_detail.php";
         try {
             ConnectionDetector cd = new ConnectionDetector(context);
@@ -293,9 +426,9 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
                             @Override
                             public void onResponse(String response) {
                                 Log.d("Response", response);
+
                                 try {
                                     JSONObject jsonObject = new JSONObject(response);
-                                    System.out.println("Add User Subscription response" + response);
                                     boolean status = jsonObject.getBoolean("status");
                                     if (status) {
                                         JSONObject dataObj = jsonObject.getJSONObject("data");
@@ -347,12 +480,13 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
     public static class PlanViewHolder extends RecyclerView.ViewHolder {
         private final TextView tv_title, tv_msg1;
         private final TextView tv_one_month, tv_two_month, tv_three_month;
-        private final TextView img_green;
+        private final TextView tv_plan_type,tv_tenure,tv_custom_tenure;
         private final ImageView iv_stk_ftr, iv_stk_opt, iv_index_ftr, iv_index_opt, iv_commodity, iv_telegram_update;
 
         public PlanViewHolder(View view) {
             super(view);
-            img_green = (TextView) view.findViewById(R.id.img);
+            tv_plan_type = (TextView) view.findViewById(R.id.tv_plan_type);
+            tv_tenure = (TextView) view.findViewById(R.id.tv_tenure);
             tv_title = (TextView) view.findViewById(R.id.tv_title);
             tv_msg1 = (TextView) view.findViewById(R.id.tv_msg1);
             iv_stk_ftr = (ImageView) view.findViewById(R.id.iv_stk_ftr);
@@ -364,6 +498,7 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
             tv_one_month = (TextView) view.findViewById(R.id.tv_one_month);
             tv_two_month = (TextView) view.findViewById(R.id.tv_two_month);
             tv_three_month = (TextView) view.findViewById(R.id.tv_three_month);
+            tv_custom_tenure = (TextView) view.findViewById(R.id.tv_custom_tenure);
         }
     }
 }

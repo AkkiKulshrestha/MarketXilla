@@ -152,7 +152,13 @@ public class CallsAdapter extends RecyclerView.Adapter<CallsAdapter.CallHolder> 
 
         @SuppressLint({"SimpleDateFormat", "SetTextI18n", "UseCompatLoadingForDrawables", "DefaultLocale"})
         private void setItem(final Context context, final CallModel callModel, final int position, final int size) {
-            tv_performance_for.setText(callModel.getPerformance_for());
+
+            if(callModel.getIs_call_for_paid_customer().equalsIgnoreCase("1")){
+                tv_performance_for.setText(callModel.getPerformance_for() + " - PAID CALL");
+            }else {
+                tv_performance_for.setText(callModel.getPerformance_for());
+            }
+
             TvStockName.setText(callModel.getStock_name());
 
             Date date = null;
@@ -218,7 +224,6 @@ public class CallsAdapter extends RecyclerView.Adapter<CallsAdapter.CallHolder> 
             try {
                 String mProfit_loss;
                 mProfit_loss = String.format("%2.7s", callModel.getProfit_loss());
-                System.out.println(mProfit_loss);
                 if (callModel.getProfit_loss() != null && !callModel.getProfit_loss().equalsIgnoreCase("")) {
                     if ((Double.parseDouble(String.valueOf(callModel.getProfit_loss()))) > 0) {
                         tv_profit_loss.setTextColor(context.getResources().getColor(R.color.mpn_green));
@@ -240,6 +245,7 @@ public class CallsAdapter extends RecyclerView.Adapter<CallsAdapter.CallHolder> 
             tv_target3.setText("\u20B9 " + callModel.getTarget3());
             tv_stop_loss.setText("\u20B9 " + callModel.getStop_loss());
             tv_closingprice.setText("\u20B9 " + callModel.getBuy_sell_closing_price());
+
         }
 
 

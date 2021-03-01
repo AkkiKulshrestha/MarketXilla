@@ -104,7 +104,13 @@ public class PackageFragment extends Fragment {
                                 try {
                                     final JSONObject obj = new JSONObject(response);
                                     final JSONArray m_jArry = obj.getJSONArray("planList");
-                                    for (int i = 0; i < m_jArry.length(); i++) {
+                                    String isTrailApplicable = UtilitySharedPreferences.getPrefs(mContext,"isTrailApplicable");
+                                    int PackagesSize = m_jArry.length();
+                                    if(isTrailApplicable!=null && isTrailApplicable.equalsIgnoreCase("false")){
+                                        PackagesSize = PackagesSize - 1 ;
+                                    }
+
+                                    for (int i = 0; i < PackagesSize; i++) {
                                         final JSONObject jo_inside = m_jArry.getJSONObject(i);
                                         final String id = jo_inside.getString("id");
                                         final String plan_name = jo_inside.getString("plan_name");
@@ -119,6 +125,7 @@ public class PackageFragment extends Fragment {
                                         final String plan_amount1_month = jo_inside.getString("plan_amount1_month");
                                         final String plan_amount2_month = jo_inside.getString("plan_amount2_month");
                                         final String plan_amount3_month = jo_inside.getString("plan_amount3_month");
+                                        final String tenure = jo_inside.getString("tenure");
 
                                         final SubscritPlanModel subscritPlanModel = new SubscritPlanModel();
                                         subscritPlanModel.setsPlanName(plan_name);
@@ -131,6 +138,7 @@ public class PackageFragment extends Fragment {
                                         subscritPlanModel.setsCommodity(Boolean.parseBoolean(commodities));
                                         subscritPlanModel.setsTelegram_Updates(Boolean.parseBoolean(telegram_messages));
                                         subscritPlanModel.setId(id);
+                                        subscritPlanModel.setTenure(tenure);
                                         subscritPlanModel.setAmount1Month((plan_amount1_month));
                                         subscritPlanModel.setAmount2Months((plan_amount2_month));
                                         subscritPlanModel.setAmount3Months((plan_amount3_month));

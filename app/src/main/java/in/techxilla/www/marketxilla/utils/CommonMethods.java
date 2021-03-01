@@ -760,20 +760,20 @@ public class CommonMethods {
 
     @SuppressLint("SimpleDateFormat")
     public static boolean isDateExpired(final String DMY_Date) {
-        boolean result = true;
+        boolean result = false;
         if (DMY_Date != null && !DMY_Date.equalsIgnoreCase("")) {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             Date strDate = null;
             try {
                 strDate = sdf.parse(DMY_Date);
-                if (System.currentTimeMillis() <= strDate.getTime()) {
-                    result = false;
+                if (strDate!=null && System.currentTimeMillis() > strDate.getTime()) {
+                    result = true;
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
             }
         }
-        return !result;
+        return result;
     }
 
     @SuppressLint("SimpleDateFormat")

@@ -142,15 +142,19 @@ public class PaidUserFragment extends Fragment {
                                             sdf2 = new SimpleDateFormat("dd/MM/yyyy");
                                             mSubscribed_till = sdf21.format(newSubscriptedTilldate);
                                             final String SubcribedTill_DMY = sdf2.format(newSubscriptedTilldate);
-                                            if (i == 0 && CommonMethods.isDateExpired(SubcribedTill_DMY)) {
-                                                tv_title_plan.setText("Current Plan : " + plan_name);
-                                                tv_valid_till.setVisibility(View.VISIBLE);
-                                                tv_valid_till.setText("Valid Till \n" + mSubscribed_till);
-                                                fetchCallData(StrPlanId);
-                                            } else {
-                                                tv_title_plan.setText("NO ACTIVE PLAN");
-                                                tv_valid_till.setVisibility(View.GONE);
+
+                                            if (i == 0) {
+                                                if(!CommonMethods.isDateExpired(SubcribedTill_DMY)){
+                                                    tv_title_plan.setText("Current Plan : " + plan_name);
+                                                    tv_valid_till.setVisibility(View.VISIBLE);
+                                                    tv_valid_till.setText("Valid Till \n" + mSubscribed_till);
+                                                    fetchCallData(StrPlanId);
+                                                }else{
+                                                    tv_title_plan.setText("NO ACTIVE PLAN");
+                                                    tv_valid_till.setVisibility(View.GONE);
+                                                }
                                             }
+
                                         } catch (ParseException e) {
                                             e.printStackTrace();
                                         }

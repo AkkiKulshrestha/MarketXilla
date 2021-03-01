@@ -27,10 +27,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
@@ -41,11 +43,17 @@ import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderView;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import in.techxilla.www.marketxilla.CalculatorActivity;
@@ -57,6 +65,7 @@ import in.techxilla.www.marketxilla.model.CallModel;
 import in.techxilla.www.marketxilla.model.SliderItem;
 import in.techxilla.www.marketxilla.utils.CommonMethods;
 import in.techxilla.www.marketxilla.utils.ConnectionDetector;
+import in.techxilla.www.marketxilla.utils.UtilitySharedPreferences;
 
 import static in.techxilla.www.marketxilla.webservices.RestClient.ROOT_URL;
 
@@ -72,6 +81,7 @@ public class HomeFragment extends Fragment {
     private CallModel callListModel;
     private CallsAdapter callsAdapter;
     private Spinner SpnCallTenure, SpnMonthwisePerformance, SpnSegment;
+    TextView tv_AvailTrail;
     private View rootView;
     private Context mContext;
     private List<String> MonthsList = new ArrayList<>();
@@ -197,7 +207,102 @@ public class HomeFragment extends Fragment {
         recycler_list.setLayoutManager(layoutManager);
 
         SpnMonthwisePerformance.setVisibility(View.GONE);
+        tv_AvailTrail = rootView.findViewById(R.id.tv_AvailTrail);
+        String isTrailApplicable = UtilitySharedPreferences.getPrefs(mContext,"isTrailApplicable");
+        if(isTrailApplicable!=null && isTrailApplicable.equalsIgnoreCase("false")){
+            tv_AvailTrail.setVisibility(View.GONE);
+        }else {
+            tv_AvailTrail.setVisibility(View.VISIBLE);
+        }
+
+        tv_AvailTrail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AddUserTRAILDetailApi();
+            }
+        });
     }
+
+    private void AddUserTRAILDetailApi() {
+        myDialog.show();
+        final String StrSubscriptionAmount = "0.0";
+        final String transactionId = "TID" + System.currentTimeMillis();
+        String mSubscripbed_on = CommonMethods.DisplayCurrentDate();
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, 3);
+        SimpleDateFormat formDate = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        String msubscribed_till = formDate.format(new Date(calendar.getTimeInMillis()));
+
+        JSONObject transactionObj = new JSONObject();
+        try {
+            transactionObj.put("transaction_id",transactionId);
+            transactionObj.put("transaction_amount",StrSubscriptionAmount);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        final String API_AddUserSubscriptionDetail = ROOT_URL + "add_user_trail_detail.php";
+        try {
+            ConnectionDetector cd = new ConnectionDetector(mContext);
+            boolean isInternetPresent = cd.isConnectingToInternet();
+            if (isInternetPresent) {
+                Log.d("URL", API_AddUserSubscriptionDetail);
+                StringRequest stringRequest = new StringRequest(Request.Method.POST, API_AddUserSubscriptionDetail,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                Log.d("Response", response);
+                                if (myDialog!=null && myDialog.isShowing()) {
+                                    myDialog.dismiss();
+                                }
+                                try {
+                                    final JSONObject jsonObject = new JSONObject(response);
+                                    final boolean status = jsonObject.getBoolean("status");
+                                    if (status) {
+                                        CommonMethods.DisplayToastSuccess(mContext, "YOUR TRAIL IS ACTIVATED");
+                                        final Intent i = new Intent(mContext, NewDashboard.class);
+                                        mContext.startActivity(i);
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                error.printStackTrace();
+                            }
+                        }) {
+                    @Override
+                    public String getBodyContentType() {
+                        return "application/x-www-form-urlencoded; charset=UTF-8";
+                    }
+
+                    @Override
+                    public Map<String, String> getParams() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<String, String>();
+                        params.put("user_id", UtilitySharedPreferences.getPrefs(mContext, "MemberId"));
+                        params.put("plan_id", "7");
+                        params.put("subscribed_on", mSubscripbed_on);
+                        params.put("payment_details",transactionObj.toString());
+                        params.put("subscribed_till", msubscribed_till);
+                        Log.d("ParrasRegister", params.toString());
+                        return params;
+                    }
+                };
+                int socketTimeout = 50000;//30 seconds - change to what you want
+                RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+                stringRequest.setRetryPolicy(policy);
+                RequestQueue requestQueue = Volley.newRequestQueue(mContext);
+                requestQueue.add(stringRequest);
+            } else {
+                CommonMethods.DisplayToastInfo(mContext, "Please check your internet connection");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     public void onResume() {
@@ -276,6 +381,9 @@ public class HomeFragment extends Fragment {
                 startActivity(intent_calc);
             }
         });
+
+
+
     }
 
     private void fetchMonthList() {
@@ -541,7 +649,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void filterSearch() {
-        if (callsAdapter != null && !SelectedSegment.isEmpty()) {
+        if (callsAdapter != null && SelectedSegment!=null && !SelectedSegment.isEmpty()) {
             callsAdapter.getFilter().filter(SelectedSegment);
         }
     }

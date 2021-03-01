@@ -82,7 +82,7 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
     int loader_position = 0;
     Fragment fragment = null;
     TextView badge_new_notification;
-    boolean isPaidUser = false;
+    boolean isPaidUser = false, isTrailApplicable = true;
     private ActionBarDrawerToggle mDrawerToggle;
     private int mStackCount = 30;
     private Dialog dialogResetPassword;
@@ -171,6 +171,8 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
     }
 
     private void getPlanDetail() {
+        isTrailApplicable = true;
+        UtilitySharedPreferences.setPrefs(getApplicationContext(),"isTrailApplicable",""+isTrailApplicable);
         String Uiid_id = UUID.randomUUID().toString();
         String StrMemberId = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberId");
         final String get_plan_details_info = ROOT_URL + "get_user_subscription_details.php?" + Uiid_id + "&user_id=" + StrMemberId;
@@ -191,6 +193,8 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
                             mStackCount = m_jArry.length();
                             if (mStackCount == 0) {
                                 isPaidUser = false;
+                                isTrailApplicable = true;
+                                UtilitySharedPreferences.setPrefs(getApplicationContext(),"isTrailApplicable",""+isTrailApplicable);
                                 Log.d("PaidUser", "No");
                             } else {
                                 for (int i = 0; i < m_jArry.length(); i++) {
@@ -201,19 +205,22 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
                                     SimpleDateFormat sdf, sdf2, sdf21;
                                     Date newSubscriptedTilldate, currentdate2, newSubscriptedOndate;
 
+                                    if(StrPlanId.equalsIgnoreCase("7")){
+                                        isTrailApplicable = false;
+                                        UtilitySharedPreferences.setPrefs(getApplicationContext(),"isTrailApplicable",""+isTrailApplicable);
+                                    }
+
                                     if (!subscribed_till.equalsIgnoreCase("")) {
                                         try {
                                             sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
                                             newSubscriptedTilldate = sdf.parse(subscribed_till);
                                             sdf21 = new SimpleDateFormat("dd/MM/yyyy");
                                             String mSubscribed_till = sdf21.format(newSubscriptedTilldate);
-                                            if (i == 0 && CommonMethods.isDateExpired(mSubscribed_till)) {
-                                                isPaidUser = true;
-                                                Log.d("PaidUser", "Yes");
-                                            } else {
-                                                isPaidUser = false;
-                                                Log.d("PaidUser", "No");
+
+                                            if (i == 0) {
+                                                isPaidUser = !CommonMethods.isDateExpired(mSubscribed_till);
                                             }
+
                                         } catch (ParseException e) {
                                             e.printStackTrace();
                                         }
