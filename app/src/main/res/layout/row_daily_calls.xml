@@ -40,22 +40,19 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:weightSum="10">
+                    android:weightSum="9">
 
                     <TextView
                         android:id="@+id/TvStockName"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center|start"
-                        android:layout_weight="5"
                         android:enabled="false"
-                        android:gravity="center|start"
+                        android:layout_alignParentStart="true"
+                        android:layout_toStartOf="@id/tv_paid_call"
                         android:paddingHorizontal="8dp"
                         android:paddingVertical="4dp"
                         android:textAllCaps="true"
@@ -65,18 +62,34 @@
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/tv_performance_for"
-                        android:layout_width="match_parent"
+                        android:id="@+id/tv_paid_call"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginHorizontal="8dp"
-                        android:layout_weight="5"
+                        android:layout_centerInParent="true"
+                        android:layout_alignParentTop="true"
+                        android:gravity="center"
+                        android:paddingVertical="4dp"
+                        android:textColor="@color/colorPrimary"
+                        android:text="PAID CALLS"
+                        android:visibility="gone"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_performance_for"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginHorizontal="8dp"
+                        android:layout_alignParentEnd="true"
                         android:gravity="center|end"
                         android:paddingVertical="4dp"
                         android:textColor="@color/black"
                         android:textSize="10sp"
                         android:textStyle="bold" />
-                </LinearLayout>
+                </RelativeLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"

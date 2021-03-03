@@ -128,11 +128,12 @@ public class CallsAdapter extends RecyclerView.Adapter<CallsAdapter.CallHolder> 
 
     public static class CallHolder extends RecyclerView.ViewHolder {
         private final ImageView iv_up_down;
-        private final TextView tv_netProfitLoss,tv_performance_for, TvStockName, tv_date_time, tv_above_below, tv_sell_buy, tv_strike_ce, tv_target1, tv_target2, tv_target3, tv_stop_loss, tv_closingprice, tv_profit_loss;
+        private final TextView tv_paid_call,tv_netProfitLoss,tv_performance_for, TvStockName, tv_date_time, tv_above_below, tv_sell_buy, tv_strike_ce, tv_target1, tv_target2, tv_target3, tv_stop_loss, tv_closingprice, tv_profit_loss;
         private final LinearLayout linear_closinglayout;
 
         CallHolder(@NonNull View itemView) {
             super(itemView);
+            tv_paid_call = (TextView) itemView.findViewById(R.id.tv_paid_call);
             tv_netProfitLoss = (TextView) itemView.findViewById(R.id.tv_netProfitLoss);
             linear_closinglayout = (LinearLayout) itemView.findViewById(R.id.row_linear_closinglayout);
             tv_performance_for = (TextView) itemView.findViewById(R.id.tv_performance_for);
@@ -153,12 +154,16 @@ public class CallsAdapter extends RecyclerView.Adapter<CallsAdapter.CallHolder> 
         @SuppressLint({"SimpleDateFormat", "SetTextI18n", "UseCompatLoadingForDrawables", "DefaultLocale"})
         private void setItem(final Context context, final CallModel callModel, final int position, final int size) {
 
+
+
             if(callModel.getIs_call_for_paid_customer().equalsIgnoreCase("1")){
-                tv_performance_for.setText(callModel.getPerformance_for() + " - PAID CALL");
+                tv_paid_call.setText("PAID CALL");
+                tv_paid_call.setVisibility(View.VISIBLE);
             }else {
-                tv_performance_for.setText(callModel.getPerformance_for());
+                tv_paid_call.setVisibility(View.GONE);
             }
 
+            tv_performance_for.setText(callModel.getPerformance_for());
             TvStockName.setText(callModel.getStock_name());
 
             Date date = null;
