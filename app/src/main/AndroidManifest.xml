@@ -23,8 +23,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
-        tools:ignore="AllowBackup"
-        tools:replace="android:allowBackup">
+        android:usesCleartextTraffic="true"
+        android:requestLegacyExternalStorage="true"
+        tools:replace="android:usesCleartextTraffic"
+        tools:targetApi="m">
+        <meta-data android:name="payu_debug_mode_enabled" android:value="true" />  <!--set the value to false for production environment-->
 
         <activity android:name=".SplashActivity">
             <intent-filter>

@@ -45,11 +45,19 @@
     <string name="basic">BASIC</string>
     <string name="standered">STANDERED</string>
     <string name="gold">GOLD</string>
-
     <string name="platinum">PLATINUM</string>
     <string name="future_special">FUTURE SPECIAL</string>
     <string name="optionsspecial">OPTIONS SPECIAL</string>
     <string name="commodityspecial">COMMODITY SPECIAL</string>
+
+    <string name="bank_account_details_for_donation">BANK ACCOUNT DETAILS</string>
+    <string name="bank_name">Bank Name : </string>
+    <string name="ifsc_code">IFSC Code : </string>
+    <string name="bank_branch">Bank Branch :</string>
+    <string name="beneficiary_name">Beneficiary Name :</string>
+    <string name="account_number">Account Number :</string>
+    <string name="upi_id">UPI ID :</string>
+    <string name="upi_merchant_name">UPI Merchant Name :</string>
 
 
     <string name="stock_future">STOCK (Future)</string>
@@ -98,6 +106,7 @@
     <string name="re_enter_password">Re Enter Password</string>
     <string name="current_password">Enter Current Password</string>
     <string name="check_junk_str">Simply check your mail inbox for the email we have just sent you. If it is not there, please check your junk mail folder and if it is in the junk mail folder, remember to mark the email as \n * Not Junk *.</string>
+    <string name="resend_otp">RESEND OTP</string>
 
 
 </resources>

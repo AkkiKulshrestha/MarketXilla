@@ -3,7 +3,6 @@ package in.techxilla.www.marketxilla.fragment;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -50,7 +49,6 @@ public class PackageFragment extends Fragment {
     private SubscriptionPlanAdapter smartPlanAdapter;
     private ArrayList<SubscritPlanModel> smartPlanModelArrayList = new ArrayList<>();
     private ProgressDialog myDialog;
-    private String StrUpiAccountId, StrUPI_MerchantName;
 
     @SuppressLint("InflateParams")
     @Nullable
@@ -77,7 +75,6 @@ public class PackageFragment extends Fragment {
         final int color = ContextCompat.getColor(mContext, R.color.blue_light);
         recyclerSmartPlan.addItemDecoration(new CirclePagerIndicatorDecoration(color, color));
         fetchPlans();
-        getBankDetail();
     }
 
 
@@ -173,63 +170,6 @@ public class PackageFragment extends Fragment {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        smartPlanAdapter.onActivityResult(requestCode, resultCode, data);
-    }
-
-    private void getBankDetail() {
-        final String Uiid_id = UUID.randomUUID().toString();
-        final String get_bank_details_info = ROOT_URL + "get_bank_details.php?_" + Uiid_id;
-        Log.d("URL --->", get_bank_details_info);
-        try {
-            ConnectionDetector cd = new ConnectionDetector(mContext);
-            boolean isInternetPresent = cd.isConnectingToInternet();
-            if (isInternetPresent) {
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, get_bank_details_info, new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(final String response) {
-                        try {
-                            Log.d("Response", "" + response);
-                            final JSONObject Jobj = new JSONObject(response);
-                            final boolean status = Jobj.getBoolean("status");
-                            if (status) {
-                                final String data = Jobj.getString("data");
-                                final JSONObject jobject = new JSONObject(data);
-                                final String Id = jobject.getString("id");
-                                final String beneficiary_name = jobject.getString("beneficiary_name");
-                                final String bank_name = jobject.getString("bank_name");
-                                final String account_no = jobject.getString("account_no");
-                                final String ifsc_code = jobject.getString("ifsc_code");
-                                StrUpiAccountId = jobject.getString("upi_id");
-                                StrUPI_MerchantName = jobject.getString("upi_merchant_name");
-                                final String branch = jobject.getString("branch");
-
-                                UtilitySharedPreferences.setPrefs(mContext, "UpiAccountId", StrUpiAccountId);
-                                UtilitySharedPreferences.setPrefs(mContext, "UpiMerchantName", StrUPI_MerchantName);
-                            }
-                        } catch (Exception e) {
-                            Log.d("Exception", e.toString());
-                        }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError volleyError) {
-                        volleyError.printStackTrace();
-                        CommonMethods.DisplayToastWarning(getContext(), "Something goes wrong. Please try again");
-                    }
-                });
-                RequestQueue requestQueue = Volley.newRequestQueue(mContext);
-                stringRequest.setRetryPolicy(new DefaultRetryPolicy(0, -1, 0));
-                requestQueue.add(stringRequest);
-            } else {
-                CommonMethods.DisplayToastWarning(getContext(), "No Internet Connection");
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
         }
     }
 }

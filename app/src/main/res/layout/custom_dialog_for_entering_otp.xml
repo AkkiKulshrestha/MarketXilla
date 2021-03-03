@@ -35,7 +35,7 @@
             android:layout_gravity="center"
             android:layout_weight="2"
             android:focusableInTouchMode="false"
-            android:src="@drawable/close"
+            android:src="@drawable/ic_close"
             android:tint="@color/white"
             android:visibility="gone"
             tools:ignore="UseAppTint" />

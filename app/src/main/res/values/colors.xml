@@ -5,6 +5,7 @@
     <color name="colorPrimaryDark">#0686AC</color>
     <color name="colorPrimaryLight">#00C5FF</color>
     <color name="colorPrimaryVeryLight">#A7DDED</color>
+    <color name="colorAccent">#000000</color>
 
     <color name="colorInactive">#747474</color>
     <color name="colorActiveSmall">#FFFFFF</color>
@@ -35,7 +36,6 @@
     <color name="primary_grey">#ededed</color>
     <color name="dark_grey">#757575</color>
     <color name="grey">#C3C2C2</color>
-    <color name="colorAccent">#000000</color>
     <color name="primary_light_blue">#6aacd9</color>
     <color name="red_close">#fc1208</color>
     <color name="pie_chart_blue">#3a4692</color>

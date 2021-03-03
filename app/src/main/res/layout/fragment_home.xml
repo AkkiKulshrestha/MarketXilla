@@ -191,12 +191,12 @@
                         android:text="GET TRAIL"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:background="@drawable/cw_button_shadow_primary"
+                        android:background="@color/colorPrimary"
                         android:textColor="@color/white"
                         android:textStyle="bold"
                         android:textSize="16dp"
                         android:minHeight="50dp"
-                        android:visibility="gone" />
+                        android:visibility="visible" />
 
                 </LinearLayout>
 
