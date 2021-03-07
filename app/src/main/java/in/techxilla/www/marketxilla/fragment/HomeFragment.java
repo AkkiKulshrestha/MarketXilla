@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -221,6 +222,12 @@ public class HomeFragment extends Fragment {
                 AddUserTRAILDetailApi();
             }
         });
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        ((NewDashboard)context).validateUser();
+        super.onAttach(context);
     }
 
     private void AddUserTRAILDetailApi() {

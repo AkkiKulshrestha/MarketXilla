@@ -158,27 +158,27 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
         holder.tv_one_month.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((NewDashboard)context).pop_up_bank_details();
-               /* ((NewDashboard)context).PayUMoneySdk(smartPlanModel.getId(), smartPlanModel.getAmount1Month(), "1", holder.tv_title.getText().toString().trim());
-                ((Activity) context).overridePendingTransition(R.animator.move_left, R.animator.move_right);*/
+               // ((NewDashboard)context).pop_up_bank_details();
+                ((NewDashboard)context).PayUMoneySdk(smartPlanModel.getId(), smartPlanModel.getAmount1Month(), "1", holder.tv_title.getText().toString().trim());
+                ((Activity) context).overridePendingTransition(R.animator.move_left, R.animator.move_right);
             }
         });
 
         holder.tv_two_month.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((NewDashboard)context).pop_up_bank_details();
-               /* ((NewDashboard)context).PayUMoneySdk(smartPlanModel.getId(), smartPlanModel.getAmount2Months(), "2", holder.tv_title.getText().toString().trim());
-                ((Activity) context).overridePendingTransition(R.animator.move_left, R.animator.move_right);*/
+               // ((NewDashboard)context).pop_up_bank_details();
+                ((NewDashboard)context).PayUMoneySdk(smartPlanModel.getId(), smartPlanModel.getAmount2Months(), "2", holder.tv_title.getText().toString().trim());
+                ((Activity) context).overridePendingTransition(R.animator.move_left, R.animator.move_right);
             }
         });
 
         holder.tv_three_month.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((NewDashboard)context).pop_up_bank_details();
-               /* ((NewDashboard)context).PayUMoneySdk(smartPlanModel.getId(), smartPlanModel.getAmount3Months(), "3", holder.tv_title.getText().toString().trim());
-                ((Activity) context).overridePendingTransition(R.animator.move_left, R.animator.move_right);*/
+                //((NewDashboard)context).pop_up_bank_details();
+                ((NewDashboard)context).PayUMoneySdk(smartPlanModel.getId(), smartPlanModel.getAmount3Months(), "3", holder.tv_title.getText().toString().trim());
+                ((Activity) context).overridePendingTransition(R.animator.move_left, R.animator.move_right);
             }
         });
 

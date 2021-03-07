@@ -60,18 +60,4 @@ public class Constant {
                 "font/helvetica_neu_bold.ttf");
     }
 
-    /*PAYU CONTANTS*/
-
-    public static String MERCHANT_ID = "8025939";
-    public static String MERCHANT_KEY = "hVyMSm";
-    public static String MERCHANT_EMAIL = "marketxilla@gmail.com";
-
-    public static String SURL = "https://www.fitternity.com/paymentsuccessandroid";
-    public static String FURL = "https://www.fitternity.com/paymentsuccessandroid";
-    public static String PAYU_SALT = "kE3fB8BV";
-    public static boolean isDebug = true;
-
-    //TEST CRED
-    //public static String MERCHANT_KEY = "gtKFFx";
-    //public static String PAYU_SALT = "eCwWELxi";
 }

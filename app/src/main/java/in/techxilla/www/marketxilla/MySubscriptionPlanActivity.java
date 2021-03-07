@@ -176,11 +176,18 @@ public class MySubscriptionPlanActivity extends AppCompatActivity {
                                 final TextView tv_status_text1 = (TextView) rowView1.findViewById(R.id.tv_status_text1);
                                 final Button btn_payment_receipt = (Button) rowView1.findViewById(R.id.btn_payment_receipt);
 
-                                String PlanAmount = "",StrTransactionId="";
+                                String PlanAmount = "",StrTransactionId="",PaymentDetailsObj = "";
                                 if(payment_detail!=null && !payment_detail.isEmpty()) {
-                                    JSONObject transactionObj = new JSONObject(payment_detail);
-                                    StrTransactionId = transactionObj.getString("transaction_id");
-                                    PlanAmount = transactionObj.getString("transaction_amount");
+                                    if(payment_detail.contains("|")){
+                                        String [] paymentDetail = ((String) payment_detail).split("\\|");
+                                        StrTransactionId = paymentDetail[0];
+                                        PlanAmount = paymentDetail[1];
+                                        PaymentDetailsObj = paymentDetail[2];
+                                    }else {
+                                        JSONObject transactionObj = new JSONObject(payment_detail);
+                                        StrTransactionId = transactionObj.getString("transaction_id");
+                                        PlanAmount = transactionObj.getString("transaction_amount");
+                                    }
                                 }
                                 btn_payment_receipt.setHint(mPdf_name);
                                 tv_plan_name.setText(plan_name);
@@ -359,9 +366,17 @@ public class MySubscriptionPlanActivity extends AppCompatActivity {
                                 }else{
                                     tv_transaction_details.setText("No Available Data");
                                 }
-                                tv_Subscribed_till.setText(mSubscribed_till.toString());
-                                tv_subscribed_on.setText(mSubscribed_on.toString());
-                                tv_paying_via.setText("No Available Data");
+                                tv_Subscribed_till.setText(mSubscribed_till);
+                                tv_subscribed_on.setText(mSubscribed_on);
+
+                                if(PaymentDetailsObj!=null && !PaymentDetailsObj.isEmpty()) {
+                                    JSONObject transactionObj = new JSONObject(PaymentDetailsObj);
+                                    String paymentMode = transactionObj.getString("mode");
+                                    tv_paying_via.setText(paymentMode);
+                                }else{
+                                    tv_paying_via.setText("No Available Data");
+                                }
+
                                 ll_details.addView(rowView2);
                             }
                         } catch (Exception e) {

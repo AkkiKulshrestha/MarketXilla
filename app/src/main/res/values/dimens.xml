@@ -13,4 +13,6 @@
     <dimen name="header_scrollable_max_scroll">136dip</dimen>
     <dimen name="header_title_height">64dip</dimen>
     <dimen name="custom_over_scroll_height">96dip</dimen>
+    <dimen name="dimen_10dp">10dp</dimen>
+    <dimen name="dimen_20dp">20dp</dimen>
 </resources>

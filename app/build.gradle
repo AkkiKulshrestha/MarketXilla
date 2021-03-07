@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-
 android {
     compileSdkVersion 30
 
@@ -9,8 +8,11 @@ android {
         targetSdkVersion 30
         versionCode 3
         versionName "1.3"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    dataBinding {
+        enabled = true
     }
 
     buildTypes {
@@ -59,7 +61,11 @@ dependencies {
     implementation 'ru.noties:scrollable:1.3.0'
     implementation 'com.youngtr:numberprogress:1.0.1'
     implementation platform('com.google.firebase:firebase-bom:26.2.0')
-    implementation project(':sdkui')
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'com.payu.india:payu-checkout-pro:1.2.0'
+    implementation 'com.payu.phonepe:phonepe-intent:1.5.3'
+    implementation 'com.payu.gpay:payu-gpay:1.3.6'
+    implementation 'com.google.android.play:core:1.10.0'
     testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'

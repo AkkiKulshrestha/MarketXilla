@@ -1,13 +1,21 @@
 package in.techxilla.www.marketxilla;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
+import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -23,6 +31,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.android.volley.AuthFailureError;
@@ -80,7 +89,8 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
     private TextView tv_forgot_password;
     private Dialog dialogForgotPassword, dialogEnteringOtp, dialogResetPassword;
     private EditText edt_verification_number;
-    private String str_registered_mobile_no = "", StrEmailMobile;
+    private String str_registered_mobile_no = "", StrEmailMobile,StrDeviceUniqueId = "";
+    private String StrIMEI1 = "", StrIMEI2 = "", StrIMEI = "", StrCellInfo = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,6 +177,7 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
                 popUpForgotPassword();
             }
         });
+        StrDeviceUniqueId =  getDeviceID();
     }
 
     private void GOTO_SIGIN() {
@@ -174,6 +185,81 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
         LayoutTabSignUp.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight));
         ll_parent_sign_in.setVisibility(View.VISIBLE);
         ll_parent_sign_up.setVisibility(View.GONE);
+    }
+
+    @SuppressLint("HardwareIds")
+    public String getDeviceID() {
+        String m_szUniqueID = "";
+        TelephonyManager telMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        int simState = telMgr != null ? telMgr.getSimState() : 0;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int simCount = telMgr != null ? telMgr.getPhoneCount() : 0;
+            if (simCount == 2) {
+                if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    Activity#requestPermissions
+                    return null;
+                }
+
+                TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+                if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            StrIMEI1 = telephonyManager != null ? telephonyManager.getImei(0) : "";
+                            StrIMEI2 = telephonyManager != null ? telephonyManager.getImei(1) : "";
+                        }
+                    } else {
+                        StrIMEI = Settings.Secure.getString(getContentResolver(),
+                                Settings.Secure.ANDROID_ID);
+                    }
+                }
+            } else {
+                StrIMEI = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+            }
+            // 2 compute DEVICE ID
+            if (StrIMEI != null && !StrIMEI.equalsIgnoreCase("") && !StrIMEI.equalsIgnoreCase("null")) {
+                m_szUniqueID = StrIMEI;
+            } else if (StrIMEI1 != null && !StrIMEI1.equalsIgnoreCase("") && !StrIMEI1.equalsIgnoreCase("null")) {
+                m_szUniqueID = StrIMEI1;
+            } else if (StrIMEI2 != null && !StrIMEI2.equalsIgnoreCase("") && !StrIMEI2.equalsIgnoreCase("null")) {
+                m_szUniqueID = StrIMEI2;
+            } else {
+                final String m_szDevIDShort = "35"
+                        + // we make this look like a valid IMEI
+                        Build.BOARD.length() % 10 + Build.BRAND.length() % 10
+                        + Build.CPU_ABI.length() % 10 + Build.DEVICE.length() % 10
+                        + Build.DISPLAY.length() % 10 + Build.HOST.length() % 10
+                        + Build.ID.length() % 10 + Build.MANUFACTURER.length() % 10
+                        + Build.MODEL.length() % 10 + Build.PRODUCT.length() % 10
+                        + Build.TAGS.length() % 10 + Build.TYPE.length() % 10
+                        + Build.USER.length() % 10; // 13 digits
+
+                final WifiManager wm = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                final String m_szWLANMAC = wm != null ? wm.getConnectionInfo().getMacAddress() : "";
+                // 5 Bluetooth MAC address android.permission.BLUETOOTH required
+                BluetoothAdapter m_BluetoothAdapter = null; // Local Bluetooth adapter
+                m_BluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                final String m_szBTMAC = m_BluetoothAdapter.getAddress();
+                System.out.println("m_szBTMAC " + m_szBTMAC);
+
+                if (m_szWLANMAC != null && !m_szWLANMAC.equalsIgnoreCase("") && !m_szWLANMAC.equalsIgnoreCase("null")) {
+                    m_szUniqueID = m_szWLANMAC;
+                } else if (m_szBTMAC != null && !m_szBTMAC.equalsIgnoreCase("") && !m_szBTMAC.equalsIgnoreCase("null")) {
+                    m_szUniqueID = m_szBTMAC;
+                }
+
+            }
+        } else {
+            if (telMgr != null) {
+                StrIMEI = telMgr.getDeviceId();
+                m_szUniqueID = StrIMEI;
+            }
+
+        }
+        Log.i("--DeviceID--", m_szUniqueID);
+        Log.d("DeviceIdCheck", "DeviceId that generated MPreferenceActivity:" + m_szUniqueID);
+        return m_szUniqueID;
     }
 
     private void LogInApi() {
@@ -227,6 +313,7 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
                                             UtilitySharedPreferences.setPrefs(getApplicationContext(), "MemberName", StrName);
                                             UtilitySharedPreferences.setPrefs(getApplicationContext(), "MemberEmailId", StrEmail);
                                             UtilitySharedPreferences.setPrefs(getApplicationContext(), "MemberMobile", StrMobile);
+                                            UtilitySharedPreferences.setPrefs(getApplicationContext(), "DeviceId", StrDeviceUniqueId);
                                             CommonMethods.DisplayToastSuccess(getApplicationContext(), message);
                                             Intent i = new Intent(getApplicationContext(), NewDashboard.class);
                                             startActivity(i);
@@ -263,6 +350,7 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
                         params.put("username", StrUserName.toUpperCase());
                         params.put("password", md5(StrPassword));
                         params.put("token", UtilitySharedPreferences.getPrefs(getApplicationContext(), "token"));
+                        params.put("device_id",StrDeviceUniqueId);
                         Log.d("ParrasLogin", params.toString());
                         return params;
                     }
@@ -374,6 +462,7 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
                         params.put("mobile_no", StrMobile);
                         params.put("password", md5(StrPassword));
                         params.put("token", UtilitySharedPreferences.getPrefs(getApplicationContext(), "token"));
+                        params.put("device_id",StrDeviceUniqueId);
                         Log.d("ParrasRegister", params.toString());
                         return params;
                     }

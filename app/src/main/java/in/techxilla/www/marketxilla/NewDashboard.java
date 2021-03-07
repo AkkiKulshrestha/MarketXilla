@@ -7,11 +7,12 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,13 +20,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -46,25 +48,25 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputLayout;
-import com.payu.india.Extras.PayUChecksum;
-import com.payu.india.Extras.PayUSdkDetails;
-import com.payu.india.Model.PayuConfig;
-import com.payu.india.Model.PayuHashes;
-import com.payu.india.Payu.Payu;
-import com.payu.india.Payu.PayuConstants;
-import com.payu.paymentparamhelper.PaymentParams;
-import com.payu.paymentparamhelper.PayuErrors;
-import com.payu.paymentparamhelper.PostData;
-import com.payu.payuui.Activity.PayUBaseActivity;
+import com.payu.base.models.ErrorResponse;
+import com.payu.base.models.PayUPaymentParams;
+import com.payu.base.models.PaymentMode;
+import com.payu.base.models.PaymentType;
+import com.payu.checkoutpro.PayUCheckoutPro;
+import com.payu.checkoutpro.models.PayUCheckoutProConfig;
+import com.payu.checkoutpro.utils.PayUCheckoutProConstants;
+import com.payu.ui.model.listeners.PayUCheckoutProListener;
+import com.payu.ui.model.listeners.PayUHashGenerationListener;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -72,13 +74,13 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import in.techxilla.www.marketxilla.adaptor.ReviewOrderRecyclerViewAdapter;
 import in.techxilla.www.marketxilla.fragment.HolidayFragment;
 import in.techxilla.www.marketxilla.fragment.HomeFragment;
 import in.techxilla.www.marketxilla.fragment.PackageFragment;
 import in.techxilla.www.marketxilla.fragment.PaidUserFragment;
 import in.techxilla.www.marketxilla.utils.CommonMethods;
 import in.techxilla.www.marketxilla.utils.ConnectionDetector;
-import in.techxilla.www.marketxilla.utils.Constant;
 import in.techxilla.www.marketxilla.utils.MyValidator;
 import in.techxilla.www.marketxilla.utils.PayUMoneyAppPreference;
 import in.techxilla.www.marketxilla.utils.UtilitySharedPreferences;
@@ -86,14 +88,31 @@ import in.techxilla.www.marketxilla.utils.UtilitySharedPreferences;
 import static in.techxilla.www.marketxilla.utils.CommonMethods.DisplayToastError;
 import static in.techxilla.www.marketxilla.utils.CommonMethods.DisplayToastWarning;
 import static in.techxilla.www.marketxilla.utils.CommonMethods.md5;
-import static in.techxilla.www.marketxilla.utils.Constant.MERCHANT_EMAIL;
-import static in.techxilla.www.marketxilla.utils.Constant.MERCHANT_KEY;
-import static in.techxilla.www.marketxilla.utils.Constant.PAYU_SALT;
 import static in.techxilla.www.marketxilla.webservices.RestClient.ROOT_URL;
 
 public class NewDashboard extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, BottomNavigationView.OnNavigationItemSelectedListener {
 
-    String StrMemberId, StrMemberName, StrMemberEmailId, StrMemberMobile;
+    /*PAYU CONTANTS*/
+
+    private final String MERCHANT_ID = "8025939";
+    private final String MERCHANT_NAME = "Marketxilla";
+    private final String MERCHANT_EMAIL = "marketxilla@gmail.com";
+    private final String SURL = "https://payuresponse.firebaseapp.com/success";
+    private final String FURL = "https://payuresponse.firebaseapp.com/failure";
+
+    private final boolean isProd = true;
+
+    // PROD CRED
+    private final String PROD_KEY = "hVyMSm";
+    private final String PROD_SALT = "kE3fB8BV";
+    private final String PROD_SALTV2 = "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCgnUYNokw7luwyWC/YeNJBVYS/5v++p6TSULw/hcyV37ICsdOm1Q4stgVPl0brVOvHCPGdcXQVk74lg/wkuh8qoGzjD6qpnqFxy4T+4YjfWJooTAIe6nsYRUG+fg095Ka3rV67D+ix19bKn8jUNTzGayV2Srv8lWe6XL8mNURwEiPpFTWSTZH3RJTTUtHoh8EObbfUrx5y2yyurcyK4gJ9LKAhSyzMIPR+YKlCc8UjM1UvSL0TcxMXYcI8pWFBGOYFn59YDH+VN1DplWiUgKWxe11mv3+J7ZLTb/c9gUbSyyXCFG9NcsgPJL1N0iqhp46/qFdufv/BGi+mdaxazlrrAgMBAAECggEALvdOcNYwrIwpbV9UPly2PtyfAO6vgjTLgaSSJ5EcjgbnqtoNJg/PIUvoqal214HxoDYBUSTH6TdWtumtZZ/3VSOsM4l1QjxcwUXeEhopSAZErdvsEtZGQIaf/vAlNyARkExmExVH2hlfecjXlRYsO2lBfyHDbszRlDFiw+13ob11lRhEXAOBPDoarhCMqAWX6MuTc92OvWcAp8w8Vwv/hIzOmg2yGv2Dhs36YPQsR9nHSqIbt330QkLMMaVEj8A0IQakouZ3uuoBC0KejfgLQCFGdeKbDY7QtDWpAfKZVWFwCZQAi3q1n3rj+jQIQ2KFpMEzvRaECINZaubMm3GRQQKBgQDRKlTQhmVqGntudSXzvP88Xqb2s6nNK9OMwEmWUkdqhwa/GYP5P9MQYL+hap9IS7273dAmACAYjHWuchch4WTqDMTTWg7hJjhxRylJ1zZb1Rn6qTNnBSp/8a8UNeL7nZc6fZowqcY5Epxeak6ZeJNiaRgK90XF/XWrPMOY3ci5mQKBgQDEk+00vSXNIsrf1VehuqbQ54OxKOpaKUwnBvV+5njXwPouhjKnb6tCXkNz5mIfmY5L8OXiPC2vdzfCg08qoMZd8+bZwePUK1NaP1xwl3pcxiUhq2tGanKgR6xMdZb7pUTyA2UcLoEaNHiCFjjjME79YTZdDY4rgqz8xL5Rp6+zIwKBgE5PtAuSlfvAyH/Vmo0EMOeQZKCvKZ7ojr7+6049pgFrZoo76l5yl/pkzrqHqfUubm4dISZpG5s1U4YpryF/OwIqH7Ml37ZKUg2PYBUGX5LIWX6wxM8Ibx4SBcPiXQZpvUon5ofbuJx7rFHpKV5qd3v77wWECPqU5+5hxLXCK7nZAoGAEG/uHcLTLlwCasUEFtnsqPsy39V0AyYA4CKM1Jeg8ymHwewmwCluQJZxPXe+LLZCV8dE8a3mhA2L9A/WxtG6xJBodTzpOAyHY7x4llGUQb2vzSjwR2sPOqfDmIEcpt4i7bmq8rhQw0gv63DAQP8BG97NFOrVQH4kyN4Kq/lBj9ECgYEAsgmADFPambDl9SgX2BIQaZ9d/ef/EKXg0dC7tQDeqYlw4cNcNvecFJmjHi/CFQIqeGwqk2oeGcfVnTbGYUJAjKgnZzamye3q3hblqhGdoR/KsCGaU3f43N7XMTMteKCiIa9oG547gEuLZYND9y+OlSwNimr2vdXGcQXxhlWdWE0=";
+
+    //TEST CRED
+    private final String TEST_KEY = "gtKFFx";
+    private final String TEST_SALT = "eCwWELxi";
+
+
+    String StrMemberId, StrMemberName, StrMemberEmailId, StrMemberMobile, StrDeviceUniqueId;
     ProgressDialog myDialog;
     int notifications_count = 0;
     ImageView iv_notification;
@@ -104,45 +123,13 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
     boolean isPaidUser = false, isTrailApplicable = true;
     private ActionBarDrawerToggle mDrawerToggle;
     private int mStackCount = 30;
-    private Dialog dialogResetPassword,dialogBankDetails;
+    private Dialog dialogResetPassword, dialogBankDetails;
     private EditText etCurrentPassword, etNewPassword, etConfirmPassword;
     private String mUserId, mPlan_id, mSubscripbed_on, mPackage_id, msubscribed_till;
-    private JSONObject transactionObj,bankObj;
-    private PaymentParams mPaymentParams;
-    private String paymentHash1;
-
-    // This sets the configuration
-    private PayuConfig payuConfig;
-
-    private String subventionHash, serverHash;
-
-    // Used when generating hash from SDK
-    private PayUChecksum checksum;
-
-    private static boolean isAppInstalled(Context context, String packageName) {
-        try {
-            context.getPackageManager().getApplicationInfo(packageName, 0);
-            return true;
-        } catch (PackageManager.NameNotFoundException e) {
-            return false;
-        }
-    }
-
-    public static String hashCal(String type, String hashString) {
-        StringBuilder hash = new StringBuilder();
-        MessageDigest messageDigest = null;
-        try {
-            messageDigest = MessageDigest.getInstance(type);
-            messageDigest.update(hashString.getBytes());
-            byte[] mdbytes = messageDigest.digest();
-            for (byte hashByte : mdbytes) {
-                hash.append(Integer.toString((hashByte & 0xff) + 0x100, 16).substring(1));
-            }
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return hash.toString();
-    }
+    private JSONObject transactionObj, bankObj;
+    private String KEY = "", SALT = "";
+    private long mLastClickTime = 0;
+    private ReviewOrderRecyclerViewAdapter reviewOrderAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,6 +167,7 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
         StrMemberName = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberName");
         StrMemberEmailId = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberEmailId");
         StrMemberMobile = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberMobile");
+        StrDeviceUniqueId = UtilitySharedPreferences.getPrefs(getApplicationContext(), "DeviceId");
 
         PayUMoneyAppPreference appPreference = new PayUMoneyAppPreference();
         appPreference.setUserEmail(StrMemberEmailId);
@@ -199,6 +187,81 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
         getPlanDetail();
         fetchNotificationList();
         getBankDetail();
+    }
+
+    @Override
+    protected void onResume() {
+        validateUser();
+        super.onResume();
+    }
+
+    public void validateUser() {
+        final String Uiid_id = UUID.randomUUID().toString();
+        final String get_bank_details_info = ROOT_URL + "getUserDeviceAuthentication.php?_" + Uiid_id + "&user_id=" + StrMemberId + "&device_id=" + StrDeviceUniqueId;
+        Log.d("URL --->", get_bank_details_info);
+        try {
+            ConnectionDetector cd = new ConnectionDetector(getApplicationContext());
+            boolean isInternetPresent = cd.isConnectingToInternet();
+            if (isInternetPresent) {
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, get_bank_details_info, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(final String response) {
+                        try {
+                            Log.d("Response", "" + response);
+                            JSONObject jsonObject = new JSONObject(response);
+                            boolean status = jsonObject.getBoolean("status");
+                            String message = jsonObject.getString("message");
+                            if (!status) {
+                                PopUpDisplayMessage(message);
+                            }/*else {
+                                CommonMethods.DisplayToastSuccess(getApplicationContext(),message);
+                            }*/
+
+                        } catch (Exception e) {
+                            Log.d("Exception", e.toString());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        volleyError.printStackTrace();
+                        CommonMethods.DisplayToastWarning(getApplicationContext(), "Something goes wrong. Please try again");
+                    }
+                });
+                RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+                stringRequest.setRetryPolicy(new DefaultRetryPolicy(0, -1, 0));
+                requestQueue.add(stringRequest);
+            } else {
+                CommonMethods.DisplayToastWarning(getApplicationContext(), "No Internet Connection");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void PopUpDisplayMessage(String message) {
+
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.pop_up_display_message);
+        dialog.getWindow().setBackgroundDrawable(
+                new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        TextView title = dialog.findViewById(R.id.title);
+        TextView tv_message = dialog.findViewById(R.id.message);
+        title.setText("DEVICE NOT FOUND");
+        tv_message.setText(message);
+
+        TextView tv_ok = dialog.findViewById(R.id.tv_ok);
+        dialog.show();
+        tv_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                logout();
+            }
+        });
     }
 
     public void setBottomNavigation() {
@@ -811,7 +874,7 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
         TextView tv_upi_merchant_name = dialogBankDetails.findViewById(R.id.tv_upi_merchant_name);
 
 
-        if(bankObj!=null){
+        if (bankObj != null) {
 
             final boolean status;
             try {
@@ -866,9 +929,9 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
         });
     }
 
-
     @SuppressLint({"SimpleDateFormat", "DefaultLocale"})
     public void PayUMoneySdk(String PlanId, String Amount, String Package_id, String PlanName) {
+
         mPlan_id = PlanId;
         mPackage_id = Package_id;
         Calendar calendar = Calendar.getInstance();
@@ -889,60 +952,48 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
         msubscribed_till = formDate.format(new Date(calendar.getTimeInMillis())); //
 
         final String StrSubscriptionAmount = String.format("%.2f", Double.parseDouble(Amount));
-        final String transactionId = "MXILLA-" + System.currentTimeMillis();
-        final String StrUpiAccountId = UtilitySharedPreferences.getPrefs(this, "UpiAccountId");
-        final String StrUPI_MerchantName = UtilitySharedPreferences.getPrefs(this, "UpiMerchantName");
+        final String transactionId = String.valueOf(System.currentTimeMillis());
         final String MemberEmailId = UtilitySharedPreferences.getPrefs(this, "MemberEmailId");
         mUserId = UtilitySharedPreferences.getPrefs(this, "MemberId");
         final String MemberName = UtilitySharedPreferences.getPrefs(this, "MemberName");
         final String MemberMobile = UtilitySharedPreferences.getPrefs(this, "MemberMobile");
 
-        Payu.setInstance(this);
-        PayUSdkDetails payUSdkDetails = new PayUSdkDetails();
 
-        Log.d("SDK DETAILS", "Build No: " + payUSdkDetails.getSdkBuildNumber() + "\n Build Type: " + payUSdkDetails.getSdkBuildType() + " \n Build Flavor: " + payUSdkDetails.getSdkFlavor() + "\n Application Id: " + payUSdkDetails.getSdkApplicationId() + "\n Version Code: " + payUSdkDetails.getSdkVersionCode() + "\n Version Name: " + payUSdkDetails.getSdkVersionName());
-
-        String hashSequence = MERCHANT_KEY + "|" + transactionId + "|" + StrSubscriptionAmount + "|" + PlanName + "|" + MemberName + "|" + MemberEmailId + "|" + mUserId + "|" + MemberMobile + "|||||||||" + Constant.PAYU_SALT;
-        subventionHash = hashCal("SHA-512", hashSequence);
+        if (SystemClock.elapsedRealtime() - mLastClickTime < 1000)
+            return;
+        mLastClickTime = SystemClock.elapsedRealtime();
 
         HashMap<String, Object> additionalParams = new HashMap<>();
-        additionalParams.put("SubscribedOn", mSubscripbed_on);
-        additionalParams.put("SubscribedTill", msubscribed_till);
-        additionalParams.put("PackageId", Package_id);
-        additionalParams.put("PlanId", mPlan_id);
-        additionalParams.put("UserId", mUserId);
+        additionalParams.put(PayUCheckoutProConstants.CP_UDF1, mSubscripbed_on);
+        additionalParams.put(PayUCheckoutProConstants.CP_UDF2, msubscribed_till);
+        additionalParams.put(PayUCheckoutProConstants.CP_UDF3, mUserId);
+        additionalParams.put(PayUCheckoutProConstants.CP_UDF4, mPlan_id);
+        additionalParams.put(PayUCheckoutProConstants.CP_UDF5, Package_id);
 
-        String userCredentials = MERCHANT_KEY + ":" + MERCHANT_EMAIL;
+        if (isProd) {
+            KEY = PROD_KEY;
+            SALT = PROD_SALT;
+        } else {
+            KEY = TEST_KEY;
+            SALT = TEST_SALT;
+        }
 
-        int environment;
-        if (Constant.isDebug)
-            environment = PayuConstants.STAGING_ENV;
-        else
-            environment = PayuConstants.PRODUCTION_ENV;
 
-        mPaymentParams = new PaymentParams();
-
-        mPaymentParams.setAmount(StrSubscriptionAmount);                        // Payment amount
-        mPaymentParams.setTxnId(transactionId);                                             // Transaction ID
-        mPaymentParams.setPhone(MemberMobile);                                           // User Phone number
-        mPaymentParams.setProductInfo(PlanName);                   // Product Name or description
-        mPaymentParams.setFirstName(MemberName);                              // User First name
-        mPaymentParams.setEmail(MemberEmailId);                                            // User Email ID
-        mPaymentParams.setSurl(Constant.SURL);                    // Success URL (surl);
-        mPaymentParams.setFurl(Constant.FURL);                     //Failure URL (furl);
-        mPaymentParams.setUdf1(mSubscripbed_on);
-        mPaymentParams.setUdf2(msubscribed_till);
-        mPaymentParams.setUdf3(mPlan_id);
-        mPaymentParams.setUdf4(Package_id);
-        mPaymentParams.setUdf5(mUserId);
-        mPaymentParams.setNotifyURL(Constant.SURL);                              // Integration environment - true (Debug);/ false(Production);
-        mPaymentParams.setKey(MERCHANT_KEY);                        // Merchant key
-        mPaymentParams.setUserCredentials(userCredentials);
-
-        payuConfig = new PayuConfig();
-        payuConfig.setEnvironment(environment);
-
-        generateHashFromSDK(mPaymentParams, Constant.PAYU_SALT);
+        PayUPaymentParams.Builder builder = new PayUPaymentParams.Builder();
+        builder.setAmount(StrSubscriptionAmount)
+                .setIsProduction(isProd)
+                .setProductInfo(PlanName)
+                .setKey(KEY)
+                .setPhone(MemberMobile)
+                .setTransactionId(transactionId)
+                .setFirstName(MemberName)
+                .setEmail(MemberEmailId)
+                .setSurl(SURL)
+                .setFurl(FURL)
+                .setUserCredential(KEY + ":" + MERCHANT_EMAIL)
+                .setAdditionalParams(additionalParams);
+        PayUPaymentParams payUPaymentParams = builder.build();
+        initUiSdk(payUPaymentParams);
 
         transactionObj = new JSONObject();
         try {
@@ -951,168 +1002,91 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        // Invoke the following function to open the checkout page.
-
-
     }
 
-   /* @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    private void initUiSdk(PayUPaymentParams payUPaymentParams) {
+        PayUCheckoutPro.open(
+                NewDashboard.this,
+                payUPaymentParams,
+                getCheckoutProConfig(),
+                new PayUCheckoutProListener() {
 
-        // Result Code is -1 send from Payumoney activity
-        Log.d("MainActivity", "request code " + requestCode + " resultcode " + resultCode);
-        if (requestCode == PayUmoneyFlowManager.REQUEST_CODE_PAYMENT && resultCode == RESULT_OK && data != null) {
-            TransactionResponse transactionResponse = data.getParcelableExtra(PayUmoneyFlowManager.INTENT_EXTRA_TRANSACTION_RESPONSE);
+                    @Override
+                    public void onPaymentSuccess(@NotNull Object response) {
+                        Log.d("Response", "" + response);
+                        HashMap<String,Object> result = (HashMap<String, Object>) response;
+                        try {
+                            transactionObj.put("payuData", result.get(PayUCheckoutProConstants.CP_PAYU_RESPONSE));
+                            transactionObj.put("merchantData", result.get(PayUCheckoutProConstants.CP_MERCHANT_RESPONSE));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
 
-            if (transactionResponse != null && transactionResponse.getPayuResponse() != null) {
-
-                if (transactionResponse.getTransactionStatus().equals(TransactionResponse.TransactionStatus.SUCCESSFUL)) {
-                    //Success Transaction
-                    // Response from Payumoney
-                    String payuResponse = transactionResponse.getPayuResponse();
-                    // Response from SURl and FURL
-                    String merchantResponse = transactionResponse.getTransactionDetails();
-                    try {
-                        transactionObj.put("payuResponse", payuResponse);
-                        transactionObj.put("merchantResponse", merchantResponse);
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        AddUserSubscriptionDetailApi(transactionObj.toString());
                     }
-                    //AddUserSubscriptionDetailApi(transactionObj.toString());
-                    AddUserSubscriptionDetailApi(transactionObj.toString());
-                } else {
-                    //Failure Transaction
-                    CommonMethods.DisplayToastError(getApplicationContext(), "" + transactionResponse);
+
+                    @Override
+                    public void onPaymentFailure(@NotNull Object response) {
+                        //CommonMethods.DisplayToastError(getApplicationContext(), "" + response);
+                    }
+
+                    @Override
+                    public void onPaymentCancel(boolean isTxnInitiated) {
+                        CommonMethods.DisplayToastError(getApplicationContext(), getResources().getString(R.string.transaction_cancelled_by_user));
+                    }
+
+                    @Override
+                    public void onError(ErrorResponse errorResponse) {
+                        String errorMessage = errorResponse.getErrorMessage();
+                        if (TextUtils.isEmpty(errorMessage))
+                            errorMessage = getResources().getString(R.string.some_error_occurred);
+                        CommonMethods.DisplayToastError(getApplicationContext(), errorMessage);
+                    }
+
+                    @Override
+                    public void setWebViewProperties(@Nullable WebView webView, @Nullable Object o) {
+                        //For setting webview properties, if any. Check Customized Integration section for more details on this
+                    }
+
+                    @Override
+                    public void generateHash(HashMap<String, String> valueMap, PayUHashGenerationListener hashGenerationListener) {
+                        String hashName = valueMap.get(PayUCheckoutProConstants.CP_HASH_NAME);
+                        String hashData = valueMap.get(PayUCheckoutProConstants.CP_HASH_STRING);
+                        if (!TextUtils.isEmpty(hashName) && !TextUtils.isEmpty(hashData)) {
+                            //Generate Hash from your backend here
+                            String hash = calculateHash(hashData + SALT);
+                            HashMap<String, String> dataMap = new HashMap<>();
+                            dataMap.put(hashName, hash);
+                            hashGenerationListener.onHashGenerated(dataMap);
+                        }
+                    }
                 }
-            }
-        }
-    }*/
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PayuConstants.PAYU_REQUEST_CODE) {
-            if (data != null) {
-
-                /**
-                 * Here, data.getStringExtra("payu_response") ---> Implicit response sent by PayU
-                 * data.getStringExtra("result") ---> Response received from merchant's Surl/Furl
-                 *
-                 * PayU sends the same response to merchant server and in app. In response check the value of key "status"
-                 * for identifying status of transaction. There are two possible status like, success or failure
-                 * */
-
-
-                new AlertDialog.Builder(this)
-                        .setCancelable(false)
-                        .setMessage("Payu's Data : " + data.getStringExtra("payu_response") + "\n\n\n Merchant's Data: " + data.getStringExtra("result"))
-                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                dialog.dismiss();
-                            }
-                        }).show();
-
-            } else {
-                Toast.makeText(this, getString(R.string.could_not_receive_data), Toast.LENGTH_LONG).show();
-            }
-        }
+        );
     }
 
-    public void generateHashFromSDK(PaymentParams mPaymentParams, String salt) {
-        PayuHashes payuHashes = new PayuHashes();
-        PostData postData = new PostData();
-        String hashSequence = mPaymentParams.getKey() + "|" + mPaymentParams.getTxnId() + "|" + mPaymentParams.getAmount() + "|" + mPaymentParams.getProductInfo() + "|" + mPaymentParams.getFirstName() + "|" + mPaymentParams.getEmail() + "|" + mPaymentParams.getUdf5() + "|" + mPaymentParams.getPhone() + "|||||||||" + PAYU_SALT;
-        serverHash = hashCal("SHA-512", hashSequence);
-//        if(mPaymentParams.getBeneficiaryAccountNumber()== null){
-
-        // payment Hash;
-        checksum = null;
-        checksum = new PayUChecksum();
-        checksum.setAmount(mPaymentParams.getAmount());
-        checksum.setKey(mPaymentParams.getKey());
-        checksum.setTxnid(mPaymentParams.getTxnId());
-        checksum.setEmail(mPaymentParams.getEmail());
-        checksum.setSalt(salt);
-        checksum.setProductinfo(mPaymentParams.getProductInfo());
-        checksum.setFirstname(mPaymentParams.getFirstName());
-        checksum.setUdf1(mPaymentParams.getUdf1());
-        checksum.setUdf2(mPaymentParams.getUdf2());
-        checksum.setUdf3(mPaymentParams.getUdf3());
-        checksum.setUdf4(mPaymentParams.getUdf4());
-        checksum.setUdf5(mPaymentParams.getUdf5());
-
-        postData = checksum.getHash();
-        if (postData.getCode() == PayuErrors.NO_ERROR) {
-            payuHashes.setPaymentHash(postData.getResult());
-        }
-        // checksum for payemnt related details
-        // var1 should be either user credentials or default
-        String var1 = mPaymentParams.getUserCredentials() == null ? PayuConstants.DEFAULT : mPaymentParams.getUserCredentials();
-        String key = mPaymentParams.getKey();
-
-        if ((postData = calculateHash(key, PayuConstants.PAYMENT_RELATED_DETAILS_FOR_MOBILE_SDK, var1, salt)) != null && postData.getCode() == PayuErrors.NO_ERROR) // Assign post data first then check for success
-            payuHashes.setPaymentRelatedDetailsForMobileSdkHash(postData.getResult());
-        //vas
-        if ((postData = calculateHash(key, PayuConstants.VAS_FOR_MOBILE_SDK, PayuConstants.DEFAULT, salt)) != null && postData.getCode() == PayuErrors.NO_ERROR)
-            payuHashes.setVasForMobileSdkHash(postData.getResult());
-
-        // getIbibocodes
-        if ((postData = calculateHash(key, PayuConstants.GET_MERCHANT_IBIBO_CODES, PayuConstants.DEFAULT, salt)) != null && postData.getCode() == PayuErrors.NO_ERROR)
-            payuHashes.setMerchantIbiboCodesHash(postData.getResult());
-
-        if (!var1.contentEquals(PayuConstants.DEFAULT)) {
-            // get user card
-            if ((postData = calculateHash(key, PayuConstants.GET_USER_CARDS, var1, salt)) != null && postData.getCode() == PayuErrors.NO_ERROR) // todo rename storedc ard
-                payuHashes.setStoredCardsHash(postData.getResult());
-            // save user card
-            if ((postData = calculateHash(key, PayuConstants.SAVE_USER_CARD, var1, salt)) != null && postData.getCode() == PayuErrors.NO_ERROR)
-                payuHashes.setSaveCardHash(postData.getResult());
-            // delete user card
-            if ((postData = calculateHash(key, PayuConstants.DELETE_USER_CARD, var1, salt)) != null && postData.getCode() == PayuErrors.NO_ERROR)
-                payuHashes.setDeleteCardHash(postData.getResult());
-            // edit user card
-            if ((postData = calculateHash(key, PayuConstants.EDIT_USER_CARD, var1, salt)) != null && postData.getCode() == PayuErrors.NO_ERROR)
-                payuHashes.setEditCardHash(postData.getResult());
-        }
-
-        if (mPaymentParams.getOfferKey() != null) {
-            postData = calculateHash(key, PayuConstants.OFFER_KEY, mPaymentParams.getOfferKey(), salt);
-            if (postData.getCode() == PayuErrors.NO_ERROR) {
-                payuHashes.setCheckOfferStatusHash(postData.getResult());
-            }
-        }
-
-        if (mPaymentParams.getOfferKey() != null && (postData = calculateHash(key, PayuConstants.CHECK_OFFER_STATUS, mPaymentParams.getOfferKey(), salt)) != null && postData.getCode() == PayuErrors.NO_ERROR) {
-            payuHashes.setCheckOfferStatusHash(postData.getResult());
-        }
-
-        // we have generated all the hases now lest launch sdk's ui
-        launchSdkUI(payuHashes);
+    private PayUCheckoutProConfig getCheckoutProConfig() {
+        PayUCheckoutProConfig checkoutProConfig = new PayUCheckoutProConfig();
+        checkoutProConfig.setPaymentModesOrder(getCheckoutOrderList());
+        checkoutProConfig.setShowCbToolbar(true);
+        checkoutProConfig.setAutoSelectOtp(false);
+        checkoutProConfig.setAutoApprove(true);
+        checkoutProConfig.setSurePayCount(0);
+        checkoutProConfig.setShowExitConfirmationOnPaymentScreen(true);
+        checkoutProConfig.setShowExitConfirmationOnCheckoutScreen(true);
+        checkoutProConfig.setMerchantName(MERCHANT_NAME);
+        checkoutProConfig.setMerchantLogo(R.drawable.app_logo);
+        if (reviewOrderAdapter != null)
+            checkoutProConfig.setCartDetails(reviewOrderAdapter.getOrderDetailsList());
+        return checkoutProConfig;
     }
 
-    private void launchSdkUI(PayuHashes payuHashes) {
-        Intent intent = new Intent(this, PayUBaseActivity.class);
-        intent.putExtra(PayuConstants.PAYU_CONFIG, payuConfig);
-        intent.putExtra(PayuConstants.PAYMENT_PARAMS, mPaymentParams);
-        //intent.putExtra(SdkUIConstants.SUBVENTION_HASH, subventionHash);
-        intent.putExtra(PayuConstants.SALT, PAYU_SALT);
-        intent.putExtra(PayuConstants.PAYU_HASHES, serverHash);
-        startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
+    private ArrayList<PaymentMode> getCheckoutOrderList() {
+        ArrayList<PaymentMode> checkoutOrderList = new ArrayList<>();
+        checkoutOrderList.add(new PaymentMode(PaymentType.UPI, PayUCheckoutProConstants.CP_GOOGLE_PAY));
+        checkoutOrderList.add(new PaymentMode(PaymentType.WALLET, PayUCheckoutProConstants.CP_PHONEPE));
+        checkoutOrderList.add(new PaymentMode(PaymentType.WALLET, PayUCheckoutProConstants.CP_PAYTM));
+        return checkoutOrderList;
     }
-
-    // deprecated, should be used only for testing.
-    private PostData calculateHash(String key, String command, String var1, String salt) {
-        checksum = null;
-        checksum = new PayUChecksum();
-        checksum.setKey(key);
-        checksum.setCommand(command);
-        checksum.setVar1(var1);
-        checksum.setSalt(salt);
-        return checksum.getHash();
-    }
-
 
     private void AddUserSubscriptionDetailApi(String transactionDetails) {
         myDialog.show();
@@ -1134,7 +1108,6 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
                                     JSONObject jsonObject = new JSONObject(response);
                                     boolean status = jsonObject.getBoolean("status");
                                     if (status) {
-                                        JSONObject dataObj = jsonObject.getJSONObject("data");
                                         String message = jsonObject.getString("message");
                                         CommonMethods.DisplayToastSuccess(getApplicationContext(), message);
                                         final Intent i = new Intent(getApplicationContext(), NewDashboard.class);
@@ -1181,6 +1154,30 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Hash Should be generated from your sever side only.
+     *
+     * Do not use this, you may use this only for testing.
+     * This should be done from server side..
+     * Do not keep salt anywhere in app.
+     * */
+    private static String calculateHash(String hashString) {
+        try {
+            StringBuilder hash = new StringBuilder();
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA-512");
+            messageDigest.update(hashString.getBytes());
+            byte[] mdbytes = messageDigest.digest();
+            for (byte hashByte : mdbytes) {
+                hash.append(Integer.toString((hashByte & 0xff) + 0x100, 16).substring(1));
+            }
+
+            return hash.toString();
+        }catch (Exception e){
+            e.printStackTrace();
+            return "";
         }
     }
 

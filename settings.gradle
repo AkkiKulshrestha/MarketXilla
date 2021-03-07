@@ -1,2 +1,2 @@
-include ':app', 'sdkui'
+include ':app'
 rootProject.name = "MarketXilla"
