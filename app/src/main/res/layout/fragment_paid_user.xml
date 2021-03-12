@@ -57,9 +57,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/ll_planTop"
-                android:layout_margin="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginHorizontal="16dp"
                 android:background="@color/colorPrimary"
-                android:padding="8dp"
+                android:paddingVertical="8dp"
+                android:gravity="center"
                 android:text="No Calls Available"
                 android:textColor="@color/white"
                 android:visibility="gone" />
@@ -70,6 +72,8 @@
                 android:layout_height="match_parent"
                 android:layout_below="@+id/ll_planTop"
                 android:scrollbars="vertical" />
+
+
         </RelativeLayout>
 
     </ScrollView>

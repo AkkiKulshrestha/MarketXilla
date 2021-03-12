@@ -185,17 +185,17 @@
                         android:id="@+id/tv_AvailTrail"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_gravity="center"
                         android:layout_marginHorizontal="8dp"
                         android:layout_marginVertical="8dp"
                         android:layout_weight="5"
-                        android:text="GET TRAIL"
-                        android:layout_gravity="center"
-                        android:gravity="center"
                         android:background="@color/colorPrimary"
-                        android:textColor="@color/white"
-                        android:textStyle="bold"
-                        android:textSize="16dp"
+                        android:gravity="center"
                         android:minHeight="50dp"
+                        android:text="GET TRAIL"
+                        android:textColor="@color/white"
+                        android:textSize="16dp"
+                        android:textStyle="bold"
                         android:visibility="visible" />
 
                 </LinearLayout>
@@ -210,6 +210,19 @@
                 android:layout_below="@+id/layout_tenure"
                 android:layout_marginVertical="8dp"
                 android:scrollbars="vertical" />
+
+            <TextView
+                android:id="@+id/no_call_txt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layout_tenure"
+                android:layout_marginHorizontal="16dp"
+                android:background="@color/colorPrimary"
+                android:paddingVertical="8dp"
+                android:gravity="center"
+                android:text="No Calls Available"
+                android:textColor="@color/white"
+                android:visibility="gone" />
 
         </RelativeLayout>
 

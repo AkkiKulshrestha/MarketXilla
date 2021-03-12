@@ -309,6 +309,7 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
                             if (mStackCount == 0) {
                                 isPaidUser = false;
                                 isTrailApplicable = true;
+                                UpdatePaymentDetails("0");
                                 UtilitySharedPreferences.setPrefs(getApplicationContext(), "isTrailApplicable", "" + isTrailApplicable);
                                 Log.d("PaidUser", "No");
                             } else {
@@ -334,6 +335,7 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
 
                                             if (i == 0) {
                                                 isPaidUser = !CommonMethods.isDateExpired(mSubscribed_till);
+                                                UpdatePaymentDetails(StrPlanId);
                                             }
 
                                         } catch (ParseException e) {
@@ -368,6 +370,69 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    private void UpdatePaymentDetails(String mPlan_id) {
+
+        String Uiid_id = UUID.randomUUID().toString();
+        String URL_ResetPassword = ROOT_URL + "add_user_payment_details.php?_" + Uiid_id;
+        try {
+            Log.d("URL_ResetPassword", URL_ResetPassword);
+            ConnectionDetector cd = new ConnectionDetector(getApplicationContext());
+            boolean isInternetPresent = cd.isConnectingToInternet();
+            if (isInternetPresent) {
+                final StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_ResetPassword,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                if (myDialog != null && myDialog.isShowing()) {
+                                    myDialog.dismiss();
+                                }
+                                Log.d("mainResponse", response);
+                                try {
+                                    JSONObject jObj = new JSONObject(response);
+
+                                } catch (JSONException e) {
+                                    if (myDialog != null && myDialog.isShowing()) {
+                                        myDialog.dismiss();
+                                    }
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (myDialog != null && myDialog.isShowing()) {
+                            myDialog.dismiss();
+                        }
+                        VolleyLog.d("volley", "Error: " + error.getMessage());
+                        error.printStackTrace();
+                    }
+                }) {
+                    @Override
+                    public Map<String, String> getParams() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<String, String>();
+                        params.put("user_id", StrMemberId);
+                        params.put("plan_id", mPlan_id);
+
+                        Log.d("updatePaymentDetails", params.toString());
+                        return params;
+                    }
+                };
+                RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+                stringRequest.setRetryPolicy(new DefaultRetryPolicy(0, -1, 0));
+                requestQueue.add(stringRequest);
+            } else {
+                if (myDialog != null && myDialog.isShowing()) {
+                    myDialog.dismiss();
+                }
+                CommonMethods.DisplayToast(getApplicationContext(), "Please check your internet connection");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void navigationView() {

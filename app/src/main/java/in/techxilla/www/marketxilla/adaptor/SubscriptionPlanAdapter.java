@@ -57,7 +57,6 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
     }
 
 
-
     @NonNull
     @Override
     public SubscriptionPlanAdapter.PlanViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -78,41 +77,41 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
         holder.tv_msg1.setText(smartPlanModel.getsDetails());
         holder.tv_tenure.setText(smartPlanModel.getTenure());
 
-        if(holder.tv_tenure.getText().toString().contains(",")){
-            String [] tenures = holder.tv_tenure.getText().toString().split(",");
+        if (holder.tv_tenure.getText().toString().contains(",")) {
+            String[] tenures = holder.tv_tenure.getText().toString().split(",");
             {
-                for(String ten : tenures){
-                    if(ten.equalsIgnoreCase("1M")){
+                for (String ten : tenures) {
+                    if (ten.equalsIgnoreCase("1M")) {
                         holder.tv_one_month.setVisibility(View.VISIBLE);
                     }
 
-                    if(ten.equalsIgnoreCase("2M")){
+                    if (ten.equalsIgnoreCase("2M")) {
                         holder.tv_two_month.setVisibility(View.VISIBLE);
                     }
 
-                    if(ten.equalsIgnoreCase("3M")){
+                    if (ten.equalsIgnoreCase("3M")) {
                         holder.tv_three_month.setVisibility(View.VISIBLE);
                     }
 
                     holder.tv_custom_tenure.setVisibility(View.GONE);
                 }
             }
-        }else {
+        } else {
             holder.tv_one_month.setVisibility(View.GONE);
             holder.tv_two_month.setVisibility(View.GONE);
             holder.tv_three_month.setVisibility(View.GONE);
             holder.tv_custom_tenure.setVisibility(View.VISIBLE);
-                if(holder.tv_tenure.getText().toString().contains("D")){
-                    String [] tenures = holder.tv_tenure.getText().toString().split("D");
-                    {
-                        mSubscripbed_on = CommonMethods.DisplayCurrentDate();
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.add(Calendar.DATE, Integer.parseInt(tenures[0]));
-                        SimpleDateFormat formDate = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-                        msubscribed_till = formDate.format(new Date(calendar.getTimeInMillis())); //
-                        holder.tv_custom_tenure.setText(tenures[0] + " Days");
-                    }
+            if (holder.tv_tenure.getText().toString().contains("D")) {
+                String[] tenures = holder.tv_tenure.getText().toString().split("D");
+                {
+                    int noOfTrailDays = Integer.parseInt(tenures[0]);
+                    mSubscripbed_on = CommonMethods.DisplayCurrentDate();
+                    Calendar calendar = CommonMethods.addWorkingDays(noOfTrailDays);
+                    SimpleDateFormat formDate = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                    msubscribed_till = formDate.format(new Date(calendar.getTimeInMillis())); //
+                    holder.tv_custom_tenure.setText(noOfTrailDays + " Days");
                 }
+            }
         }
 
         holder.tv_one_month.setText("1 Month\n\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(smartPlanModel.getAmount1Month()));
@@ -158,8 +157,8 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
         holder.tv_one_month.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               // ((NewDashboard)context).pop_up_bank_details();
-                ((NewDashboard)context).PayUMoneySdk(smartPlanModel.getId(), smartPlanModel.getAmount1Month(), "1", holder.tv_title.getText().toString().trim());
+                // ((NewDashboard)context).pop_up_bank_details();
+                ((NewDashboard) context).PayUMoneySdk(smartPlanModel.getId(), smartPlanModel.getAmount1Month(), "1", holder.tv_title.getText().toString().trim());
                 ((Activity) context).overridePendingTransition(R.animator.move_left, R.animator.move_right);
             }
         });
@@ -167,8 +166,8 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
         holder.tv_two_month.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               // ((NewDashboard)context).pop_up_bank_details();
-                ((NewDashboard)context).PayUMoneySdk(smartPlanModel.getId(), smartPlanModel.getAmount2Months(), "2", holder.tv_title.getText().toString().trim());
+                // ((NewDashboard)context).pop_up_bank_details();
+                ((NewDashboard) context).PayUMoneySdk(smartPlanModel.getId(), smartPlanModel.getAmount2Months(), "2", holder.tv_title.getText().toString().trim());
                 ((Activity) context).overridePendingTransition(R.animator.move_left, R.animator.move_right);
             }
         });
@@ -177,7 +176,7 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
             @Override
             public void onClick(View view) {
                 //((NewDashboard)context).pop_up_bank_details();
-                ((NewDashboard)context).PayUMoneySdk(smartPlanModel.getId(), smartPlanModel.getAmount3Months(), "3", holder.tv_title.getText().toString().trim());
+                ((NewDashboard) context).PayUMoneySdk(smartPlanModel.getId(), smartPlanModel.getAmount3Months(), "3", holder.tv_title.getText().toString().trim());
                 ((Activity) context).overridePendingTransition(R.animator.move_left, R.animator.move_right);
             }
         });
@@ -198,12 +197,12 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
     private void AddUserTRAILDetailApi(ProgressDialog dialog) {
 
         final String StrSubscriptionAmount = "0.0";
-        final String transactionId = "TID" + System.currentTimeMillis();
+        final String transactionId = String.valueOf(System.currentTimeMillis());
 
         JSONObject transactionObj = new JSONObject();
         try {
-            transactionObj.put("transaction_id",transactionId);
-            transactionObj.put("transaction_amount",StrSubscriptionAmount);
+            transactionObj.put("transaction_id", transactionId);
+            transactionObj.put("transaction_amount", StrSubscriptionAmount);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -218,7 +217,7 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
                             @Override
                             public void onResponse(String response) {
                                 Log.d("Response", response);
-                                if (dialog!=null && dialog.isShowing()) {
+                                if (dialog != null && dialog.isShowing()) {
                                     dialog.dismiss();
                                 }
                                 try {
@@ -251,7 +250,7 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
                         params.put("user_id", UtilitySharedPreferences.getPrefs(context, "MemberId"));
                         params.put("plan_id", mPlan_id);
                         params.put("subscribed_on", mSubscripbed_on);
-                        params.put("payment_details",transactionObj.toString());
+                        params.put("payment_details", transactionObj.toString());
                         params.put("subscribed_till", msubscribed_till);
                         Log.d("ParrasRegister", params.toString());
                         return params;
@@ -279,7 +278,7 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
     public static class PlanViewHolder extends RecyclerView.ViewHolder {
         private final TextView tv_title, tv_msg1;
         private final TextView tv_one_month, tv_two_month, tv_three_month;
-        private final TextView tv_plan_type,tv_tenure,tv_custom_tenure;
+        private final TextView tv_plan_type, tv_tenure, tv_custom_tenure;
         private final ImageView iv_stk_ftr, iv_stk_opt, iv_index_ftr, iv_index_opt, iv_commodity, iv_telegram_update;
 
         public PlanViewHolder(View view) {

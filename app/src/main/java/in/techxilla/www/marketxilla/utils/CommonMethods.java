@@ -96,7 +96,6 @@ public class CommonMethods {
         Toasty.info(context, message, Toast.LENGTH_SHORT).show();
     }
 
-
     public static void DisplaySnackBar(View view, String message, String type) {
         if (type != null && !type.equalsIgnoreCase("")) {
             if (type.equalsIgnoreCase("INFO")) {
@@ -758,6 +757,24 @@ public class CommonMethods {
         return CurrentDate;
     }
 
+    public static Calendar addWorkingDays(int businessDays) {
+        Calendar cal = Calendar.getInstance();
+        int daysAdded = 0;
+        do {
+            cal.add(Calendar.DATE, 1);
+            if (isWorkingDay(cal)) {
+                daysAdded++;
+            }
+        } while (daysAdded < businessDays);
+        return cal;
+    }
+
+    private static boolean isWorkingDay(Calendar cal) {
+        int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+        return dayOfWeek != Calendar.SUNDAY && dayOfWeek != Calendar.SATURDAY;
+        // tests for other holidays here
+    }
+
     @SuppressLint("SimpleDateFormat")
     public static boolean isDateExpired(final String DMY_Date) {
         boolean result = false;
@@ -766,7 +783,7 @@ public class CommonMethods {
             Date strDate = null;
             try {
                 strDate = sdf.parse(DMY_Date);
-                if (strDate!=null && System.currentTimeMillis() > strDate.getTime()) {
+                if (strDate != null && System.currentTimeMillis() > strDate.getTime()) {
                     result = true;
                 }
             } catch (ParseException e) {
@@ -788,17 +805,17 @@ public class CommonMethods {
             String year = dateParts[0];
             if (!day.equalsIgnoreCase("01") || !day.equalsIgnoreCase("1")) {
                 int OneDayless = Integer.parseInt(day) - 1;
-                OneDayLessDate = dateParts[0] + "-" + dateParts[1] + "-" + String.valueOf(OneDayless);
+                OneDayLessDate = dateParts[0] + "-" + dateParts[1] + "-" + OneDayless;
             } else {
                 if (!month.equalsIgnoreCase("01") || !month.equalsIgnoreCase("1")) {
                     int OneDayless = 30;
                     int OneMonthless = Integer.parseInt(month) - 1;
-                    OneDayLessDate = dateParts[0] + "-" + String.valueOf(OneMonthless) + "-" + String.valueOf(OneDayless);
+                    OneDayLessDate = dateParts[0] + "-" + OneMonthless + "-" + OneDayless;
                 } else {
                     int OneDayless = 30;
                     int OneMonthless = Integer.parseInt(month) - 1;
                     int OneYearless = Integer.parseInt(year);
-                    OneDayLessDate = String.valueOf(OneYearless) + "-" + String.valueOf(OneMonthless) + "-" + String.valueOf(OneDayless);
+                    OneDayLessDate = OneYearless + "-" + OneMonthless + "-" + OneDayless;
                 }
             }
         }
