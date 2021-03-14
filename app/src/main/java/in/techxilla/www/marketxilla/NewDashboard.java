@@ -131,6 +131,30 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
     private long mLastClickTime = 0;
     private ReviewOrderRecyclerViewAdapter reviewOrderAdapter;
 
+    /**
+     * Hash Should be generated from your sever side only.
+     * <p>
+     * Do not use this, you may use this only for testing.
+     * This should be done from server side..
+     * Do not keep salt anywhere in app.
+     */
+    private static String calculateHash(String hashString) {
+        try {
+            StringBuilder hash = new StringBuilder();
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA-512");
+            messageDigest.update(hashString.getBytes());
+            byte[] mdbytes = messageDigest.digest();
+            for (byte hashByte : mdbytes) {
+                hash.append(Integer.toString((hashByte & 0xff) + 0x100, 16).substring(1));
+            }
+
+            return hash.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -176,13 +200,10 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
         appPreference.setUserFullName(StrMemberName);
 
         iv_notification = findViewById(R.id.iv_notification);
-        iv_notification.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), NotificationActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.animator.move_left, R.animator.move_right);
-            }
+        iv_notification.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), NotificationActivity.class);
+            startActivity(intent);
+            overridePendingTransition(R.animator.move_left, R.animator.move_right);
         });
         getPlanDetail();
         fetchNotificationList();
@@ -1079,7 +1100,7 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
                     @Override
                     public void onPaymentSuccess(@NotNull Object response) {
                         Log.d("Response", "" + response);
-                        HashMap<String,Object> result = (HashMap<String, Object>) response;
+                        HashMap<String, Object> result = (HashMap<String, Object>) response;
                         try {
                             transactionObj.put("payuData", result.get(PayUCheckoutProConstants.CP_PAYU_RESPONSE));
                             transactionObj.put("merchantData", result.get(PayUCheckoutProConstants.CP_MERCHANT_RESPONSE));
@@ -1162,42 +1183,34 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
             if (isInternetPresent) {
                 Log.d("URL", API_AddUserSubscriptionDetail);
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, API_AddUserSubscriptionDetail,
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String response) {
-                                Log.d("Response", response);
-                                if (myDialog != null && myDialog.isShowing()) {
-                                    myDialog.dismiss();
+                        response -> {
+                            Log.d("Response", response);
+                            if (myDialog != null && myDialog.isShowing()) {
+                                myDialog.dismiss();
+                            }
+                            try {
+                                JSONObject jsonObject = new JSONObject(response);
+                                boolean status = jsonObject.getBoolean("status");
+                                if (status) {
+                                    String message = jsonObject.getString("message");
+                                    CommonMethods.DisplayToastSuccess(getApplicationContext(), message);
+                                    final Intent i = new Intent(getApplicationContext(), NewDashboard.class);
+                                    startActivity(i);
+                                    overridePendingTransition(R.animator.move_left, R.animator.move_right);
+                                    finish();
                                 }
-                                try {
-                                    JSONObject jsonObject = new JSONObject(response);
-                                    boolean status = jsonObject.getBoolean("status");
-                                    if (status) {
-                                        String message = jsonObject.getString("message");
-                                        CommonMethods.DisplayToastSuccess(getApplicationContext(), message);
-                                        final Intent i = new Intent(getApplicationContext(), NewDashboard.class);
-                                        startActivity(i);
-                                        overridePendingTransition(R.animator.move_left, R.animator.move_right);
-                                        finish();
-                                    }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
                         },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                error.printStackTrace();
-                            }
-                        }) {
+                        Throwable::printStackTrace) {
                     @Override
                     public String getBodyContentType() {
                         return "application/x-www-form-urlencoded; charset=UTF-8";
                     }
 
                     @Override
-                    public Map<String, String> getParams() throws AuthFailureError {
+                    public Map<String, String> getParams() {
                         Map<String, String> params = new HashMap<String, String>();
                         params.put("user_id", mUserId);
                         params.put("plan_id", mPlan_id);
@@ -1221,29 +1234,4 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
             e.printStackTrace();
         }
     }
-
-    /**
-     * Hash Should be generated from your sever side only.
-     *
-     * Do not use this, you may use this only for testing.
-     * This should be done from server side..
-     * Do not keep salt anywhere in app.
-     * */
-    private static String calculateHash(String hashString) {
-        try {
-            StringBuilder hash = new StringBuilder();
-            MessageDigest messageDigest = MessageDigest.getInstance("SHA-512");
-            messageDigest.update(hashString.getBytes());
-            byte[] mdbytes = messageDigest.digest();
-            for (byte hashByte : mdbytes) {
-                hash.append(Integer.toString((hashByte & 0xff) + 0x100, 16).substring(1));
-            }
-
-            return hash.toString();
-        }catch (Exception e){
-            e.printStackTrace();
-            return "";
-        }
-    }
-
 }

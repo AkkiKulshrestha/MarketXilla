@@ -87,6 +87,7 @@
 
     <string-array name="spin_item_segments">
         <item>All Segments</item>
+        <item>Paid Calls</item>
         <item>Stock Future</item>
         <item>Stock Option</item>
         <item>Index Future</item>
@@ -108,7 +109,6 @@
     <string name="check_junk_str">Simply check your mail inbox for the email we have just sent you. If it is not there, please check your junk mail folder and if it is in the junk mail folder, remember to mark the email as \n * Not Junk *.</string>
     <string name="resend_otp">RESEND OTP</string>
 
-
     <!--PAY U STRINGS-->
     <string name="some_error_occurred">Some error occurred...</string>
     <string name="transaction_cancelled_by_user">Transaction cancelled by user</string>
@@ -124,4 +124,7 @@
     <string name="remarks">remarks</string>
     <string name="si_date_hint">YYYY-MM-DD</string>
     <string name="free_trial">Free Trial</string>
+    <string name="prod_ad_unit_id">ca-app-pub-7875930800675907/2647487053</string>
+    <string name="test_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="google_adds_app_id">ca-app-pub-7875930800675907~9539364314</string>
 </resources>

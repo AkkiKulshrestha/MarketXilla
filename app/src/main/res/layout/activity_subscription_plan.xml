@@ -64,6 +64,15 @@
                 android:layout_below="@+id/ll_planTop"
                 android:orientation="vertical">
 
+                <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/adView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_margin="8dp"
+                    ads:adSize="BANNER"
+                    ads:adUnitId="@string/prod_ad_unit_id" />
+
                 <HorizontalScrollView
                     android:id="@+id/horizontal_card"
                     android:layout_width="match_parent"

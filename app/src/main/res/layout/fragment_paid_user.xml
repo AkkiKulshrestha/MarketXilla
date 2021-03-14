@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -52,6 +52,16 @@
 
             </RelativeLayout>
 
+            <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/adView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="8dp"
+                ads:adSize="BANNER"
+                ads:adUnitId="@string/prod_ad_unit_id" />
+
+
             <TextView
                 android:id="@+id/tv_noRecordFound"
                 android:layout_width="match_parent"
@@ -74,7 +84,7 @@
                 android:scrollbars="vertical" />
 
 
-        </RelativeLayout>
+        </LinearLayout>
 
     </ScrollView>
 

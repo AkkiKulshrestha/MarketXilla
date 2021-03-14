@@ -218,8 +218,8 @@
                 android:layout_below="@+id/layout_tenure"
                 android:layout_marginHorizontal="16dp"
                 android:background="@color/colorPrimary"
-                android:paddingVertical="8dp"
                 android:gravity="center"
+                android:paddingVertical="8dp"
                 android:text="No Calls Available"
                 android:textColor="@color/white"
                 android:visibility="gone" />

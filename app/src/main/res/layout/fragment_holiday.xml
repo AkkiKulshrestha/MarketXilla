@@ -12,10 +12,26 @@
         android:fitsSystemWindows="true">
 
         <LinearLayout
-            android:id="@+id/ll_parent_holiday"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical" />
+            android:orientation="vertical">
+
+            <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/adView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="8dp"
+                ads:adSize="BANNER"
+                ads:adUnitId="@string/prod_ad_unit_id" />
+
+            <LinearLayout
+                android:id="@+id/ll_parent_holiday"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical" />
+
+        </LinearLayout>
 
     </ScrollView>
 

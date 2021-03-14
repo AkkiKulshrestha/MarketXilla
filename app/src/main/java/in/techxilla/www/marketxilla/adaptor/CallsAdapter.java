@@ -1,7 +1,6 @@
 package in.techxilla.www.marketxilla.adaptor;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
@@ -28,10 +27,10 @@ import in.techxilla.www.marketxilla.utils.CommonMethods;
 public class CallsAdapter extends RecyclerView.Adapter<CallsAdapter.CallHolder> {
     private final Context mCtx;
     private final int mStackCount;
-    private List<CallModel> callArrayList = new ArrayList<>();
-    private List<CallModel> tempItemList;
-    private List<CallModel> filteredItemList;
     public double netProfitLoss = 0.0;
+    private List<CallModel> callArrayList = new ArrayList<>();
+    private final List<CallModel> tempItemList;
+    private List<CallModel> filteredItemList;
 
     public CallsAdapter(Context mCtx, ArrayList<CallModel> callArrayList) {
         this.mCtx = mCtx;
@@ -51,10 +50,10 @@ public class CallsAdapter extends RecyclerView.Adapter<CallsAdapter.CallHolder> 
         notifyDataSetChanged();
     }
 
-    private void grandTotal(List<CallModel> items){
+    private void grandTotal(List<CallModel> items) {
 
         netProfitLoss = 0.0;
-        for(int i = 0 ; i < items.size(); i++) {
+        for (int i = 0; i < items.size(); i++) {
             double profit_loss_dou = !items.get(i).getProfit_loss().equalsIgnoreCase("") ? Double.parseDouble(items.get(i).getProfit_loss()) : 0.0;
             netProfitLoss += profit_loss_dou;
         }
@@ -71,11 +70,11 @@ public class CallsAdapter extends RecyclerView.Adapter<CallsAdapter.CallHolder> 
         final CallModel callModel = filteredItemList.get(position);
         viewHolder.setItem(mCtx, callModel, position, filteredItemList.size());
 
-        viewHolder.tv_netProfitLoss.setText("Net Profit / Loss: \u20B9 " + CommonMethods.DecimalNumberDisplayFormattingWithComma(String.format("%.2f",netProfitLoss)));
+        viewHolder.tv_netProfitLoss.setText("Net Profit / Loss: \u20B9 " + CommonMethods.DecimalNumberDisplayFormattingWithComma(String.format("%.2f", netProfitLoss)));
 
-        if(position==0){
+        if (position == 0) {
             viewHolder.tv_netProfitLoss.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             viewHolder.tv_netProfitLoss.setVisibility(View.GONE);
         }
     }
@@ -98,6 +97,16 @@ public class CallsAdapter extends RecyclerView.Adapter<CallsAdapter.CallHolder> 
                 } else if (filterString.equalsIgnoreCase("All Segments")) {
                     filteredItemList.clear();
                     filteredItemList.addAll(tempItemList);
+                } else if (filterString.equalsIgnoreCase("Paid Calls")) {
+                    final String paidCall = "1";
+                    final List<CallModel> list = new ArrayList<>(tempItemList);
+                    filteredItemList.clear();
+                    for (CallModel item : list) {
+                        String filterableString = item.getIs_call_for_paid_customer();
+                        if (filterableString.toLowerCase().equalsIgnoreCase(paidCall)) {
+                            filteredItemList.add(item);
+                        }
+                    }
                 } else {
                     final List<CallModel> list = new ArrayList<>(tempItemList);
                     filteredItemList.clear();
@@ -128,38 +137,37 @@ public class CallsAdapter extends RecyclerView.Adapter<CallsAdapter.CallHolder> 
 
     public static class CallHolder extends RecyclerView.ViewHolder {
         private final ImageView iv_up_down;
-        private final TextView tv_paid_call,tv_netProfitLoss,tv_performance_for, TvStockName, tv_date_time, tv_above_below, tv_sell_buy, tv_strike_ce, tv_target1, tv_target2, tv_target3, tv_stop_loss, tv_closingprice, tv_profit_loss;
+        private final TextView tv_paid_call, tv_netProfitLoss, tv_performance_for, TvStockName, tv_date_time, tv_above_below, tv_sell_buy, tv_strike_ce, tv_target1, tv_target2, tv_target3, tv_stop_loss, tv_closingprice, tv_profit_loss;
         private final LinearLayout linear_closinglayout;
 
         CallHolder(@NonNull View itemView) {
             super(itemView);
-            tv_paid_call = (TextView) itemView.findViewById(R.id.tv_paid_call);
-            tv_netProfitLoss = (TextView) itemView.findViewById(R.id.tv_netProfitLoss);
-            linear_closinglayout = (LinearLayout) itemView.findViewById(R.id.row_linear_closinglayout);
-            tv_performance_for = (TextView) itemView.findViewById(R.id.tv_performance_for);
-            TvStockName = (TextView) itemView.findViewById(R.id.TvStockName);
-            tv_date_time = (TextView) itemView.findViewById(R.id.tv_date_time);
-            tv_above_below = (TextView) itemView.findViewById(R.id.tv_above_below);
-            tv_strike_ce = (TextView) itemView.findViewById(R.id.tv_strike_ce);
-            tv_sell_buy = (TextView) itemView.findViewById(R.id.tv_sell_buy);
-            iv_up_down = (ImageView) itemView.findViewById(R.id.iv_up_down);
-            tv_target1 = (TextView) itemView.findViewById(R.id.tv_target1);
-            tv_target2 = (TextView) itemView.findViewById(R.id.tv_target2);
-            tv_target3 = (TextView) itemView.findViewById(R.id.tv_target3);
-            tv_stop_loss = (TextView) itemView.findViewById(R.id.tv_stop_loss);
-            tv_profit_loss = (TextView) itemView.findViewById(R.id.tv_profit_loss);
-            tv_closingprice = (TextView) itemView.findViewById(R.id.tv_closingprice);
+            tv_paid_call = itemView.findViewById(R.id.tv_paid_call);
+            tv_netProfitLoss = itemView.findViewById(R.id.tv_netProfitLoss);
+            linear_closinglayout = itemView.findViewById(R.id.row_linear_closinglayout);
+            tv_performance_for = itemView.findViewById(R.id.tv_performance_for);
+            TvStockName = itemView.findViewById(R.id.TvStockName);
+            tv_date_time = itemView.findViewById(R.id.tv_date_time);
+            tv_above_below = itemView.findViewById(R.id.tv_above_below);
+            tv_strike_ce = itemView.findViewById(R.id.tv_strike_ce);
+            tv_sell_buy = itemView.findViewById(R.id.tv_sell_buy);
+            iv_up_down = itemView.findViewById(R.id.iv_up_down);
+            tv_target1 = itemView.findViewById(R.id.tv_target1);
+            tv_target2 = itemView.findViewById(R.id.tv_target2);
+            tv_target3 = itemView.findViewById(R.id.tv_target3);
+            tv_stop_loss = itemView.findViewById(R.id.tv_stop_loss);
+            tv_profit_loss = itemView.findViewById(R.id.tv_profit_loss);
+            tv_closingprice = itemView.findViewById(R.id.tv_closingprice);
         }
 
         @SuppressLint({"SimpleDateFormat", "SetTextI18n", "UseCompatLoadingForDrawables", "DefaultLocale"})
         private void setItem(final Context context, final CallModel callModel, final int position, final int size) {
 
 
-
-            if(callModel.getIs_call_for_paid_customer().equalsIgnoreCase("1")){
+            if (callModel.getIs_call_for_paid_customer().equalsIgnoreCase("1")) {
                 tv_paid_call.setText("PAID CALL");
                 tv_paid_call.setVisibility(View.VISIBLE);
-            }else {
+            } else {
                 tv_paid_call.setVisibility(View.GONE);
             }
 
@@ -252,7 +260,6 @@ public class CallsAdapter extends RecyclerView.Adapter<CallsAdapter.CallHolder> 
             tv_closingprice.setText("\u20B9 " + callModel.getBuy_sell_closing_price());
 
         }
-
 
 
     }

@@ -26,6 +26,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -34,6 +37,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 import java.util.UUID;
 
 import in.techxilla.www.marketxilla.NewDashboard;
@@ -58,6 +62,8 @@ public class PaidUserFragment extends Fragment {
     private String StrPlanId, mSubscribed_till;
     private View rootView;
     private Context mContext;
+    private AdView mAdView;
+
 
     @SuppressLint("InflateParams")
     @Nullable
@@ -76,20 +82,20 @@ public class PaidUserFragment extends Fragment {
         myDialog.setCanceledOnTouchOutside(false);
 
         NewDashboard activity = (NewDashboard) getActivity();
-        toolbar = activity.findViewById(R.id.toolbar);
+        toolbar = Objects.requireNonNull(activity).findViewById(R.id.toolbar);
         activity.setSupportActionBar(toolbar);
 
-        final ImageView iv_refresh = (ImageView) toolbar.findViewById(R.id.iv_refresh);
-        iv_refresh.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getPlanDetail();
-            }
-        });
+        final ImageView iv_refresh = toolbar.findViewById(R.id.iv_refresh);
+        iv_refresh.setOnClickListener(v -> getPlanDetail());
 
-        tv_title_plan = (TextView) rootView.findViewById(R.id.tv_title_plan);
-        tv_valid_till = (TextView) rootView.findViewById(R.id.tv_valid_till);
-        tv_noRecordFound = (TextView) rootView.findViewById(R.id.tv_noRecordFound);
+        MobileAds.initialize(mContext);
+        mAdView = rootView.findViewById(R.id.adView);
+        AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
+        mAdView.loadAd(adRequestBuilder.build());
+
+        tv_title_plan = rootView.findViewById(R.id.tv_title_plan);
+        tv_valid_till = rootView.findViewById(R.id.tv_valid_till);
+        tv_noRecordFound = rootView.findViewById(R.id.tv_noRecordFound);
         recycler_list = rootView.findViewById(R.id.recycler_list);
         recycler_list.setHasFixedSize(true);
         recycler_list.setNestedScrollingEnabled(false);
@@ -113,71 +119,65 @@ public class PaidUserFragment extends Fragment {
             ConnectionDetector cd = new ConnectionDetector(mContext);
             boolean isInternetPresent = cd.isConnectingToInternet();
             if (isInternetPresent) {
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, get_plan_details_info, new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(final String response) {
-                        try {
-                            Log.d("Response", "" + response);
-                            final JSONObject obj = new JSONObject(response);
-                            final boolean status = obj.getBoolean("status");
-                            final String Message = obj.getString("message");
-                            final JSONArray m_jArry = obj.getJSONArray("data");
-                            if (m_jArry.length() == 0) {
-                                tv_title_plan.setText("NO ACTIVE PLAN");
-                                tv_valid_till.setVisibility(View.GONE);
-                            } else {
-                                for (int i = 0; i < m_jArry.length(); i++) {
-                                    final JSONObject jo_data = m_jArry.getJSONObject(i);
-                                    StrPlanId = jo_data.getString("plan_id");
-                                    final String plan_name = jo_data.getString("plan_name");
-                                    final String subscribed_till = jo_data.getString("subscribed_till");
-                                    final SimpleDateFormat sdf, sdf2, sdf21;
-                                    final Date newSubscriptedTilldate, currentdate2, newSubscriptedOndate;
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, get_plan_details_info, response -> {
+                    try {
+                        Log.d("Response", "" + response);
+                        final JSONObject obj = new JSONObject(response);
+                        final boolean status = obj.getBoolean("status");
+                        final String Message = obj.getString("message");
+                        final JSONArray m_jArry = obj.getJSONArray("data");
+                        if (m_jArry.length() == 0) {
+                            tv_title_plan.setText("NO ACTIVE PLAN");
+                            tv_valid_till.setVisibility(View.GONE);
+                        } else {
+                            for (int i = 0; i < m_jArry.length(); i++) {
+                                final JSONObject jo_data = m_jArry.getJSONObject(i);
+                                StrPlanId = jo_data.getString("plan_id");
+                                final String plan_name = jo_data.getString("plan_name");
+                                final String subscribed_till = jo_data.getString("subscribed_till");
+                                final SimpleDateFormat sdf, sdf2, sdf21;
+                                final Date newSubscriptedTilldate, currentdate2, newSubscriptedOndate;
 
-                                    if (!subscribed_till.equalsIgnoreCase("")) {
-                                        try {
-                                            sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-                                            newSubscriptedTilldate = sdf.parse(subscribed_till);
-                                            sdf21 = new SimpleDateFormat("dd MMM, yyyy");
-                                            sdf2 = new SimpleDateFormat("dd/MM/yyyy");
-                                            mSubscribed_till = sdf21.format(newSubscriptedTilldate);
-                                            final String SubcribedTill_DMY = sdf2.format(newSubscriptedTilldate);
+                                if (!subscribed_till.equalsIgnoreCase("")) {
+                                    try {
+                                        sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                                        newSubscriptedTilldate = sdf.parse(subscribed_till);
+                                        sdf21 = new SimpleDateFormat("dd MMM, yyyy");
+                                        sdf2 = new SimpleDateFormat("dd/MM/yyyy");
+                                        mSubscribed_till = sdf21.format(Objects.requireNonNull(newSubscriptedTilldate));
+                                        final String SubcribedTill_DMY = sdf2.format(newSubscriptedTilldate);
 
-                                            if (i == 0) {
-                                                if(!CommonMethods.isDateExpired(SubcribedTill_DMY)){
-                                                    tv_title_plan.setText("Current Plan : " + plan_name);
-                                                    tv_valid_till.setVisibility(View.VISIBLE);
-                                                    tv_valid_till.setText("Valid Till \n" + mSubscribed_till);
-                                                    fetchCallData(StrPlanId);
-                                                }else{
-                                                    tv_title_plan.setText("NO ACTIVE PLAN");
-                                                    tv_valid_till.setVisibility(View.GONE);
-                                                }
+                                        if (i == 0) {
+                                            if (!CommonMethods.isDateExpired(SubcribedTill_DMY)) {
+                                                tv_title_plan.setText("Current Plan : " + plan_name);
+                                                tv_valid_till.setVisibility(View.VISIBLE);
+                                                tv_valid_till.setText("Valid Till \n" + mSubscribed_till);
+                                                fetchCallData(StrPlanId);
+                                            } else {
+                                                tv_title_plan.setText("NO ACTIVE PLAN");
+                                                tv_valid_till.setVisibility(View.GONE);
                                             }
-
-                                        } catch (ParseException e) {
-                                            e.printStackTrace();
                                         }
+
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
                                     }
                                 }
                             }
-                            if (myDialog != null && myDialog.isShowing()) {
-                                myDialog.hide();
-                            }
-                        } catch (Exception e) {
-                            Log.d("Exception", e.toString());
-                            if (myDialog != null && myDialog.isShowing()) {
-                                myDialog.hide();
-                            }
                         }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError volleyError) {
-                        volleyError.printStackTrace();
                         if (myDialog != null && myDialog.isShowing()) {
                             myDialog.hide();
                         }
+                    } catch (Exception e) {
+                        Log.d("Exception", e.toString());
+                        if (myDialog != null && myDialog.isShowing()) {
+                            myDialog.hide();
+                        }
+                    }
+                }, volleyError -> {
+                    volleyError.printStackTrace();
+                    if (myDialog != null && myDialog.isShowing()) {
+                        myDialog.hide();
                     }
                 });
                 RequestQueue requestQueue = Volley.newRequestQueue(mContext);

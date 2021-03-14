@@ -62,17 +62,14 @@ public class MarketFragment extends Fragment {
 
     private void initUI() {
         NewDashboard activity = (NewDashboard) getActivity();
-        final Toolbar toolbar = activity.findViewById(R.id.toolbar);
+        final Toolbar toolbar = Objects.requireNonNull(activity).findViewById(R.id.toolbar);
         activity.setSupportActionBar(toolbar);
 
         final ImageView iv_refresh = (ImageView) toolbar.findViewById(R.id.iv_refresh);
-        iv_refresh.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fetch_MarketData();
-                fetch_MarketStatus();
-                fetchAdvanceDecline();
-            }
+        iv_refresh.setOnClickListener(v -> {
+            fetch_MarketData();
+            fetch_MarketStatus();
+            fetchAdvanceDecline();
         });
 
         final TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tab_layout);
@@ -122,6 +119,12 @@ public class MarketFragment extends Fragment {
         niftybank_adv = (TextView) rootView.findViewById(R.id.niftybank_adv);
         niftybank_dec = (TextView) rootView.findViewById(R.id.niftybank_dec);
 
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         fetch_MarketData();
         fetch_MarketStatus();
         fetchAdvanceDecline();

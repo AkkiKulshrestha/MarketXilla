@@ -55,6 +55,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import in.techxilla.www.marketxilla.CalculatorActivity;
@@ -101,7 +102,7 @@ public class HomeFragment extends Fragment {
     private void initUI() {
         mContext = getContext();
         NewDashboard activity = (NewDashboard) getActivity();
-        toolbar = activity.findViewById(R.id.toolbar);
+        toolbar = Objects.requireNonNull(activity).findViewById(R.id.toolbar);
         activity.setSupportActionBar(toolbar);
 
         myDialog = new ProgressDialog(mContext);
@@ -109,21 +110,17 @@ public class HomeFragment extends Fragment {
         myDialog.setCancelable(false);
         myDialog.setCanceledOnTouchOutside(false);
 
-        final ImageView iv_refresh = (ImageView) toolbar.findViewById(R.id.iv_refresh);
-        iv_refresh.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                myDialog.show();
-                fetchCallData();
-                SpnCallTenure.setSelection(0);
-                SpnMonthwisePerformance.setVisibility(View.GONE);
-                SpnMonthwisePerformance.setSelection(0);
-                SpnSegment.setSelection(0);
-            }
+        final ImageView iv_refresh = toolbar.findViewById(R.id.iv_refresh);
+        iv_refresh.setOnClickListener(v -> {
+            fetchCallData();
+            SpnCallTenure.setSelection(0);
+            SpnMonthwisePerformance.setVisibility(View.GONE);
+            SpnMonthwisePerformance.setSelection(0);
+            SpnSegment.setSelection(0);
         });
 
-        final ViewPager mPager = (ViewPager) rootView.findViewById(R.id.image_pager);
-        sliderView = (SliderView) rootView.findViewById(R.id.imageSlider);
+        final ViewPager mPager = rootView.findViewById(R.id.image_pager);
+        sliderView = rootView.findViewById(R.id.imageSlider);
         sliderView.setIndicatorAnimation(IndicatorAnimations.THIN_WORM); //set indicator animation by using SliderLayout.IndicatorAnimations. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
         sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
         sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_RIGHT);
@@ -132,12 +129,7 @@ public class HomeFragment extends Fragment {
         sliderView.setScrollTimeInSec(3);
         sliderView.setAutoCycle(true);
         sliderView.startAutoCycle();
-        sliderView.setOnIndicatorClickListener(new DrawController.ClickListener() {
-            @Override
-            public void onIndicatorClicked(int position) {
-                sliderView.setCurrentPagePosition(position);
-            }
-        });
+        sliderView.setOnIndicatorClickListener(position -> sliderView.setCurrentPagePosition(position));
 
         adapter = new ImageSliderAdapter(mContext);
         final List<SliderItem> sliderItemList = new ArrayList<>();
@@ -151,7 +143,7 @@ public class HomeFragment extends Fragment {
 
         SocialNetworkingLinks();
 
-        SpnCallTenure = (Spinner) rootView.findViewById(R.id.SpnCallTenure);
+        SpnCallTenure = rootView.findViewById(R.id.SpnCallTenure);
         SpnCallTenure.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -169,7 +161,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        SpnMonthwisePerformance = (Spinner) rootView.findViewById(R.id.SpnMonthwisePerformance);
+        SpnMonthwisePerformance = rootView.findViewById(R.id.SpnMonthwisePerformance);
         SpnMonthwisePerformance.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(final AdapterView<?> parent, final View view, final int position, final long id) {
@@ -184,7 +176,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        SpnSegment = (Spinner) rootView.findViewById(R.id.SpnSegment);
+        SpnSegment = rootView.findViewById(R.id.SpnSegment);
         SpnSegment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(final AdapterView<?> parent, final View view, final int position, final long id) {
@@ -217,12 +209,7 @@ public class HomeFragment extends Fragment {
             tv_AvailTrail.setVisibility(View.VISIBLE);
         }
 
-        tv_AvailTrail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AddUserTRAILDetailApi();
-            }
-        });
+        tv_AvailTrail.setOnClickListener(v -> AddUserTRAILDetailApi());
     }
 
     @Override
@@ -319,10 +306,10 @@ public class HomeFragment extends Fragment {
     }
 
     private void SocialNetworkingLinks() {
-        final ImageView iv_gmail = (ImageView) rootView.findViewById(R.id.iv_gmail);
-        final ImageView iv_sms = (ImageView) rootView.findViewById(R.id.iv_sms);
-        final ImageView iv_whatsapp = (ImageView) rootView.findViewById(R.id.iv_whatsapp);
-        final ImageView iv_calc = (ImageView) rootView.findViewById(R.id.iv_calc);
+        final ImageView iv_gmail = rootView.findViewById(R.id.iv_gmail);
+        final ImageView iv_sms = rootView.findViewById(R.id.iv_sms);
+        final ImageView iv_whatsapp = rootView.findViewById(R.id.iv_whatsapp);
+        final ImageView iv_calc = rootView.findViewById(R.id.iv_calc);
 
         iv_gmail.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -467,84 +454,78 @@ public class HomeFragment extends Fragment {
             boolean isInternetPresent = cd.isConnectingToInternet();
             if (isInternetPresent) {
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, URL_GetCallList,
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(final String response) {
-                                Log.d("Response", response);
-                                try {
-                                    final JSONObject jobj = new JSONObject(response);
-                                    final JSONArray data = jobj.getJSONArray("data");
-                                    if (data.length() > 0) {
-                                        for (int k = 0; k < data.length(); k++) {
-                                            final JSONObject jsonObject = data.getJSONObject(k);
-                                            final String id = jsonObject.getString("id");
-                                            final String stock_name = jsonObject.getString("stock_name");
-                                            final String date = jsonObject.getString("date");
-                                            final String performance_for = jsonObject.getString("performance_for");
-                                            final String performance_for_id = jsonObject.getString("performance_for_id");
-                                            final String is_buy_sell = jsonObject.getString("is_buy_sell");
-                                            final String buy_sell_above_below = jsonObject.getString("buy_sell_above_below");
-                                            final String stop_loss = jsonObject.getString("stop_loss");
-                                            final String target1 = jsonObject.getString("target1");
-                                            final String target2 = jsonObject.getString("target2");
-                                            final String target3 = jsonObject.getString("target3");
-                                            final String ce_pe = jsonObject.getString("ce_pe");
-                                            final String strike = jsonObject.getString("strike");
-                                            final String buy_sell_closing_price = jsonObject.getString("buy_sell_closing_price");
-                                            final String profit_loss = jsonObject.getString("profit_loss");
-                                            final String is_active_performance = jsonObject.getString("is_active_performance");
-                                            final String is_call_for_paid_customer = jsonObject.getString("is_call_for_paid_customer");
+                        response -> {
+                            Log.d("Response", response);
+                            try {
+                                final JSONObject jobj = new JSONObject(response);
+                                final JSONArray data = jobj.getJSONArray("data");
+                                if (data.length() > 0) {
+                                    for (int k = 0; k < data.length(); k++) {
+                                        final JSONObject jsonObject = data.getJSONObject(k);
+                                        final String id = jsonObject.getString("id");
+                                        final String stock_name = jsonObject.getString("stock_name");
+                                        final String date = jsonObject.getString("date");
+                                        final String performance_for = jsonObject.getString("performance_for");
+                                        final String performance_for_id = jsonObject.getString("performance_for_id");
+                                        final String is_buy_sell = jsonObject.getString("is_buy_sell");
+                                        final String buy_sell_above_below = jsonObject.getString("buy_sell_above_below");
+                                        final String stop_loss = jsonObject.getString("stop_loss");
+                                        final String target1 = jsonObject.getString("target1");
+                                        final String target2 = jsonObject.getString("target2");
+                                        final String target3 = jsonObject.getString("target3");
+                                        final String ce_pe = jsonObject.getString("ce_pe");
+                                        final String strike = jsonObject.getString("strike");
+                                        final String buy_sell_closing_price = jsonObject.getString("buy_sell_closing_price");
+                                        final String profit_loss = jsonObject.getString("profit_loss");
+                                        final String is_active_performance = jsonObject.getString("is_active_performance");
+                                        final String is_call_for_paid_customer = jsonObject.getString("is_call_for_paid_customer");
 
-                                            callListModel = new CallModel();
-                                            callListModel.setId(id);
-                                            callListModel.setStock_name(stock_name.toUpperCase());
-                                            callListModel.setDate(date);
-                                            callListModel.setPerformance_for(performance_for);
-                                            callListModel.setPerformance_for_id(performance_for_id);
-                                            callListModel.setIs_buy_sell(is_buy_sell);
-                                            callListModel.setBuy_sell_above_below(buy_sell_above_below);
-                                            callListModel.setStop_loss(stop_loss);
-                                            callListModel.setTarget1(target1);
-                                            callListModel.setTarget2(target2);
-                                            callListModel.setTarget3(target3);
-                                            callListModel.setCe_pe(ce_pe);
-                                            callListModel.setStrike(strike);
-                                            callListModel.setBuy_sell_closing_price(buy_sell_closing_price);
-                                            callListModel.setProfit_loss(profit_loss);
-                                            callListModel.setIs_active_performance(is_active_performance);
-                                            callListModel.setIs_call_for_paid_customer(is_call_for_paid_customer);
-                                            callModel_list.add(callListModel);
+                                        callListModel = new CallModel();
+                                        callListModel.setId(id);
+                                        callListModel.setStock_name(stock_name.toUpperCase());
+                                        callListModel.setDate(date);
+                                        callListModel.setPerformance_for(performance_for);
+                                        callListModel.setPerformance_for_id(performance_for_id);
+                                        callListModel.setIs_buy_sell(is_buy_sell);
+                                        callListModel.setBuy_sell_above_below(buy_sell_above_below);
+                                        callListModel.setStop_loss(stop_loss);
+                                        callListModel.setTarget1(target1);
+                                        callListModel.setTarget2(target2);
+                                        callListModel.setTarget3(target3);
+                                        callListModel.setCe_pe(ce_pe);
+                                        callListModel.setStrike(strike);
+                                        callListModel.setBuy_sell_closing_price(buy_sell_closing_price);
+                                        callListModel.setProfit_loss(profit_loss);
+                                        callListModel.setIs_active_performance(is_active_performance);
+                                        callListModel.setIs_call_for_paid_customer(is_call_for_paid_customer);
+                                        callModel_list.add(callListModel);
 
-                                        }
-                                        no_call_txt.setVisibility(View.GONE);
-                                        callsAdapter = new CallsAdapter(mContext, callModel_list);
-                                        recycler_list.setAdapter(callsAdapter);
-                                        recycler_list.setVisibility(View.VISIBLE);
-                                        callsAdapter.notifyDataSetChanged();
-                                        filterSearch();
-                                        if (myDialog != null && myDialog.isShowing()) {
-                                            myDialog.dismiss();
-                                        }
-                                    } else {
-                                        no_call_txt.setVisibility(View.VISIBLE);
-                                        recycler_list.setVisibility(View.GONE);
                                     }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                                    no_call_txt.setVisibility(View.GONE);
+                                    callsAdapter = new CallsAdapter(mContext, callModel_list);
+                                    recycler_list.setAdapter(callsAdapter);
+                                    recycler_list.setVisibility(View.VISIBLE);
+                                    callsAdapter.notifyDataSetChanged();
+                                    filterSearch();
                                     if (myDialog != null && myDialog.isShowing()) {
                                         myDialog.dismiss();
                                     }
+                                } else {
+                                    no_call_txt.setVisibility(View.VISIBLE);
+                                    recycler_list.setVisibility(View.GONE);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                if (myDialog != null && myDialog.isShowing()) {
+                                    myDialog.dismiss();
                                 }
                             }
-                        }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
-                        if (myDialog != null && myDialog.isShowing()) {
-                            myDialog.dismiss();
-                        }
-                    }
-                });
+                        }, error -> {
+                            error.printStackTrace();
+                            if (myDialog != null && myDialog.isShowing()) {
+                                myDialog.dismiss();
+                            }
+                        });
 
                 RequestQueue requestQueue = Volley.newRequestQueue(mContext);
                 stringRequest.setRetryPolicy(new DefaultRetryPolicy(0, -1, 0));
@@ -576,85 +557,79 @@ public class HomeFragment extends Fragment {
             boolean isInternetPresent = cd.isConnectingToInternet();
             if (isInternetPresent) {
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, URL_GetCallList,
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String response) {
-                                Log.d("Response", response);
-                                try {
-                                    final JSONObject jobj = new JSONObject(response);
-                                    final JSONArray data = jobj.getJSONArray("data");
-                                    if (data.length() > 0) {
-                                        for (int k = 0; k < data.length(); k++) {
-                                            final JSONObject jsonObject = data.getJSONObject(k);
-                                            final String id = jsonObject.getString("id");
-                                            final String stock_name = jsonObject.getString("stock_name");
-                                            final String date = jsonObject.getString("date");
-                                            final String performance_for = jsonObject.getString("performance_for");
-                                            final String performance_for_id = jsonObject.getString("performance_for_id");
-                                            final String is_buy_sell = jsonObject.getString("is_buy_sell");
-                                            final String buy_sell_above_below = jsonObject.getString("buy_sell_above_below");
-                                            final String stop_loss = jsonObject.getString("stop_loss");
-                                            final String target1 = jsonObject.getString("target1");
-                                            final String target2 = jsonObject.getString("target2");
-                                            final String target3 = jsonObject.getString("target3");
-                                            final String ce_pe = jsonObject.getString("ce_pe");
-                                            final String strike = jsonObject.getString("strike");
-                                            final String buy_sell_closing_price = jsonObject.getString("buy_sell_closing_price");
-                                            final String profit_loss = jsonObject.getString("profit_loss");
-                                            final String is_active_performance = jsonObject.getString("is_active_performance");
-                                            final String is_call_for_paid_customer = jsonObject.getString("is_call_for_paid_customer");
+                        response -> {
+                            Log.d("Response", response);
+                            try {
+                                final JSONObject jobj = new JSONObject(response);
+                                final JSONArray data = jobj.getJSONArray("data");
+                                if (data.length() > 0) {
+                                    for (int k = 0; k < data.length(); k++) {
+                                        final JSONObject jsonObject = data.getJSONObject(k);
+                                        final String id = jsonObject.getString("id");
+                                        final String stock_name = jsonObject.getString("stock_name");
+                                        final String date = jsonObject.getString("date");
+                                        final String performance_for = jsonObject.getString("performance_for");
+                                        final String performance_for_id = jsonObject.getString("performance_for_id");
+                                        final String is_buy_sell = jsonObject.getString("is_buy_sell");
+                                        final String buy_sell_above_below = jsonObject.getString("buy_sell_above_below");
+                                        final String stop_loss = jsonObject.getString("stop_loss");
+                                        final String target1 = jsonObject.getString("target1");
+                                        final String target2 = jsonObject.getString("target2");
+                                        final String target3 = jsonObject.getString("target3");
+                                        final String ce_pe = jsonObject.getString("ce_pe");
+                                        final String strike = jsonObject.getString("strike");
+                                        final String buy_sell_closing_price = jsonObject.getString("buy_sell_closing_price");
+                                        final String profit_loss = jsonObject.getString("profit_loss");
+                                        final String is_active_performance = jsonObject.getString("is_active_performance");
+                                        final String is_call_for_paid_customer = jsonObject.getString("is_call_for_paid_customer");
 
-                                            callListModel = new CallModel();
-                                            callListModel.setId(id);
-                                            callListModel.setStock_name(stock_name.toUpperCase());
-                                            callListModel.setDate(date);
-                                            callListModel.setPerformance_for(performance_for);
-                                            callListModel.setPerformance_for_id(performance_for_id);
-                                            callListModel.setIs_buy_sell(is_buy_sell);
-                                            callListModel.setBuy_sell_above_below(buy_sell_above_below);
-                                            callListModel.setStop_loss(stop_loss);
-                                            callListModel.setTarget1(target1);
-                                            callListModel.setTarget2(target2);
-                                            callListModel.setTarget3(target3);
-                                            callListModel.setCe_pe(ce_pe);
-                                            callListModel.setStrike(strike);
-                                            callListModel.setBuy_sell_closing_price(buy_sell_closing_price);
-                                            callListModel.setProfit_loss(profit_loss);
-                                            callListModel.setIs_active_performance(is_active_performance);
-                                            callListModel.setIs_call_for_paid_customer(is_call_for_paid_customer);
-                                            callModel_list.add(callListModel);
+                                        callListModel = new CallModel();
+                                        callListModel.setId(id);
+                                        callListModel.setStock_name(stock_name.toUpperCase());
+                                        callListModel.setDate(date);
+                                        callListModel.setPerformance_for(performance_for);
+                                        callListModel.setPerformance_for_id(performance_for_id);
+                                        callListModel.setIs_buy_sell(is_buy_sell);
+                                        callListModel.setBuy_sell_above_below(buy_sell_above_below);
+                                        callListModel.setStop_loss(stop_loss);
+                                        callListModel.setTarget1(target1);
+                                        callListModel.setTarget2(target2);
+                                        callListModel.setTarget3(target3);
+                                        callListModel.setCe_pe(ce_pe);
+                                        callListModel.setStrike(strike);
+                                        callListModel.setBuy_sell_closing_price(buy_sell_closing_price);
+                                        callListModel.setProfit_loss(profit_loss);
+                                        callListModel.setIs_active_performance(is_active_performance);
+                                        callListModel.setIs_call_for_paid_customer(is_call_for_paid_customer);
+                                        callModel_list.add(callListModel);
 
-                                        }
-                                        no_call_txt.setVisibility(View.GONE);
-                                        callsAdapter = new CallsAdapter(mContext, callModel_list);
-                                        recycler_list.setAdapter(callsAdapter);
-                                        recycler_list.setVisibility(View.VISIBLE);
-                                        callsAdapter.notifyDataSetChanged();
-                                        filterSearch();
-                                        if (myDialog != null && myDialog.isShowing()) {
-                                            myDialog.dismiss();
-                                        }
-                                    } else {
-                                        no_call_txt.setVisibility(View.VISIBLE);
-                                        recycler_list.setVisibility(View.GONE);
                                     }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                                    no_call_txt.setVisibility(View.GONE);
+                                    callsAdapter = new CallsAdapter(mContext, callModel_list);
+                                    recycler_list.setAdapter(callsAdapter);
+                                    recycler_list.setVisibility(View.VISIBLE);
+                                    callsAdapter.notifyDataSetChanged();
+                                    filterSearch();
                                     if (myDialog != null && myDialog.isShowing()) {
                                         myDialog.dismiss();
                                     }
+                                } else {
+                                    no_call_txt.setVisibility(View.VISIBLE);
+                                    recycler_list.setVisibility(View.GONE);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                if (myDialog != null && myDialog.isShowing()) {
+                                    myDialog.dismiss();
                                 }
                             }
-                        }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        VolleyLog.d("volley", "Error: " + error.getMessage());
-                        error.printStackTrace();
-                        if (myDialog != null && myDialog.isShowing()) {
-                            myDialog.dismiss();
-                        }
-                    }
-                });
+                        }, error -> {
+                            VolleyLog.d("volley", "Error: " + error.getMessage());
+                            error.printStackTrace();
+                            if (myDialog != null && myDialog.isShowing()) {
+                                myDialog.dismiss();
+                            }
+                        });
                 RequestQueue requestQueue = Volley.newRequestQueue(mContext);
                 stringRequest.setRetryPolicy(new DefaultRetryPolicy(0, -1, 0));
                 requestQueue.add(stringRequest);

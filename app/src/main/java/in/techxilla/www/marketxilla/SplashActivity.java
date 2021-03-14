@@ -188,34 +188,28 @@ public class SplashActivity extends AppCompatActivity {
             ConnectionDetector cd = new ConnectionDetector(this);
             boolean isInternetPresent = cd.isConnectingToInternet();
             if (isInternetPresent) {
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, get_latest_version_info, new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(final String response) {
-                        try {
-                            Log.d("Response", "" + response);
-                            final String latestVersion = "";
-                            final JSONObject Jobj = new JSONObject(response);
-                            final String data = Jobj.getString("data");
-                            final JSONObject jobject = new JSONObject(data);
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, get_latest_version_info, response -> {
+                    try {
+                        Log.d("Response", "" + response);
+                        final String latestVersion = "";
+                        final JSONObject Jobj = new JSONObject(response);
+                        final String data = Jobj.getString("data");
+                        final JSONObject jobject = new JSONObject(data);
 
-                            final String Id = jobject.getString("id");
-                            final String VersionCode = jobject.getString("version_code");
-                            final String VersionName = jobject.getString("version_name");
-                            Force_Update_flag = jobject.getString("is_force_update");
-                            update_dialog(VersionCode);
+                        final String Id = jobject.getString("id");
+                        final String VersionCode = jobject.getString("version_code");
+                        final String VersionName = jobject.getString("version_name");
+                        Force_Update_flag = jobject.getString("is_force_update");
+                        update_dialog(VersionCode);
 
-                            Log.d("Latest version:", latestVersion);
-                        } catch (Exception e) {
-                            Log.d("Exception", e.toString());
-                        }
+                        Log.d("Latest version:", latestVersion);
+                    } catch (Exception e) {
+                        Log.d("Exception", e.toString());
                     }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError volleyError) {
-                        volleyError.printStackTrace();
-                        if (volleyError.toString().equalsIgnoreCase("com.android.volley.ServerError")) {
-                            CommonMethods.DisplayToastInfo(getApplicationContext(), "App under maintenance");
-                        }
+                }, volleyError -> {
+                    volleyError.printStackTrace();
+                    if (volleyError.toString().equalsIgnoreCase("com.android.volley.ServerError")) {
+                        CommonMethods.DisplayToastInfo(getApplicationContext(), "App under maintenance");
                     }
                 });
                 RequestQueue requestQueue = Volley.newRequestQueue(this);

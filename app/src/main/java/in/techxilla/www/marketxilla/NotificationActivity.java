@@ -22,6 +22,9 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,6 +44,7 @@ import static in.techxilla.www.marketxilla.webservices.RestClient.ROOT_URL;
 public class NotificationActivity extends AppCompatActivity {
     private ProgressDialog myDialog;
     private LinearLayout ll_parent_notification;
+    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +70,36 @@ public class NotificationActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+
+        mAdView = findViewById(R.id.adView);
+        AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
+        mAdView.loadAd(adRequestBuilder.build());
+
         ll_parent_notification = (LinearLayout) findViewById(R.id.ll_parent_notification);
         fetchNotificationList();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Resume the AdView.
+        mAdView.resume();
+    }
+
+    @Override
+    public void onPause() {
+        // Pause the AdView.
+        mAdView.pause();
+
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        // Destroy the AdView.
+        mAdView.destroy();
+
+        super.onDestroy();
     }
 
     @SuppressLint({"UseCompatLoadingForDrawables", "SimpleDateFormat"})

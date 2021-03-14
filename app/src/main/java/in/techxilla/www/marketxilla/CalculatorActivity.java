@@ -8,6 +8,9 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 public class CalculatorActivity extends AppCompatActivity {
 
     private TextView gann_cart_9;
@@ -16,6 +19,8 @@ public class CalculatorActivity extends AppCompatActivity {
     private TextView camerilla_pivot;
     private TextView forex_pivot;
     private TextView woddie_pivot;
+    private AdView mAdView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +41,10 @@ public class CalculatorActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+
+        mAdView = findViewById(R.id.adView);
+        AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
+        mAdView.loadAd(adRequestBuilder.build());
 
         gann_cart_9 = (TextView) findViewById(R.id.gann_cart_9);
         classic_pivot = (TextView) findViewById(R.id.classic_pivot);

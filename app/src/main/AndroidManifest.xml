@@ -89,7 +89,8 @@
         <activity
             android:name=".NotificationActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:hardwareAccelerated="true"/>
 
         <activity
             android:name=".MySubscriptionPlanActivity"
@@ -115,6 +116,13 @@
             android:name=".WebViewActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name="com.google.android.gms.ads.AdActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:theme="@android:style/Theme.Translucent" />
+        <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/google_adds_app_id"/>
 
         <uses-library
             android:name="org.apache.http.legacy"
