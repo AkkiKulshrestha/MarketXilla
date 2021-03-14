@@ -109,7 +109,7 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
                     Calendar calendar = CommonMethods.addWorkingDays(noOfTrailDays);
                     SimpleDateFormat formDate = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
                     msubscribed_till = formDate.format(new Date(calendar.getTimeInMillis())); //
-                    holder.tv_custom_tenure.setText(noOfTrailDays + " Days");
+                    holder.tv_custom_tenure.setText(noOfTrailDays + " Days\n\u20B9 0");
                 }
             }
         }
