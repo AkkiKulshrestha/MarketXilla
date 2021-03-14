@@ -15,6 +15,10 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+
 import in.techxilla.www.marketxilla.utils.CommonMethods;
 import in.techxilla.www.marketxilla.utils.MyValidator;
 
@@ -28,6 +32,7 @@ public class PivotCalc extends AppCompatActivity {
     private String StrPreviousHigh, StrPreviousLow, StrPreviousClose;
     private double previous_high = 0.0, previous_low = 0.0, previous_close = 0.0;
     private double dou_resistance4 = 0.0, dou_resistance3 = 0.0, dou_resistance2 = 0.0, dou_resistance1 = 0.0, dou_pivot_point = 0.0, dou_support1 = 0.0, dou_support2 = 0.0, dou_support3 = 0.0, dou_support4 = 0.0;
+    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,12 +50,12 @@ public class PivotCalc extends AppCompatActivity {
         final ImageView iv_back = (ImageView) findViewById(R.id.back_btn_toolbar);
 
         tv_title.setText(CalcName);
-        iv_back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        iv_back.setOnClickListener(v -> onBackPressed());
+
+        MobileAds.initialize(this);
+        mAdView = findViewById(R.id.adView);
+        AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
+        mAdView.loadAd(adRequestBuilder.build());
 
         Edt_PreviousHigh = (EditText) findViewById(R.id.Edt_PreviousHigh);
         Edt_PreviousLow = (EditText) findViewById(R.id.Edt_PreviousLow);
@@ -70,59 +75,53 @@ public class PivotCalc extends AppCompatActivity {
         tv_support3 = (TextView) findViewById(R.id.tv_support3);
         tv_support4 = (TextView) findViewById(R.id.tv_support4);
 
-        btn_Calc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isValid()) {
-                    InputMethodManager imm = (InputMethodManager) getApplicationContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(Edt_PreviousClose.getWindowToken(), 0);
-                    StrPreviousHigh = Edt_PreviousHigh.getText().toString().trim();
-                    StrPreviousLow = Edt_PreviousLow.getText().toString().trim();
-                    StrPreviousClose = Edt_PreviousClose.getText().toString().trim();
-                    previous_high = StrPreviousHigh != null ? Double.parseDouble(StrPreviousHigh) : 0.0;
-                    previous_low = StrPreviousLow != null ? Double.parseDouble(StrPreviousLow) : 0.0;
-                    previous_close = StrPreviousClose != null ? Double.parseDouble(StrPreviousClose) : 0.0;
-                    if (CalcName != null && CalcName.equalsIgnoreCase(getString(R.string.classic_pivot))) {
-                        ClassicPivotCalc();
-                    } else if (CalcName != null && CalcName.equalsIgnoreCase(getString(R.string.fibonacci_pivot))) {
-                        FibonacciPivotCalc();
-                    } else if (CalcName != null && CalcName.equalsIgnoreCase(getString(R.string.camerilla_pivot))) {
-                        CamerillaPivotCalc();
-                    } else if (CalcName != null && CalcName.equalsIgnoreCase(getString(R.string.forex_pivot))) {
-                        ForexPivotCalc();
-                    } else if (CalcName != null && CalcName.equalsIgnoreCase(getString(R.string.woodie_s_pivot))) {
-                        WoodiePivotCalc();
-                    }
+        btn_Calc.setOnClickListener(v -> {
+            if (isValid()) {
+                InputMethodManager imm = (InputMethodManager) getApplicationContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(Edt_PreviousClose.getWindowToken(), 0);
+                StrPreviousHigh = Edt_PreviousHigh.getText().toString().trim();
+                StrPreviousLow = Edt_PreviousLow.getText().toString().trim();
+                StrPreviousClose = Edt_PreviousClose.getText().toString().trim();
+                previous_high = StrPreviousHigh != null ? Double.parseDouble(StrPreviousHigh) : 0.0;
+                previous_low = StrPreviousLow != null ? Double.parseDouble(StrPreviousLow) : 0.0;
+                previous_close = StrPreviousClose != null ? Double.parseDouble(StrPreviousClose) : 0.0;
+                if (CalcName != null && CalcName.equalsIgnoreCase(getString(R.string.classic_pivot))) {
+                    ClassicPivotCalc();
+                } else if (CalcName != null && CalcName.equalsIgnoreCase(getString(R.string.fibonacci_pivot))) {
+                    FibonacciPivotCalc();
+                } else if (CalcName != null && CalcName.equalsIgnoreCase(getString(R.string.camerilla_pivot))) {
+                    CamerillaPivotCalc();
+                } else if (CalcName != null && CalcName.equalsIgnoreCase(getString(R.string.forex_pivot))) {
+                    ForexPivotCalc();
+                } else if (CalcName != null && CalcName.equalsIgnoreCase(getString(R.string.woodie_s_pivot))) {
+                    WoodiePivotCalc();
                 }
             }
         });
 
-        Edt_PreviousClose.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (isValid()) {
-                    InputMethodManager imm = (InputMethodManager) getApplicationContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(Edt_PreviousClose.getWindowToken(), 0);
-                    StrPreviousHigh = Edt_PreviousHigh.getText().toString().trim();
-                    StrPreviousLow = Edt_PreviousLow.getText().toString().trim();
-                    StrPreviousClose = Edt_PreviousClose.getText().toString().trim();
-                    previous_high = StrPreviousHigh != null ? Double.parseDouble(StrPreviousHigh) : 0.0;
-                    previous_low = StrPreviousLow != null ? Double.parseDouble(StrPreviousLow) : 0.0;
-                    previous_close = StrPreviousClose != null ? Double.parseDouble(StrPreviousClose) : 0.0;
-                    if (CalcName != null && CalcName.equalsIgnoreCase(getString(R.string.classic_pivot))) {
-                        ClassicPivotCalc();
-                    } else if (CalcName != null && CalcName.equalsIgnoreCase(getString(R.string.fibonacci_pivot))) {
-                        FibonacciPivotCalc();
-                    } else if (CalcName != null && CalcName.equalsIgnoreCase(getString(R.string.camerilla_pivot))) {
-                        CamerillaPivotCalc();
-                    } else if (CalcName != null && CalcName.equalsIgnoreCase(getString(R.string.forex_pivot))) {
-                        ForexPivotCalc();
-                    } else if (CalcName != null && CalcName.equalsIgnoreCase(getString(R.string.woodie_s_pivot))) {
-                        WoodiePivotCalc();
-                    }
+        Edt_PreviousClose.setOnEditorActionListener((v, actionId, event) -> {
+            if (isValid()) {
+                InputMethodManager imm = (InputMethodManager) getApplicationContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(Edt_PreviousClose.getWindowToken(), 0);
+                StrPreviousHigh = Edt_PreviousHigh.getText().toString().trim();
+                StrPreviousLow = Edt_PreviousLow.getText().toString().trim();
+                StrPreviousClose = Edt_PreviousClose.getText().toString().trim();
+                previous_high = StrPreviousHigh != null ? Double.parseDouble(StrPreviousHigh) : 0.0;
+                previous_low = StrPreviousLow != null ? Double.parseDouble(StrPreviousLow) : 0.0;
+                previous_close = StrPreviousClose != null ? Double.parseDouble(StrPreviousClose) : 0.0;
+                if (CalcName != null && CalcName.equalsIgnoreCase(getString(R.string.classic_pivot))) {
+                    ClassicPivotCalc();
+                } else if (CalcName != null && CalcName.equalsIgnoreCase(getString(R.string.fibonacci_pivot))) {
+                    FibonacciPivotCalc();
+                } else if (CalcName != null && CalcName.equalsIgnoreCase(getString(R.string.camerilla_pivot))) {
+                    CamerillaPivotCalc();
+                } else if (CalcName != null && CalcName.equalsIgnoreCase(getString(R.string.forex_pivot))) {
+                    ForexPivotCalc();
+                } else if (CalcName != null && CalcName.equalsIgnoreCase(getString(R.string.woodie_s_pivot))) {
+                    WoodiePivotCalc();
                 }
-                return false;
             }
+            return false;
         });
 
     }

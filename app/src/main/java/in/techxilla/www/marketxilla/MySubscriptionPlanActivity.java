@@ -242,14 +242,11 @@ public class MySubscriptionPlanActivity extends AppCompatActivity {
                                         tv_status_text1.setText("Enjoy your Service");
                                         btn_payment_receipt.setText("Download Transaction Details");
 
-                                        btn_payment_receipt.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                final String path_link = ROOT_URL + "payment_receipt/" + btn_payment_receipt.getHint().toString().trim();
-                                                final Intent intent = new Intent(Intent.ACTION_VIEW);
-                                                intent.setData(Uri.parse(path_link));
-                                                startActivity(intent);
-                                            }
+                                        btn_payment_receipt.setOnClickListener(v -> {
+                                            final String path_link = ROOT_URL + "payment_receipt/" + btn_payment_receipt.getHint().toString().trim();
+                                            final Intent intent = new Intent(Intent.ACTION_VIEW);
+                                            intent.setData(Uri.parse(path_link));
+                                            startActivity(intent);
                                         });
 
                                         tv_status.setText("Active");
@@ -280,7 +277,7 @@ public class MySubscriptionPlanActivity extends AppCompatActivity {
                                     sdf21 = new SimpleDateFormat("dd MMM, yyyy");
                                     mSubscribed_on = sdf21.format(currentdate2);
                                     newSubscriptedOndate = sdf2.parse(subscribed_on);
-                                    mShortDate = new SimpleDateFormat("MMM yyyy").format(newSubscriptedOndate);
+                                    mShortDate = new SimpleDateFormat("MMM yyyy").format(Objects.requireNonNull(newSubscriptedOndate));
                                     if (new Date().after(currentdate2)) {
                                         tv_Subscripte_on_date.setText(mSubscribed_on);
                                         // tv_status.setText("In Active");
@@ -422,12 +419,7 @@ public class MySubscriptionPlanActivity extends AppCompatActivity {
     }
 
     private void ScrollDown() {
-        scrollView.post(new Runnable() {
-            @Override
-            public void run() {
-                scrollView.fullScroll(ScrollView.FOCUS_DOWN);
-            }
-        });
+        scrollView.post(() -> scrollView.fullScroll(ScrollView.FOCUS_DOWN));
     }
 
     @Override

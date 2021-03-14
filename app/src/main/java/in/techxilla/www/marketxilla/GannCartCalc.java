@@ -13,6 +13,10 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+
 import in.techxilla.www.marketxilla.utils.CommonMethods;
 import in.techxilla.www.marketxilla.utils.MyValidator;
 
@@ -66,6 +70,8 @@ public class GannCartCalc extends AppCompatActivity {
             box20_dou = 0.0, box21_dou = 0.0, box22_dou = 0.0, box23_dou = 0.0, box24_dou = 0.0, box25_dou = 0.0, box26_dou = 0.0, box27_dou = 0.0, box28_dou = 0.0, box29_dou = 0.0, box30_dou = 0.0, box31_dou = 0.0, box32_dou = 0.0, box33_dou = 0.0, box34_dou = 0.0, box35_dou = 0.0, box36_dou = 0.0, box37_dou = 0.0,
             box38_dou = 0.0, box39_dou = 0.0, box40_dou = 0.0, box41_dou = 0.0, box42_dou = 0.0, box43_dou = 0.0, box44_dou = 0.0, box45_dou = 0.0, box46_dou = 0.0, box47_dou = 0.0, box48_dou = 0.0, box49_dou = 0.0;
 
+    private AdView mAdView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,13 +89,13 @@ public class GannCartCalc extends AppCompatActivity {
         final TextView tv_title = (TextView) findViewById(R.id.tv_title);
         final ImageView iv_back = (ImageView) findViewById(R.id.back_btn_toolbar);
 
+        MobileAds.initialize(this);
+        mAdView = findViewById(R.id.adView);
+        AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
+        mAdView.loadAd(adRequestBuilder.build());
+
         tv_title.setText(CalcName);
-        iv_back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        iv_back.setOnClickListener(v -> onBackPressed());
 
         Edt_LastTradedPrice = (EditText) findViewById(R.id.Edt_LastTradedPrice);
 
@@ -171,37 +177,31 @@ public class GannCartCalc extends AppCompatActivity {
         box48 = (TextView) findViewById(R.id.box48);
         box49 = (TextView) findViewById(R.id.box49);
 
-        btn_Calc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isValid()) {
-                    StrLastTradedPrice = Edt_LastTradedPrice.getText().toString().trim();
-                    last_traded_price = StrLastTradedPrice != null ? Double.parseDouble(StrLastTradedPrice) : 0.0;
-                    if (last_traded_price < 1000000) {
-                        Calculate();
-                    } else {
-                        Edt_LastTradedPrice.setError("Please Enter Amount Below 10 Lacs.");
-                        Edt_LastTradedPrice.requestFocus();
-                    }
+        btn_Calc.setOnClickListener(v -> {
+            if (isValid()) {
+                StrLastTradedPrice = Edt_LastTradedPrice.getText().toString().trim();
+                last_traded_price = Double.parseDouble(StrLastTradedPrice);
+                if (last_traded_price < 1000000) {
+                    Calculate();
+                } else {
+                    Edt_LastTradedPrice.setError("Please Enter Amount Below 10 Lacs.");
+                    Edt_LastTradedPrice.requestFocus();
                 }
             }
         });
 
-        Edt_LastTradedPrice.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (isValid()) {
-                    StrLastTradedPrice = Edt_LastTradedPrice.getText().toString().trim();
-                    last_traded_price = StrLastTradedPrice != null ? Double.parseDouble(StrLastTradedPrice) : 0.0;
-                    if (last_traded_price < 1000000) {
-                        Calculate();
-                    } else {
-                        Edt_LastTradedPrice.setError("Please Enter Amount Below 10 Lacs.");
-                        Edt_LastTradedPrice.requestFocus();
-                    }
+        Edt_LastTradedPrice.setOnEditorActionListener((v, actionId, event) -> {
+            if (isValid()) {
+                StrLastTradedPrice = Edt_LastTradedPrice.getText().toString().trim();
+                last_traded_price = Double.parseDouble(StrLastTradedPrice);
+                if (last_traded_price < 1000000) {
+                    Calculate();
+                } else {
+                    Edt_LastTradedPrice.setError("Please Enter Amount Below 10 Lacs.");
+                    Edt_LastTradedPrice.requestFocus();
                 }
-                return false;
             }
+            return false;
         });
 
     }

@@ -24,6 +24,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,6 +52,8 @@ public class PackageFragment extends Fragment {
     private SubscriptionPlanAdapter smartPlanAdapter;
     private ArrayList<SubscritPlanModel> smartPlanModelArrayList = new ArrayList<>();
     private ProgressDialog myDialog;
+    private AdView mAdView;
+
 
     @SuppressLint("InflateParams")
     @Nullable
@@ -66,6 +71,11 @@ public class PackageFragment extends Fragment {
         myDialog.setCancelable(false);
         myDialog.setCanceledOnTouchOutside(false);
 
+        MobileAds.initialize(mContext);
+        mAdView = rootView.findViewById(R.id.adView);
+        AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
+        mAdView.loadAd(adRequestBuilder.build());
+
         recyclerSmartPlan = (RecyclerView) rootView.findViewById(R.id.recyclerSmartPlan);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
         final SnapHelper snapHelper = new PagerSnapHelper();
@@ -74,9 +84,14 @@ public class PackageFragment extends Fragment {
         recyclerSmartPlan.setHasFixedSize(true);
         final int color = ContextCompat.getColor(mContext, R.color.blue_light);
         recyclerSmartPlan.addItemDecoration(new CirclePagerIndicatorDecoration(color, color));
-        fetchPlans();
+
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        fetchPlans();
+    }
 
     private void fetchPlans() {
         final String Uiid_id = UUID.randomUUID().toString();
