@@ -86,27 +86,14 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private boolean checkAndRequestPermissions() {
-        int camerapermission = ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA);
         int writepermission = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE);
-        int permissionLocation = ContextCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_FINE_LOCATION);
-        int read_sms_permission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS);
-
 
         List<String> listPermissionsNeeded = new ArrayList<>();
 
-        if (camerapermission != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.CAMERA);
-        }
         if (writepermission != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(Manifest.permission.READ_PHONE_STATE);
         }
-        if (permissionLocation != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION);
-        }
-        if(read_sms_permission != PackageManager.PERMISSION_GRANTED){
-            listPermissionsNeeded.add(Manifest.permission.READ_SMS);
 
-        }
         if (!listPermissionsNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
             return false;
@@ -123,26 +110,17 @@ public class SplashActivity extends AppCompatActivity {
 
                 Map<String, Integer> perms = new HashMap<>();
                 // Initialize the map with both permissions
-                perms.put(Manifest.permission.CAMERA, PackageManager.PERMISSION_GRANTED);
                 perms.put(Manifest.permission.READ_PHONE_STATE, PackageManager.PERMISSION_GRANTED);
-                perms.put(Manifest.permission.ACCESS_FINE_LOCATION, PackageManager.PERMISSION_GRANTED);
-                perms.put(Manifest.permission.READ_SMS, PackageManager.PERMISSION_GRANTED);
 
                 if (grantResults.length > 0) {
                     for (int i = 0; i < permissions.length; i++)
                         perms.put(permissions[i], grantResults[i]);
-                    if (perms.get(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
-                            && perms.get(READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
-                            && perms.get(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                            && perms.get(Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED) {
+                    if (perms.get(READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
                         Log.d(TAG, "sms & location services permission granted");
                         force_update();
                     } else {
                         Log.d(TAG, "Some permissions are not granted ask again ");
-                        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)
-                                || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                                || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE)
-                                || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_SMS)) {
+                        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE)) {
                             checkAndRequestPermissions();
                         }
                         //permission is denied (and never ask again is  checked)

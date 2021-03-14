@@ -29,7 +29,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -38,15 +37,10 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.phone.SmsRetriever;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
@@ -71,6 +65,8 @@ import static in.techxilla.www.marketxilla.webservices.RestClient.ROOT_URL;
 
 public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroadcastReceiver.OTPReceiveListener {
     private final ViewGroup nullParent = null;
+    private final String str_registered_mobile_no = "";
+    private final String StrCellInfo = "";
     boolean emailOtpVerified = false;
     boolean mobileOtpVerified = false;
     private LinearLayout ll_parent_sign_in, ll_parent_sign_up;
@@ -89,8 +85,11 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
     private TextView tv_forgot_password;
     private Dialog dialogForgotPassword, dialogEnteringOtp, dialogResetPassword;
     private EditText edt_verification_number;
-    private String str_registered_mobile_no = "", StrEmailMobile,StrDeviceUniqueId = "";
-    private String StrIMEI1 = "", StrIMEI2 = "", StrIMEI = "", StrCellInfo = "";
+    private String StrEmailMobile;
+    private String StrDeviceUniqueId = "";
+    private String StrIMEI1 = "";
+    private String StrIMEI2 = "";
+    private String StrIMEI = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,32 +125,16 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
         filter.addAction(SmsRetriever.SMS_RETRIEVED_ACTION);
         registerReceiver(smsBroadcastReceiver, filter);
 
-        LayoutTabSignIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                GOTO_SIGIN();
-            }
-        });
+        LayoutTabSignIn.setOnClickListener(v -> GOTO_SIGIN());
 
-        LayoutTabSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LayoutTabSignIn.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight));
-                LayoutTabSignUp.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-                ll_parent_sign_in.setVisibility(View.GONE);
-                ll_parent_sign_up.setVisibility(View.VISIBLE);
-            }
-        });
+        LayoutTabSignUp.setOnClickListener(v -> GOTO_SIGNUP());
 
         Edt_Email_Mobile = (EditText) findViewById(R.id.Edt_Email_Mobile);
         Edt_Password = (EditText) findViewById(R.id.Edt_Password);
         final Button btnSignIn = (Button) findViewById(R.id.BtnSignIn);
-        btnSignIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isValidLogin()) {
-                    LogInApi();
-                }
+        btnSignIn.setOnClickListener(v -> {
+            if (isValidLogin()) {
+                LogInApi();
             }
         });
 
@@ -161,23 +144,22 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
         edt_Su_Password = (EditText) findViewById(R.id.edt_Su_Password);
 
         final Button btnSignUp = (Button) findViewById(R.id.BtnSignUp);
-        btnSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isValidRegister()) {
-                    RegisterApi();
-                }
+        btnSignUp.setOnClickListener(v -> {
+            if (isValidRegister()) {
+                RegisterApi();
             }
         });
 
         tv_forgot_password = (TextView) findViewById(R.id.tv_forgot_password);
-        tv_forgot_password.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                popUpForgotPassword();
-            }
-        });
-        StrDeviceUniqueId =  getDeviceID();
+        tv_forgot_password.setOnClickListener(v -> popUpForgotPassword());
+        StrDeviceUniqueId = getDeviceID();
+    }
+
+    private void GOTO_SIGNUP() {
+        LayoutTabSignIn.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight));
+        LayoutTabSignUp.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        ll_parent_sign_in.setVisibility(View.GONE);
+        ll_parent_sign_up.setVisibility(View.VISIBLE);
     }
 
     private void GOTO_SIGIN() {
@@ -273,69 +255,63 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
             if (isInternetPresent) {
                 Log.d("URL", API_LOGIN);
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, API_LOGIN,
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(final String response) {
-                                Log.d("Response", response);
-                                if (myDialog != null && myDialog.isShowing()) {
-                                    myDialog.dismiss();
-                                }
-                                try {
-                                    final JSONObject jsonObject = new JSONObject(response);
-                                    final boolean status = jsonObject.getBoolean("status");
-                                    if (status) {
-                                        final JSONObject dataObj = jsonObject.getJSONObject("data");
-                                        final String message = jsonObject.getString("message");
-                                        ClientId = dataObj.getString("id");
-                                        StrName = dataObj.getString("name");
-                                        StrEmail = dataObj.getString("email_id");
-                                        StrMobile = dataObj.getString("mobile_no");
-                                        EmailVerified = dataObj.getString("is_email_verified");
-                                        MobileVerified = dataObj.getString("is_mobile_verified");
-                                        if (EmailVerified != null && EmailVerified.equalsIgnoreCase("0")) {
-                                            emailOtpVerified = false;
-                                            resendEmailPin();
-                                        } else if (EmailVerified != null && EmailVerified.equalsIgnoreCase("1")) {
-                                            emailOtpVerified = true;
-                                        }
-
-                                        if (MobileVerified != null && MobileVerified.equalsIgnoreCase("1")) {
-                                            mobileOtpVerified = true;
-                                        } else if (MobileVerified.equalsIgnoreCase("0")) {
-                                            mobileOtpVerified = false;
-                                            resendMobilePin();
-                                        }
-
-                                        if (!mobileOtpVerified || !emailOtpVerified) {
-                                            VerifyEmail_MobilePopup();
-                                        } else {
-                                            UtilitySharedPreferences.setPrefs(getApplicationContext(), "MemberId", ClientId);
-                                            UtilitySharedPreferences.setPrefs(getApplicationContext(), "MemberName", StrName);
-                                            UtilitySharedPreferences.setPrefs(getApplicationContext(), "MemberEmailId", StrEmail);
-                                            UtilitySharedPreferences.setPrefs(getApplicationContext(), "MemberMobile", StrMobile);
-                                            UtilitySharedPreferences.setPrefs(getApplicationContext(), "DeviceId", StrDeviceUniqueId);
-                                            CommonMethods.DisplayToastSuccess(getApplicationContext(), message);
-                                            Intent i = new Intent(getApplicationContext(), NewDashboard.class);
-                                            startActivity(i);
-                                            overridePendingTransition(R.animator.move_left, R.animator.move_right);
-                                            finish();
-                                        }
-                                    } else {
-                                        final String message = jsonObject.getString("message");
-                                        CommonMethods.DisplayToastError(getApplicationContext(), message);
+                        response -> {
+                            Log.d("Response", response);
+                            if (myDialog != null && myDialog.isShowing()) {
+                                myDialog.dismiss();
+                            }
+                            try {
+                                final JSONObject jsonObject = new JSONObject(response);
+                                final boolean status = jsonObject.getBoolean("status");
+                                if (status) {
+                                    final JSONObject dataObj = jsonObject.getJSONObject("data");
+                                    final String message = jsonObject.getString("message");
+                                    ClientId = dataObj.getString("id");
+                                    StrName = dataObj.getString("name");
+                                    StrEmail = dataObj.getString("email_id");
+                                    StrMobile = dataObj.getString("mobile_no");
+                                    EmailVerified = dataObj.getString("is_email_verified");
+                                    MobileVerified = dataObj.getString("is_mobile_verified");
+                                    if (EmailVerified != null && EmailVerified.equalsIgnoreCase("0")) {
+                                        emailOtpVerified = false;
+                                        resendEmailPin();
+                                    } else if (EmailVerified != null && EmailVerified.equalsIgnoreCase("1")) {
+                                        emailOtpVerified = true;
                                     }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+
+                                    if (MobileVerified != null && MobileVerified.equalsIgnoreCase("1")) {
+                                        mobileOtpVerified = true;
+                                    } else if (MobileVerified != null && MobileVerified.equalsIgnoreCase("0")) {
+                                        mobileOtpVerified = false;
+                                        resendMobilePin();
+                                    }
+
+                                    if (!mobileOtpVerified || !emailOtpVerified) {
+                                        VerifyEmail_MobilePopup();
+                                    } else {
+                                        UtilitySharedPreferences.setPrefs(getApplicationContext(), "MemberId", ClientId);
+                                        UtilitySharedPreferences.setPrefs(getApplicationContext(), "MemberName", StrName);
+                                        UtilitySharedPreferences.setPrefs(getApplicationContext(), "MemberEmailId", StrEmail);
+                                        UtilitySharedPreferences.setPrefs(getApplicationContext(), "MemberMobile", StrMobile);
+                                        UtilitySharedPreferences.setPrefs(getApplicationContext(), "DeviceId", StrDeviceUniqueId);
+                                        CommonMethods.DisplayToastSuccess(getApplicationContext(), message);
+                                        Intent i = new Intent(getApplicationContext(), NewDashboard.class);
+                                        startActivity(i);
+                                        overridePendingTransition(R.animator.move_left, R.animator.move_right);
+                                        finish();
+                                    }
+                                } else {
+                                    final String message = jsonObject.getString("message");
+                                    CommonMethods.DisplayToastError(getApplicationContext(), message);
                                 }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
                         },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                error.printStackTrace();
-                                if (myDialog != null && myDialog.isShowing()) {
-                                    myDialog.dismiss();
-                                }
+                        error -> {
+                            error.printStackTrace();
+                            if (myDialog != null && myDialog.isShowing()) {
+                                myDialog.dismiss();
                             }
                         }) {
 
@@ -350,7 +326,7 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
                         params.put("username", StrUserName.toUpperCase());
                         params.put("password", md5(StrPassword));
                         params.put("token", UtilitySharedPreferences.getPrefs(getApplicationContext(), "token"));
-                        params.put("device_id",StrDeviceUniqueId);
+                        params.put("device_id", StrDeviceUniqueId);
                         Log.d("ParrasLogin", params.toString());
                         return params;
                     }
@@ -395,58 +371,52 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
             if (isInternetPresent) {
                 Log.d("URL", API_REGISTER);
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, API_REGISTER,
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(final String response) {
-                                Log.d("Response", response);
-                                if (myDialog != null && myDialog.isShowing()) {
-                                    myDialog.dismiss();
-                                }
-                                try {
-                                    final JSONObject jsonObject = new JSONObject(response);
-                                    boolean status = jsonObject.getBoolean("status");
-                                    if (status) {
-                                        final JSONObject dataObj = jsonObject.getJSONObject("data");
-                                        final String message = jsonObject.getString("message");
+                        response -> {
+                            Log.d("Response", response);
+                            if (myDialog != null && myDialog.isShowing()) {
+                                myDialog.dismiss();
+                            }
+                            try {
+                                final JSONObject jsonObject = new JSONObject(response);
+                                boolean status = jsonObject.getBoolean("status");
+                                if (status) {
+                                    final JSONObject dataObj = jsonObject.getJSONObject("data");
+                                    final String message = jsonObject.getString("message");
 
-                                        ClientId = dataObj.getString("id");
-                                        StrName = dataObj.getString("name");
-                                        StrEmail = dataObj.getString("email_id");
-                                        StrMobile = dataObj.getString("mobile_no");
-                                        EmailVerified = dataObj.getString("is_email_verified");
-                                        MobileVerified = dataObj.getString("is_mobile_verified");
+                                    ClientId = dataObj.getString("id");
+                                    StrName = dataObj.getString("name");
+                                    StrEmail = dataObj.getString("email_id");
+                                    StrMobile = dataObj.getString("mobile_no");
+                                    EmailVerified = dataObj.getString("is_email_verified");
+                                    MobileVerified = dataObj.getString("is_mobile_verified");
 
-                                        if (EmailVerified != null && EmailVerified.equalsIgnoreCase("0")) {
-                                            emailOtpVerified = false;
-                                        } else if (EmailVerified != null && EmailVerified.equalsIgnoreCase("1")) {
-                                            emailOtpVerified = true;
-                                        }
-
-                                        if (MobileVerified != null && MobileVerified.equalsIgnoreCase("1")) {
-                                            mobileOtpVerified = true;
-                                        } else if (MobileVerified.equalsIgnoreCase("0")) {
-                                            mobileOtpVerified = false;
-                                        }
-
-                                        if (!mobileOtpVerified || !emailOtpVerified) {
-                                            VerifyEmail_MobilePopup();
-                                        }
-                                    } else {
-                                        final String message = jsonObject.getString("message");
-                                        CommonMethods.DisplayToastError(getApplicationContext(), message);
+                                    if (EmailVerified != null && EmailVerified.equalsIgnoreCase("0")) {
+                                        emailOtpVerified = false;
+                                    } else if (EmailVerified != null && EmailVerified.equalsIgnoreCase("1")) {
+                                        emailOtpVerified = true;
                                     }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+
+                                    if (MobileVerified != null && MobileVerified.equalsIgnoreCase("1")) {
+                                        mobileOtpVerified = true;
+                                    } else if (MobileVerified.equalsIgnoreCase("0")) {
+                                        mobileOtpVerified = false;
+                                    }
+
+                                    if (!mobileOtpVerified || !emailOtpVerified) {
+                                        VerifyEmail_MobilePopup();
+                                    }
+                                } else {
+                                    final String message = jsonObject.getString("message");
+                                    CommonMethods.DisplayToastError(getApplicationContext(), message);
                                 }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
                         },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                error.printStackTrace();
-                                if (myDialog != null && myDialog.isShowing()) {
-                                    myDialog.dismiss();
-                                }
+                        error -> {
+                            error.printStackTrace();
+                            if (myDialog != null && myDialog.isShowing()) {
+                                myDialog.dismiss();
                             }
                         }) {
                     @Override
@@ -462,7 +432,7 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
                         params.put("mobile_no", StrMobile);
                         params.put("password", md5(StrPassword));
                         params.put("token", UtilitySharedPreferences.getPrefs(getApplicationContext(), "token"));
-                        params.put("device_id",StrDeviceUniqueId);
+                        params.put("device_id", StrDeviceUniqueId);
                         Log.d("ParrasRegister", params.toString());
                         return params;
                     }
@@ -514,59 +484,38 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
             edt_Check_Mobile_Otp.setHint("Mobile OTP *");
         }
         dialog11.show();
-        btnContinue.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (emailOtpVerified && mobileOtpVerified) {
-                    dialog11.dismiss();
-                    UtilitySharedPreferences.setPrefs(getApplicationContext(), "MemberId", ClientId);
-                    UtilitySharedPreferences.setPrefs(getApplicationContext(), "MemberName", StrName);
-                    UtilitySharedPreferences.setPrefs(getApplicationContext(), "MemberEmailId", StrEmail);
-                    UtilitySharedPreferences.setPrefs(getApplicationContext(), "MemberMobile", StrMobile);
-                    if (verificationID != null) {
-                        final PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.getCredential(verificationID, edt_Check_Mobile_Otp.getText().toString());
-                        FirebaseAuth.getInstance().signInWithCredential(phoneAuthCredential)
-                                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<AuthResult> task) {
-                                        if (task.isSuccessful()) {
-                                            final Intent i = new Intent(getApplicationContext(), NewDashboard.class);
-                                            startActivity(i);
-                                            overridePendingTransition(R.animator.move_left, R.animator.move_right);
-                                            finish();
-                                        } else {
-                                            DisplayToastWarning(SignIn_SignUpActivity.this, "The verification code entered was invalid");
-                                        }
-
-                                    }
-                                });
-                    }
-                } else {
-                    DisplayToastWarning(getApplicationContext(), "Please verify both the OTP");
-                }
-            }
-        });
-
-        btnClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        btnContinue.setOnClickListener(view -> {
+            if (emailOtpVerified && mobileOtpVerified) {
                 dialog11.dismiss();
+                UtilitySharedPreferences.setPrefs(getApplicationContext(), "MemberId", ClientId);
+                UtilitySharedPreferences.setPrefs(getApplicationContext(), "MemberName", StrName);
+                UtilitySharedPreferences.setPrefs(getApplicationContext(), "MemberEmailId", StrEmail);
+                UtilitySharedPreferences.setPrefs(getApplicationContext(), "MemberMobile", StrMobile);
+                if (verificationID != null) {
+                    final PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.getCredential(verificationID, edt_Check_Mobile_Otp.getText().toString());
+                    FirebaseAuth.getInstance().signInWithCredential(phoneAuthCredential)
+                            .addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    final Intent i = new Intent(getApplicationContext(), NewDashboard.class);
+                                    startActivity(i);
+                                    overridePendingTransition(R.animator.move_left, R.animator.move_right);
+                                    finish();
+                                } else {
+                                    DisplayToastWarning(SignIn_SignUpActivity.this, "The verification code entered was invalid");
+                                }
+
+                            });
+                }
+            } else {
+                DisplayToastWarning(getApplicationContext(), "Please verify both the OTP");
             }
         });
 
-        txt_resend_mobile_otp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                resendMobilePin();
-            }
-        });
+        btnClose.setOnClickListener(view -> dialog11.dismiss());
 
-        txt_resend_email_otp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                resendEmailPin();
-            }
-        });
+        txt_resend_mobile_otp.setOnClickListener(view -> resendMobilePin());
+
+        txt_resend_email_otp.setOnClickListener(view -> resendEmailPin());
 
         edt_Check_Mobile_Otp.addTextChangedListener(new TextWatcher() {
             @Override
@@ -613,36 +562,30 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
         final String URL_Resend_Mobile_Pin = ROOT_URL + "resendMobilePin.php";
         Log.d("UrlresendMobilePin", URL_Resend_Mobile_Pin);
         StringRequest strReq = new StringRequest(Request.Method.POST, URL_Resend_Mobile_Pin,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(final String response) {
-                        Log.d("TAG", response.toString());
-                        if (myDialog != null && myDialog.isShowing()) {
-                            myDialog.dismiss();
+                response -> {
+                    Log.d("TAG", "" + response);
+                    if (myDialog != null && myDialog.isShowing()) {
+                        myDialog.dismiss();
+                    }
+                    try {
+                        final JSONObject jsonObject = new JSONObject(response);
+                        final boolean status = jsonObject.getBoolean("status");
+                        if (status) {
+                            CommonMethods.DisplayToastSuccess(getApplicationContext(), "Mobile OTP Mail Sent Successfully");
                         }
-                        try {
-                            final JSONObject jsonObject = new JSONObject(response);
-                            final boolean status = jsonObject.getBoolean("status");
-                            if (status) {
-                                CommonMethods.DisplayToastSuccess(getApplicationContext(), "Mobile OTP Mail Sent Successfully");
-                            }
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        VolleyLog.d("TAG", "Error: " + error.getMessage());
-                        if (myDialog != null && myDialog.isShowing()) {
-                            myDialog.dismiss();
-                        }
+                error -> {
+                    VolleyLog.d("TAG", "Error: " + error.getMessage());
+                    if (myDialog != null && myDialog.isShowing()) {
+                        myDialog.dismiss();
                     }
                 }) {
             @Override
-            public Map<String, String> getParams() throws AuthFailureError {
+            public Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("user_id", ClientId);
                 Log.d("resendparams", params.toString());
@@ -659,35 +602,29 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
         final String URL_Resend_Email_Pin = ROOT_URL + "resendEmailPin.php";
         Log.d("UrlresendMobilePin", URL_Resend_Email_Pin);
         StringRequest strReq = new StringRequest(Request.Method.POST, URL_Resend_Email_Pin,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(final String response) {
-                        Log.d("TAG", response.toString());
-                        if (myDialog != null && myDialog.isShowing()) {
-                            myDialog.dismiss();
+                response -> {
+                    Log.d("TAG", "" + response);
+                    if (myDialog != null && myDialog.isShowing()) {
+                        myDialog.dismiss();
+                    }
+                    try {
+                        final JSONObject jsonObject = new JSONObject(response);
+                        final boolean status = jsonObject.getBoolean("status");
+                        if (status) {
+                            CommonMethods.DisplayToastSuccess(getApplicationContext(), "Email Pin sent Successfully");
                         }
-                        try {
-                            final JSONObject jsonObject = new JSONObject(response);
-                            final boolean status = jsonObject.getBoolean("status");
-                            if (status) {
-                                CommonMethods.DisplayToastSuccess(getApplicationContext(), "Email Pin sent Successfully");
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        VolleyLog.d("TAG", "Error: " + error.getMessage());
-                        if (myDialog != null && myDialog.isShowing()) {
-                            myDialog.dismiss();
-                        }
+                error -> {
+                    VolleyLog.d("TAG", "Error: " + error.getMessage());
+                    if (myDialog != null && myDialog.isShowing()) {
+                        myDialog.dismiss();
                     }
                 }) {
             @Override
-            public Map<String, String> getParams() throws AuthFailureError {
+            public Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("user_id", ClientId);
                 Log.d("resendparams", params.toString());
@@ -703,41 +640,35 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
         final String URL_EMAIL_VERIFY = ROOT_URL + "verifyUserEmail.php";
         Log.d("UrlEmailVerify", URL_EMAIL_VERIFY);
         StringRequest strReq = new StringRequest(Request.Method.POST, URL_EMAIL_VERIFY,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(final String response) {
-                        Log.d("TAG", response.toString());
-                        if (myDialog != null && myDialog.isShowing()) {
-                            myDialog.dismiss();
+                response -> {
+                    Log.d("TAG", "" + response);
+                    if (myDialog != null && myDialog.isShowing()) {
+                        myDialog.dismiss();
+                    }
+                    try {
+                        final JSONObject jsonObject = new JSONObject(response);
+                        final boolean status = jsonObject.getBoolean("status");
+                        if (status) {
+                            CommonMethods.DisplayToastSuccess(getApplicationContext(), "Email ID is Verified Successfully");
+                            edt_Check_Email_Otp.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.tick, 0);
+                            edt_Check_Email_Otp.setEnabled(false);
+                            emailOtpVerified = true;
+                            txt_resend_email_otp.setVisibility(View.GONE);
+                        } else {
+                            CommonMethods.DisplayToastError(getApplicationContext(), "Invalid Otp");
                         }
-                        try {
-                            final JSONObject jsonObject = new JSONObject(response);
-                            final boolean status = jsonObject.getBoolean("status");
-                            if (status) {
-                                CommonMethods.DisplayToastSuccess(getApplicationContext(), "Email ID is Verified Successfully");
-                                edt_Check_Email_Otp.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.tick, 0);
-                                edt_Check_Email_Otp.setEnabled(false);
-                                emailOtpVerified = true;
-                                txt_resend_email_otp.setVisibility(View.GONE);
-                            } else {
-                                CommonMethods.DisplayToastError(getApplicationContext(), "Invalid Otp");
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
-                        if (myDialog != null && myDialog.isShowing()) {
-                            myDialog.dismiss();
-                        }
+                error -> {
+                    error.printStackTrace();
+                    if (myDialog != null && myDialog.isShowing()) {
+                        myDialog.dismiss();
                     }
                 }) {
             @Override
-            public Map<String, String> getParams() throws AuthFailureError {
+            public Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("user_id", ClientId);
                 params.put("Email", StrEmail);
@@ -755,44 +686,38 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
         final String MobileVerifyUrl = ROOT_URL + "verifyUserMobile.php";
         Log.d("MobileVerfiyUrl", MobileVerifyUrl);
         StringRequest strReq = new StringRequest(Request.Method.POST, MobileVerifyUrl,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(final String response) {
-                        Log.d("TAG", response.toString());
-                        if (myDialog != null && myDialog.isShowing()) {
-                            myDialog.dismiss();
+                response -> {
+                    Log.d("TAG", "" + response);
+                    if (myDialog != null && myDialog.isShowing()) {
+                        myDialog.dismiss();
+                    }
+                    try {
+                        final JSONObject jsonObject = new JSONObject(response);
+                        final boolean status = jsonObject.getBoolean("status");
+                        if (status) {
+                            CommonMethods.DisplayToastSuccess(getApplicationContext(), "Mobile No. is Verified Successfully");
+                            edt_Check_Mobile_Otp.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.tick, 0);
+                            edt_Check_Mobile_Otp.setEnabled(false);
+                            mobileOtpVerified = true;
+                            MobileVerified = "1";
+                            txt_resend_mobile_otp.setVisibility(View.GONE);
+                        } else {
+                            CommonMethods.DisplayToastError(getApplicationContext(), "Invalid Otp");
+                            mobileOtpVerified = false;
+                            MobileVerified = "0";
                         }
-                        try {
-                            final JSONObject jsonObject = new JSONObject(response);
-                            final boolean status = jsonObject.getBoolean("status");
-                            if (status) {
-                                CommonMethods.DisplayToastSuccess(getApplicationContext(), "Mobile No. is Verified Successfully");
-                                edt_Check_Mobile_Otp.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.tick, 0);
-                                edt_Check_Mobile_Otp.setEnabled(false);
-                                mobileOtpVerified = true;
-                                MobileVerified = "1";
-                                txt_resend_mobile_otp.setVisibility(View.GONE);
-                            } else {
-                                CommonMethods.DisplayToastError(getApplicationContext(), "Invalid Otp");
-                                mobileOtpVerified = false;
-                                MobileVerified = "0";
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if (myDialog != null && myDialog.isShowing()) {
-                            myDialog.dismiss();
-                        }
-                        error.printStackTrace();
+                error -> {
+                    if (myDialog != null && myDialog.isShowing()) {
+                        myDialog.dismiss();
                     }
+                    error.printStackTrace();
                 }) {
             @Override
-            public Map<String, String> getParams() throws AuthFailureError {
+            public Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("user_id", ClientId);
                 params.put("Mobile", StrMobile);
@@ -866,29 +791,21 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
         EditText edtEmail_Mobile = (EditText) dialogForgotPassword.findViewById(R.id.edtEmail_Mobile);
 
         ImageView iv_close = (ImageView) dialogForgotPassword.findViewById(R.id.iv_close);
-        iv_close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogForgotPassword.dismiss();
-            }
-        });
+        iv_close.setOnClickListener(v -> dialogForgotPassword.dismiss());
 
         Button btn_get_otp = (Button) dialogForgotPassword.findViewById(R.id.btn_get_otp);
-        btn_get_otp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!MyValidator.isValidEmailMobile(edtEmail_Mobile)) {
-                    edtEmail_Mobile.requestFocus();
-                    edtEmail_Mobile.setError("Please Enter Registered Email Id or Mobile No.");
-                    CommonMethods.DisplayToastWarning(getApplicationContext(), "Please enter Registered Email Id or Mobile No");
-                } else {
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    if (imm != null) {
-                        imm.hideSoftInputFromWindow(edtEmail_Mobile.getWindowToken(), 0);
-                    }
-                    StrEmailMobile = edtEmail_Mobile.getText().toString();
-                    GetAPI_ForgotPassword();
+        btn_get_otp.setOnClickListener(view -> {
+            if (!MyValidator.isValidEmailMobile(edtEmail_Mobile)) {
+                edtEmail_Mobile.requestFocus();
+                edtEmail_Mobile.setError("Please Enter Registered Email Id or Mobile No.");
+                CommonMethods.DisplayToastWarning(getApplicationContext(), "Please enter Registered Email Id or Mobile No");
+            } else {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(edtEmail_Mobile.getWindowToken(), 0);
                 }
+                StrEmailMobile = edtEmail_Mobile.getText().toString();
+                GetAPI_ForgotPassword();
             }
         });
     }
@@ -903,45 +820,39 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
             boolean isInternetPresent = cd.isConnectingToInternet();
             if (isInternetPresent) {
                 final StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_SendPasswordOTP,
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String response) {
-                                if (myDialog != null && myDialog.isShowing()) {
-                                    myDialog.dismiss();
-                                }
-                                try {
-                                    if (response != null) {
-                                        JSONObject resObj = new JSONObject(response);
-                                        boolean status = resObj.getBoolean("status");
-                                        String message = resObj.getString("message");
-                                        if (status) {
-                                            if (dialogForgotPassword != null && dialogForgotPassword.isShowing()) {
-                                                dialogForgotPassword.dismiss();
-                                            }
-                                            JSONObject jsonObject = resObj.getJSONObject("data");
-                                            ClientId = jsonObject.getString("id");
-                                            CommonMethods.DisplayToastSuccess(getApplicationContext(), message);
-                                            pop_up_otp_verification(true);
-                                        } else {
-                                            CommonMethods.DisplayToastError(getApplicationContext(), message);
-                                        }
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
+                        response -> {
+                            if (myDialog != null && myDialog.isShowing()) {
+                                myDialog.dismiss();
                             }
-                        }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if (myDialog != null && myDialog.isShowing()) {
-                            myDialog.dismiss();
-                        }
-                        VolleyLog.d("volley", "Error: " + error.getMessage());
-                        error.printStackTrace();
+                            try {
+                                if (response != null) {
+                                    JSONObject resObj = new JSONObject(response);
+                                    boolean status = resObj.getBoolean("status");
+                                    String message = resObj.getString("message");
+                                    if (status) {
+                                        if (dialogForgotPassword != null && dialogForgotPassword.isShowing()) {
+                                            dialogForgotPassword.dismiss();
+                                        }
+                                        JSONObject jsonObject = resObj.getJSONObject("data");
+                                        ClientId = jsonObject.getString("id");
+                                        CommonMethods.DisplayToastSuccess(getApplicationContext(), message);
+                                        pop_up_otp_verification(true);
+                                    } else {
+                                        CommonMethods.DisplayToastError(getApplicationContext(), message);
+                                    }
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }, error -> {
+                    if (myDialog != null && myDialog.isShowing()) {
+                        myDialog.dismiss();
                     }
+                    VolleyLog.d("volley", "Error: " + error.getMessage());
+                    error.printStackTrace();
                 }) {
                     @Override
-                    public Map<String, String> getParams() throws AuthFailureError {
+                    public Map<String, String> getParams() {
                         Map<String, String> params = new HashMap<String, String>();
                         params.put("email_mobile", StrEmailMobile);
                         Log.d("ParrasUserRegi", params.toString());
@@ -962,7 +873,7 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
         }
     }
 
-    private void pop_up_otp_verification(boolean showPopupResetPassword) {
+    private void pop_up_otp_verification(final boolean showPopupResetPassword) {
         dialogEnteringOtp = new Dialog(SignIn_SignUpActivity.this);
         dialogEnteringOtp.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialogEnteringOtp.setCanceledOnTouchOutside(false);
@@ -976,27 +887,21 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
 
         edt_verification_number = (EditText) dialogEnteringOtp.findViewById(R.id.edt_verification_number);
         final ImageView iv_close = (ImageView) dialogEnteringOtp.findViewById(R.id.iv_close);
-        iv_close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (myDialog != null && myDialog.isShowing()) {
-                    myDialog.dismiss();
-                }
-                dialogEnteringOtp.dismiss();
+        iv_close.setOnClickListener(v -> {
+            if (myDialog != null && myDialog.isShowing()) {
+                myDialog.dismiss();
             }
+            dialogEnteringOtp.dismiss();
         });
 
         final TextView Verify_otp = (TextView) dialogEnteringOtp.findViewById(R.id.Verify_otp);
-        Verify_otp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm != null) {
-                    imm.hideSoftInputFromWindow(edt_verification_number.getWindowToken(), 0);
-                }
-                String OTP_Entered = edt_verification_number.getText().toString();
-                OtpVerifyApi(OTP_Entered);
+        Verify_otp.setOnClickListener(view -> {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(edt_verification_number.getWindowToken(), 0);
             }
+            String OTP_Entered = edt_verification_number.getText().toString();
+            OtpVerifyApi(OTP_Entered);
         });
         dialogEnteringOtp.show();
     }
@@ -1017,44 +922,38 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
             if (isInternetPresent) {
 
                 final StringRequest stringRequest = new StringRequest(Request.Method.POST, verifyOTP_Api,
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String response) {
+                        response -> {
+                            if (myDialog != null && myDialog.isShowing()) {
+                                myDialog.dismiss();
+                            }
+                            Log.d("mainResponse", response);
+                            try {
+                                JSONObject jObj = new JSONObject(response);
+                                boolean status = jObj.getBoolean("status");
+                                if (status) {
+                                    edt_verification_number.setError(null);
+                                    if (dialogEnteringOtp != null && dialogEnteringOtp.isShowing()) {
+                                        dialogEnteringOtp.dismiss();
+                                    }
+                                    pop_up_reset_password();
+                                } else {
+                                    edt_verification_number.setError("Invalid OTP.");
+                                }
+                            } catch (JSONException e) {
                                 if (myDialog != null && myDialog.isShowing()) {
                                     myDialog.dismiss();
                                 }
-                                Log.d("mainResponse", response);
-                                try {
-                                    JSONObject jObj = new JSONObject(response);
-                                    boolean status = jObj.getBoolean("status");
-                                    if (status) {
-                                        edt_verification_number.setError(null);
-                                        if (dialogEnteringOtp != null && dialogEnteringOtp.isShowing()) {
-                                            dialogEnteringOtp.dismiss();
-                                        }
-                                        pop_up_reset_password();
-                                    } else {
-                                        edt_verification_number.setError("Invalid OTP.");
-                                    }
-                                } catch (JSONException e) {
-                                    if (myDialog != null && myDialog.isShowing()) {
-                                        myDialog.dismiss();
-                                    }
-                                    e.printStackTrace();
-                                }
+                                e.printStackTrace();
                             }
-                        }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if (myDialog != null && myDialog.isShowing()) {
-                            myDialog.dismiss();
-                        }
-                        VolleyLog.d("volley", "Error: " + error.getMessage());
-                        error.printStackTrace();
+                        }, error -> {
+                    if (myDialog != null && myDialog.isShowing()) {
+                        myDialog.dismiss();
                     }
+                    VolleyLog.d("volley", "Error: " + error.getMessage());
+                    error.printStackTrace();
                 }) {
                     @Override
-                    public Map<String, String> getParams() throws AuthFailureError {
+                    public Map<String, String> getParams() {
                         Map<String, String> params = new HashMap<String, String>();
                         if (StrEmailMobile.length() == 10) {
                             params.put("user_id", ClientId);
@@ -1098,33 +997,27 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
         final EditText etNewPassword = (EditText) dialogResetPassword.findViewById(R.id.etNewPassword);
         final EditText etConfirmPassword = (EditText) dialogResetPassword.findViewById(R.id.etConfirmPassword);
         final ImageView iv_close = (ImageView) dialogResetPassword.findViewById(R.id.iv_close);
-        iv_close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (myDialog != null && myDialog.isShowing()) {
-                    myDialog.dismiss();
-                }
-                dialogResetPassword.dismiss();
+        iv_close.setOnClickListener(v -> {
+            if (myDialog != null && myDialog.isShowing()) {
+                myDialog.dismiss();
             }
+            dialogResetPassword.dismiss();
         });
 
 
         final Button btn_reset = (Button) dialogResetPassword.findViewById(R.id.btn_reset);
-        btn_reset.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm != null) {
-                    imm.hideSoftInputFromWindow(etConfirmPassword.getWindowToken(), 0);
-                }
-                if ((etNewPassword.getText() != null && etNewPassword.getText().toString().length() != 0) && (etConfirmPassword.getText() != null && etConfirmPassword.getText().toString().length() != 0)) {
-                    String StrNewPassword = etNewPassword.getText().toString();
-                    String StrConfirmPassword = etConfirmPassword.getText().toString();
-                    if (StrNewPassword.equalsIgnoreCase(StrConfirmPassword)) {
-                        ResetPasswordApi(StrNewPassword, StrConfirmPassword);
-                    } else {
-                        etConfirmPassword.setError("New Password & Confirm Password does not Match.");
-                    }
+        btn_reset.setOnClickListener(view -> {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(etConfirmPassword.getWindowToken(), 0);
+            }
+            if ((etNewPassword.getText() != null && etNewPassword.getText().toString().length() != 0) && (etConfirmPassword.getText() != null && etConfirmPassword.getText().toString().length() != 0)) {
+                String StrNewPassword = etNewPassword.getText().toString();
+                String StrConfirmPassword = etConfirmPassword.getText().toString();
+                if (StrNewPassword.equalsIgnoreCase(StrConfirmPassword)) {
+                    ResetPasswordApi(StrNewPassword, StrConfirmPassword);
+                } else {
+                    etConfirmPassword.setError("New Password & Confirm Password does not Match.");
                 }
             }
         });
@@ -1140,45 +1033,39 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
             boolean isInternetPresent = cd.isConnectingToInternet();
             if (isInternetPresent) {
                 final StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_ResetPassword,
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String response) {
+                        response -> {
+                            if (myDialog != null && myDialog.isShowing()) {
+                                myDialog.dismiss();
+                            }
+                            Log.d("mainResponse", response);
+                            try {
+                                JSONObject jObj = new JSONObject(response);
+                                boolean status = jObj.getBoolean("status");
+                                if (status) {
+                                    String message = jObj.getString("message");
+                                    CommonMethods.DisplayToastSuccess(getApplicationContext(), message);
+                                    if (dialogResetPassword != null && dialogResetPassword.isShowing()) {
+                                        dialogResetPassword.dismiss();
+                                    }
+                                } else {
+                                    String message = jObj.getString("message");
+                                    CommonMethods.DisplayToastError(getApplicationContext(), message);
+                                }
+                            } catch (JSONException e) {
                                 if (myDialog != null && myDialog.isShowing()) {
                                     myDialog.dismiss();
                                 }
-                                Log.d("mainResponse", response);
-                                try {
-                                    JSONObject jObj = new JSONObject(response);
-                                    boolean status = jObj.getBoolean("status");
-                                    if (status) {
-                                        String message = jObj.getString("message");
-                                        CommonMethods.DisplayToastSuccess(getApplicationContext(), message);
-                                        if (dialogResetPassword != null && dialogResetPassword.isShowing()) {
-                                            dialogResetPassword.dismiss();
-                                        }
-                                    } else {
-                                        String message = jObj.getString("message");
-                                        CommonMethods.DisplayToastError(getApplicationContext(), message);
-                                    }
-                                } catch (JSONException e) {
-                                    if (myDialog != null && myDialog.isShowing()) {
-                                        myDialog.dismiss();
-                                    }
-                                    e.printStackTrace();
-                                }
+                                e.printStackTrace();
                             }
-                        }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if (myDialog != null && myDialog.isShowing()) {
-                            myDialog.dismiss();
-                        }
-                        VolleyLog.d("volley", "Error: " + error.getMessage());
-                        error.printStackTrace();
+                        }, error -> {
+                    if (myDialog != null && myDialog.isShowing()) {
+                        myDialog.dismiss();
                     }
+                    VolleyLog.d("volley", "Error: " + error.getMessage());
+                    error.printStackTrace();
                 }) {
                     @Override
-                    public Map<String, String> getParams() throws AuthFailureError {
+                    public Map<String, String> getParams() {
                         Map<String, String> params = new HashMap<String, String>();
                         params.put("user_id", ClientId);
                         params.put("password", md5(strNewPassword));
