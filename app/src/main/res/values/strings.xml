@@ -127,4 +127,6 @@
     <string name="prod_ad_unit_id">ca-app-pub-7875930800675907/2647487053</string>
     <string name="test_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
     <string name="google_adds_app_id">ca-app-pub-7875930800675907~9539364314</string>
+    <string name="audio_permission_text">We need <b> AUDIO </b> permission to make your Glucometer work.</string>
+    <string name="get_started">Get Started</string>
 </resources>

@@ -2,14 +2,17 @@ package in.techxilla.www.marketxilla;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -67,23 +70,64 @@ public class SplashActivity extends AppCompatActivity {
     private void init() {
         StrMobileNo = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberMobile");
         StrMemberId = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberId");
-        ConnectionDetector cd = new ConnectionDetector(getApplicationContext());
-        boolean isInternetPresent = cd.isConnectingToInternet();
-        if(checkAndRequestPermissions()) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (isInternetPresent) {
-                        force_update();
-                        //inAppUpdate();
-                    } else {
-                        CommonMethods.DisplayToastInfo(getApplicationContext(), "No Internet Connection");
-                    }
-                }
-            }, SPLASH_TIME_OUT);
+
+
+
+        try {
+            if (ActivityCompat.checkSelfPermission(SplashActivity.this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+            } else {
+                gfitRequest(SplashActivity.this, getString(R.string.audio_permission_text), false, getString(R.string.get_started));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }
+
+    public void gfitRequest(final Context mContext, String message, final boolean fitness, String cta) {
+
+        final Dialog gfitDialog = new Dialog(mContext);
+        gfitDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        gfitDialog.setContentView(R.layout.custom_dialog_gfit);
+        gfitDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        gfitDialog.setCanceledOnTouchOutside(false);
+        gfitDialog.getWindow().getAttributes().windowAnimations = R.style.Dialog_No_Border;
+        gfitDialog.show();
+        TextView btnOk = gfitDialog.findViewById(R.id.btn_update);
+        TextView txt_updated = gfitDialog.findViewById(R.id.update_text);
+        try {
+            btnOk.setText(cta);
+            txt_updated.setText(Html.fromHtml(message));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        btnOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gfitDialog.dismiss();
+                if (!fitness) {
+                    ConnectionDetector cd = new ConnectionDetector(getApplicationContext());
+                    boolean isInternetPresent = cd.isConnectingToInternet();
+                    if(checkAndRequestPermissions()) {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (isInternetPresent) {
+                                    force_update();
+                                    //inAppUpdate();
+                                } else {
+                                    CommonMethods.DisplayToastInfo(getApplicationContext(), "No Internet Connection");
+                                }
+                            }
+                        }, SPLASH_TIME_OUT);
+                    }
+
+                } else {
+                }
+            }
+        });
+    }
+
 
     private boolean checkAndRequestPermissions() {
         int camerapermission = ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA);
