@@ -119,6 +119,7 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
         ll_parent_sign_up = (LinearLayout) findViewById(R.id.ll_parent_sign_up);
         ll_parent_sign_in.setVisibility(View.VISIBLE);
         ll_parent_sign_up.setVisibility(View.GONE);
+
         smsBroadcastReceiver = new SMSBroadcastReceiver();
         smsBroadcastReceiver.setOtpReceiveListener(SignIn_SignUpActivity.this);
         final IntentFilter filter = new IntentFilter();
