@@ -609,4 +609,8 @@
         <item>@color/dot_dark_screen3</item>
         <item>@color/dot_dark_screen4</item>
     </array>
+
+    <color name="btn_green_normal">#009686</color>
+    <color name="text_selected">#ffffff</color>
+    <color name="text_unselected">#922d2d34</color>
 </resources>
