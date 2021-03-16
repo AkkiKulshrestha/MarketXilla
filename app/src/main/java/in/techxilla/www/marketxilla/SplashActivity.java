@@ -26,8 +26,6 @@ import androidx.core.content.ContextCompat;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.play.core.appupdate.AppUpdateInfo;
@@ -71,8 +69,6 @@ public class SplashActivity extends AppCompatActivity {
         StrMobileNo = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberMobile");
         StrMemberId = UtilitySharedPreferences.getPrefs(getApplicationContext(), "MemberId");
 
-
-
         try {
             if (ActivityCompat.checkSelfPermission(SplashActivity.this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
             } else {
@@ -108,7 +104,7 @@ public class SplashActivity extends AppCompatActivity {
                 if (!fitness) {
                     ConnectionDetector cd = new ConnectionDetector(getApplicationContext());
                     boolean isInternetPresent = cd.isConnectingToInternet();
-                    if(checkAndRequestPermissions()) {
+                    if (checkAndRequestPermissions()) {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
