@@ -77,7 +77,7 @@
                 android:id="@+id/btn_update"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/update_round"
+                android:background="@drawable/cw_shadow_black"
                 android:clickable="true"
                 android:gravity="center"
                 android:textSize="14dp"
