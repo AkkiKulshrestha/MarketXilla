@@ -23,8 +23,9 @@
                 android:gravity="center_horizontal|center"
                 android:padding="8dp"
                 android:textAllCaps="true"
-                android:textColor="@color/btn_green_normal"
+                android:textColor="@color/colorPrimary"
                 android:textSize="14dp"
+                android:text="PERMISSION REQUIRED"
                 android:textStyle="bold" />
 
             <TextView
@@ -43,7 +44,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
-            android:background="@color/btn_green_normal" />
+            android:background="@color/dark_grey" />
 
         <LinearLayout
             android:layout_width="match_parent"

@@ -72,7 +72,7 @@ public class SplashActivity extends AppCompatActivity {
         try {
             if (ActivityCompat.checkSelfPermission(SplashActivity.this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
             } else {
-                gfitRequest(SplashActivity.this, getString(R.string.audio_permission_text), false, getString(R.string.get_started));
+                gfitRequest(SplashActivity.this, "We need <b>PHONE STATE</b> permission to recognize the <b>Unique Device Id</b> for single user single device login.", false, "Allow");
             }
         } catch (Exception e) {
             e.printStackTrace();
