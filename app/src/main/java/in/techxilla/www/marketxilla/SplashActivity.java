@@ -71,6 +71,14 @@ public class SplashActivity extends AppCompatActivity {
 
         try {
             if (ActivityCompat.checkSelfPermission(SplashActivity.this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+                ConnectionDetector cd = new ConnectionDetector(getApplicationContext());
+                boolean isInternetPresent = cd.isConnectingToInternet();
+                if (isInternetPresent) {
+                    force_update();
+                    //inAppUpdate();
+                } else {
+                    CommonMethods.DisplayToastInfo(getApplicationContext(), "No Internet Connection");
+                }
             } else {
                 gfitRequest(SplashActivity.this, "We need <b>PHONE STATE</b> permission to recognize the <b>Unique Device Id</b> for single user single device login.", false, "Allow");
             }
@@ -97,29 +105,26 @@ public class SplashActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        btnOk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                gfitDialog.dismiss();
-                if (!fitness) {
-                    ConnectionDetector cd = new ConnectionDetector(getApplicationContext());
-                    boolean isInternetPresent = cd.isConnectingToInternet();
-                    if (checkAndRequestPermissions()) {
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (isInternetPresent) {
-                                    force_update();
-                                    //inAppUpdate();
-                                } else {
-                                    CommonMethods.DisplayToastInfo(getApplicationContext(), "No Internet Connection");
-                                }
+        btnOk.setOnClickListener(v -> {
+            gfitDialog.dismiss();
+            if (!fitness) {
+                ConnectionDetector cd = new ConnectionDetector(getApplicationContext());
+                boolean isInternetPresent = cd.isConnectingToInternet();
+                if (checkAndRequestPermissions()) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (isInternetPresent) {
+                                force_update();
+                                //inAppUpdate();
+                            } else {
+                                CommonMethods.DisplayToastInfo(getApplicationContext(), "No Internet Connection");
                             }
-                        }, SPLASH_TIME_OUT);
-                    }
-
-                } else {
+                        }
+                    }, SPLASH_TIME_OUT);
                 }
+
+            } else {
             }
         });
     }
