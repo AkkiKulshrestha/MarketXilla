@@ -450,7 +450,7 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
     }
 
     private void VerifyEmail_MobilePopup() {
-        dialog11 = new Dialog(SignIn_SignUpActivity.this);
+        dialog11 = new Dialog(this);
         dialog11.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog11.setCanceledOnTouchOutside(false);
         dialog11.setContentView(R.layout.popup_verify_email_mobile_otp);
@@ -463,7 +463,9 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
         txt_resend_mobile_otp = (TextView) dialog11.findViewById(R.id.txt_resend_mobile_otp);
 
         if (EmailVerified != null && EmailVerified.equals("1")) {
-            edt_Check_Email_Otp.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.tick, 0);
+            //edt_Check_Email_Otp.setCompoundDrawablesRelative(null,null, getApplicationContext().getResources().getDrawable(R.drawable.tick), null);
+            edt_Check_Email_Otp.setCompoundDrawablesWithIntrinsicBounds(null, null,
+                    getResources().getDrawable(R.drawable.tick, null), null);
             txt_resend_email_otp.setVisibility(View.GONE);
             emailOtpVerified = true;
             edt_Check_Email_Otp.setEnabled(false);
@@ -474,7 +476,8 @@ public class SignIn_SignUpActivity extends AppCompatActivity implements SMSBroad
         }
 
         if (MobileVerified != null && MobileVerified.equals("1")) {
-            edt_Check_Mobile_Otp.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.tick, 0);
+            edt_Check_Mobile_Otp.setCompoundDrawablesWithIntrinsicBounds(null, null,
+                    getResources().getDrawable(R.drawable.tick, null), null);
             txt_resend_mobile_otp.setVisibility(View.GONE);
             mobileOtpVerified = true;
             edt_Check_Mobile_Otp.setEnabled(false);

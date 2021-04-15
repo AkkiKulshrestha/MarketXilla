@@ -12,7 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
-        android:layout_centerInParent="true"
         android:visibility="visible"
         tools:ignore="UselessParent">
 
@@ -20,6 +19,7 @@
             android:id="@+id/animationView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
             app:lottie_rawRes="@raw/m_logo" />
@@ -28,7 +28,8 @@
             android:id="@+id/animationView1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/animationView"
+            android:layout_below="@id/animationView"
+            android:layout_centerHorizontal="true"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
             app:lottie_rawRes="@raw/data_research" />

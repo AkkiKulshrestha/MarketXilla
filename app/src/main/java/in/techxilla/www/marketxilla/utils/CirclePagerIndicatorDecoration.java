@@ -1,4 +1,4 @@
-package in.techxilla.www.marketxilla.utils;
+    package in.techxilla.www.marketxilla.utils;
 
 
 import android.annotation.SuppressLint;
@@ -41,8 +41,8 @@ public class CirclePagerIndicatorDecoration extends RecyclerView.ItemDecoration 
     private final Paint mPaint = new Paint();
     private final Paint inactivePaint = new Paint();
     private final Paint activePaint = new Paint();
-    private int colorActive = 0xFF607D90;
-    private int colorInactive = 0xFFCFD8DC;
+    private final int colorActive = 0xFF607D90;
+    private final int colorInactive = 0xFFCFD8DC;
 
     public CirclePagerIndicatorDecoration(@ColorInt int colorInactive, @ColorInt int colorActive) {
 
@@ -63,7 +63,7 @@ public class CirclePagerIndicatorDecoration extends RecyclerView.ItemDecoration 
     @Override
     public void onDrawOver(@NotNull final Canvas c, @NotNull final RecyclerView parent, @NotNull final RecyclerView.State state) {
         super.onDrawOver(c, parent, state);
-        int itemCount = parent.getAdapter().getItemCount();
+        int itemCount = Math.max(parent.getAdapter().getItemCount(), 0);
         // center horizontally, calculate width and subtract half from center
         float totalLength = mIndicatorItemLength * itemCount;
         float paddingBetweenItems = Math.max(0, itemCount - 1) * mIndicatorItemPadding;

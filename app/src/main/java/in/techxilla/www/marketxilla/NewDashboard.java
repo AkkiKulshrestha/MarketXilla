@@ -501,40 +501,28 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
         ImageView iv_telegram = navigationView1.findViewById(R.id.iv_telegram);
         ImageView iv_linked_in = navigationView1.findViewById(R.id.iv_linked_in);
 
-        iv_facebook.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(getResources().getString(R.string.facebook_page)));
-                startActivity(i);
-            }
+        iv_facebook.setOnClickListener(view -> {
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(getResources().getString(R.string.facebook_page)));
+            startActivity(i);
         });
 
-        iv_twitter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(getResources().getString(R.string.twitter_page)));
-                startActivity(i);
-            }
+        iv_twitter.setOnClickListener(view -> {
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(getResources().getString(R.string.twitter_page)));
+            startActivity(i);
         });
 
-        iv_telegram.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent telegram = new Intent(Intent.ACTION_VIEW);
-                telegram.setData(Uri.parse(getResources().getString(R.string.telegram)));
-                startActivity(telegram);
-            }
+        iv_telegram.setOnClickListener(view -> {
+            Intent telegram = new Intent(Intent.ACTION_VIEW);
+            telegram.setData(Uri.parse(getResources().getString(R.string.telegram)));
+            startActivity(telegram);
         });
 
-        iv_linked_in.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(getResources().getString(R.string.linked_in_page)));
-                startActivity(i);
-            }
+        iv_linked_in.setOnClickListener(view -> {
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(getResources().getString(R.string.linked_in_page)));
+            startActivity(i);
         });
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -699,33 +687,26 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
         if (isInternetPresent) {
             String URL = ROOT_URL + "get_notifications_list.php?_" + Uiid_id;
             Log.d("URL", "--> " + URL);
-            StringRequest postrequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
-                @SuppressLint("UseCompatLoadingForDrawables")
-                @Override
-                public void onResponse(String response) {
-                    try {
-                        Log.d("URL Response", "--> " + response);
-                        JSONObject jsonresponse = new JSONObject(response);
-                        boolean status = jsonresponse.getBoolean("status");
-                        if (status) {
-                            String result = jsonresponse.getString("data");
-                            JSONArray resultArry = new JSONArray(result);
-                            notifications_count = resultArry.length();
-                            SetNotificationBadge();
-                        } else {
-                            notifications_count = 0;
-                            SetNotificationBadge();
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+            StringRequest postrequest = new StringRequest(Request.Method.GET, URL, response -> {
+                try {
+                    Log.d("URL Response", "--> " + response);
+                    JSONObject jsonresponse = new JSONObject(response);
+                    boolean status = jsonresponse.getBoolean("status");
+                    if (status) {
+                        String result = jsonresponse.getString("data");
+                        JSONArray resultArry = new JSONArray(result);
+                        notifications_count = resultArry.length();
+                        SetNotificationBadge();
+                    } else {
+                        notifications_count = 0;
+                        SetNotificationBadge();
                     }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError volleyError) {
-                    volleyError.printStackTrace();
-                    DisplayToastError(getApplicationContext(), "Something goes wrong. Please try again");
-                }
+            }, volleyError -> {
+                volleyError.printStackTrace();
+                DisplayToastError(getApplicationContext(), "Something goes wrong. Please try again");
             });
             RequestQueue requestQueue = Volley.newRequestQueue(this);
             postrequest.setRetryPolicy(new DefaultRetryPolicy(0, -1, 0));
@@ -762,33 +743,25 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
 
         ImageView iv_close = dialogResetPassword.findViewById(R.id.iv_close);
         iv_close.setVisibility(View.VISIBLE);
-        iv_close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogResetPassword.dismiss();
-            }
-        });
+        iv_close.setOnClickListener(v -> dialogResetPassword.dismiss());
 
 
         Button btn_reset = dialogResetPassword.findViewById(R.id.btn_reset);
-        btn_reset.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (validateResetPassword()) {
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    if (imm != null) {
-                        imm.hideSoftInputFromWindow(etConfirmPassword.getWindowToken(), 0);
+        btn_reset.setOnClickListener(view -> {
+            if (validateResetPassword()) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(etConfirmPassword.getWindowToken(), 0);
+                }
+                if ((etNewPassword.getText() != null && etNewPassword.getText().toString().length() != 0) && (etConfirmPassword.getText() != null && etConfirmPassword.getText().toString().length() != 0)) {
+                    String StrNewPassword = etNewPassword.getText().toString();
+                    String StrConfirmPassword = etConfirmPassword.getText().toString();
+                    if (StrNewPassword.equalsIgnoreCase(StrConfirmPassword)) {
+                        ResetPasswordApi(StrNewPassword, StrConfirmPassword);
+                    } else {
+                        etConfirmPassword.setError("New Password & Confirm Password does not Match.");
                     }
-                    if ((etNewPassword.getText() != null && etNewPassword.getText().toString().length() != 0) && (etConfirmPassword.getText() != null && etConfirmPassword.getText().toString().length() != 0)) {
-                        String StrNewPassword = etNewPassword.getText().toString();
-                        String StrConfirmPassword = etConfirmPassword.getText().toString();
-                        if (StrNewPassword.equalsIgnoreCase(StrConfirmPassword)) {
-                            ResetPasswordApi(StrNewPassword, StrConfirmPassword);
-                        } else {
-                            etConfirmPassword.setError("New Password & Confirm Password does not Match.");
-                        }
 
-                    }
                 }
             }
         });
@@ -830,45 +803,39 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
             boolean isInternetPresent = cd.isConnectingToInternet();
             if (isInternetPresent) {
                 final StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_ResetPassword,
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String response) {
+                        response -> {
+                            if (myDialog != null && myDialog.isShowing()) {
+                                myDialog.dismiss();
+                            }
+                            Log.d("mainResponse", response);
+                            try {
+                                JSONObject jObj = new JSONObject(response);
+                                boolean status = jObj.getBoolean("status");
+                                if (status) {
+                                    String message = jObj.getString("message");
+                                    CommonMethods.DisplayToastSuccess(getApplicationContext(), message);
+                                    if (dialogResetPassword != null && dialogResetPassword.isShowing()) {
+                                        dialogResetPassword.dismiss();
+                                    }
+                                    logout();
+                                } else {
+                                    String message = jObj.getString("message");
+                                    CommonMethods.DisplayToastError(getApplicationContext(), message);
+                                }
+
+                            } catch (JSONException e) {
                                 if (myDialog != null && myDialog.isShowing()) {
                                     myDialog.dismiss();
                                 }
-                                Log.d("mainResponse", response);
-                                try {
-                                    JSONObject jObj = new JSONObject(response);
-                                    boolean status = jObj.getBoolean("status");
-                                    if (status) {
-                                        String message = jObj.getString("message");
-                                        CommonMethods.DisplayToastSuccess(getApplicationContext(), message);
-                                        if (dialogResetPassword != null && dialogResetPassword.isShowing()) {
-                                            dialogResetPassword.dismiss();
-                                        }
-                                        logout();
-                                    } else {
-                                        String message = jObj.getString("message");
-                                        CommonMethods.DisplayToastError(getApplicationContext(), message);
-                                    }
-
-                                } catch (JSONException e) {
-                                    if (myDialog != null && myDialog.isShowing()) {
-                                        myDialog.dismiss();
-                                    }
-                                    e.printStackTrace();
-                                }
-
+                                e.printStackTrace();
                             }
-                        }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if (myDialog != null && myDialog.isShowing()) {
-                            myDialog.dismiss();
-                        }
-                        VolleyLog.d("volley", "Error: " + error.getMessage());
-                        error.printStackTrace();
+
+                        }, error -> {
+                    if (myDialog != null && myDialog.isShowing()) {
+                        myDialog.dismiss();
                     }
+                    VolleyLog.d("volley", "Error: " + error.getMessage());
+                    error.printStackTrace();
                 }) {
                     @Override
                     public Map<String, String> getParams() throws AuthFailureError {
@@ -910,23 +877,17 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
             ConnectionDetector cd = new ConnectionDetector(getApplicationContext());
             boolean isInternetPresent = cd.isConnectingToInternet();
             if (isInternetPresent) {
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, get_bank_details_info, new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(final String response) {
-                        try {
-                            Log.d("Response", "" + response);
-                            bankObj = new JSONObject(response);
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, get_bank_details_info, response -> {
+                    try {
+                        Log.d("Response", "" + response);
+                        bankObj = new JSONObject(response);
 
-                        } catch (Exception e) {
-                            Log.d("Exception", e.toString());
-                        }
+                    } catch (Exception e) {
+                        Log.d("Exception", e.toString());
                     }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError volleyError) {
-                        volleyError.printStackTrace();
-                        CommonMethods.DisplayToastWarning(getApplicationContext(), "Something goes wrong. Please try again");
-                    }
+                }, volleyError -> {
+                    volleyError.printStackTrace();
+                    CommonMethods.DisplayToastWarning(getApplicationContext(), "Something goes wrong. Please try again");
                 });
                 RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
                 stringRequest.setRetryPolicy(new DefaultRetryPolicy(0, -1, 0));
@@ -998,21 +959,11 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
 
         ImageView iv_close = dialogBankDetails.findViewById(R.id.iv_close);
         iv_close.setVisibility(View.VISIBLE);
-        iv_close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogBankDetails.dismiss();
-            }
-        });
+        iv_close.setOnClickListener(v -> dialogBankDetails.dismiss());
 
 
         Button btnOk = dialogBankDetails.findViewById(R.id.btnOk);
-        btnOk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialogBankDetails.dismiss();
-            }
-        });
+        btnOk.setOnClickListener(view -> dialogBankDetails.dismiss());
     }
 
     @SuppressLint({"SimpleDateFormat", "DefaultLocale"})
@@ -1044,7 +995,6 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
         final String MemberName = UtilitySharedPreferences.getPrefs(this, "MemberName");
         final String MemberMobile = UtilitySharedPreferences.getPrefs(this, "MemberMobile");
 
-
         if (SystemClock.elapsedRealtime() - mLastClickTime < 1000)
             return;
         mLastClickTime = SystemClock.elapsedRealtime();
@@ -1063,7 +1013,6 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
             KEY = TEST_KEY;
             SALT = TEST_SALT;
         }
-
 
         PayUPaymentParams.Builder builder = new PayUPaymentParams.Builder();
         builder.setAmount(StrSubscriptionAmount)

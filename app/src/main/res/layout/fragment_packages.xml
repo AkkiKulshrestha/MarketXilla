@@ -5,6 +5,7 @@
     android:background="@color/colorAccent">
 
     <ScrollView
+        android:id="@+id/package_main_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="60sp"
@@ -40,7 +41,6 @@
                 android:visibility="visible" />
 
 
-
         </LinearLayout>
 
     </ScrollView>
@@ -49,8 +49,8 @@
         android:id="@+id/adView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_margin="8dp"
+        android:layout_below="@id/package_main_content"
         ads:adSize="BANNER"
         ads:adUnitId="@string/prod_ad_unit_id" />
 
