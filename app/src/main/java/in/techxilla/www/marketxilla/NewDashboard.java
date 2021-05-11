@@ -100,7 +100,7 @@ public class NewDashboard extends AppCompatActivity implements NavigationView.On
     private final String SURL = "https://payuresponse.firebaseapp.com/success";
     private final String FURL = "https://payuresponse.firebaseapp.com/failure";
 
-    private final boolean isProd = true;
+    private final boolean isProd = false;
 
     // PROD CRED
     private final String PROD_KEY = "hVyMSm";

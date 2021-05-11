@@ -12,6 +12,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
@@ -23,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.android.volley.BuildConfig;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -35,12 +37,14 @@ import com.google.android.play.core.install.model.AppUpdateType;
 import com.google.android.play.core.install.model.UpdateAvailability;
 import com.google.android.play.core.tasks.Task;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import in.techxilla.www.marketxilla.utils.CommonMethods;
@@ -148,33 +152,30 @@ public class SplashActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+                                           @NotNull String permissions[], @NotNull int[] grantResults) {
         Log.d(TAG, "Permission callback called-------");
-        switch (requestCode) {
-            case REQUEST_ID_MULTIPLE_PERMISSIONS: {
+        if (requestCode == REQUEST_ID_MULTIPLE_PERMISSIONS) {
+            Map<String, Integer> perms = new HashMap<>();
+            // Initialize the map with both permissions
+            perms.put(READ_PHONE_STATE, PackageManager.PERMISSION_GRANTED);
 
-                Map<String, Integer> perms = new HashMap<>();
-                // Initialize the map with both permissions
-                perms.put(Manifest.permission.READ_PHONE_STATE, PackageManager.PERMISSION_GRANTED);
-
-                if (grantResults.length > 0) {
-                    for (int i = 0; i < permissions.length; i++)
-                        perms.put(permissions[i], grantResults[i]);
-                    if (perms.get(READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
-                        Log.d(TAG, "sms & location services permission granted");
-                        force_update();
-                    } else {
-                        Log.d(TAG, "Some permissions are not granted ask again ");
-                        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE)) {
-                            checkAndRequestPermissions();
-                        }
-                        //permission is denied (and never ask again is  checked)
-                        //shouldShowRequestPermissionRationale will return false
-                        else {
-                            Intent i = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + BuildConfig.APPLICATION_ID));
-                            startActivity(i);
-                            finish();
-                        }
+            if (grantResults.length > 0) {
+                for (int i = 0; i < permissions.length; i++)
+                    perms.put(permissions[i], grantResults[i]);
+                if (perms.get(READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "sms & location services permission granted");
+                    force_update();
+                } else {
+                    Log.d(TAG, "Some permissions are not granted ask again ");
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, READ_PHONE_STATE)) {
+                        checkAndRequestPermissions();
+                    }
+                    //permission is denied (and never ask again is  checked)
+                    //shouldShowRequestPermissionRationale will return false
+                    else {
+                        Intent i = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + BuildConfig.APPLICATION_ID));
+                        startActivity(i);
+                        finish();
                     }
                 }
             }
@@ -189,11 +190,10 @@ public class SplashActivity extends AppCompatActivity {
         Task<AppUpdateInfo> appUpdateInfoTask = appUpdateManager.getAppUpdateInfo();
         // Checks that the platform will allow the specified type of update.
         appUpdateInfoTask.addOnSuccessListener(appUpdateInfo -> {
-            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-                    // For a flexible update, use AppUpdateType.FLEXIBLE
-                    && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)) {
-                // Request the update.
-            }
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
+                appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE);
+            }// For a flexible update, use AppUpdateType.FLEXIBLE
+// Request the update.
         });
     }
 
@@ -254,74 +254,62 @@ public class SplashActivity extends AppCompatActivity {
         } catch (PackageManager.NameNotFoundException e1) {
             e1.printStackTrace();
         }
-        final String currentVersion = pInfo.versionName;
+        final String currentVersion = Objects.requireNonNull(pInfo).versionName;
         YourApkVersionCode = pInfo.versionCode;
         final String version_code = String.valueOf(YourApkVersionCode);
         return YourApkVersionCode;
     }
 
     private void update_dialog(String versionCode) {
-        if (!versionCode.equals("") || versionCode != null) {
-            int v_code = Integer.parseInt(versionCode);
-            if ((YourApkVersionCode < v_code) && Force_Update_flag.equalsIgnoreCase("1")) {
-                Log.d("version code", "" + v_code);
-                Log.d("Your APK CODE ", "" + YourApkVersionCode);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        final Dialog dialog = new Dialog(SplashActivity.this);
-                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                        dialog.setCanceledOnTouchOutside(false);
-                        dialog.setCancelable(false);
-                        dialog.setContentView(R.layout.pop_up_app_update);
-                        dialog.getWindow().setBackgroundDrawable(
-                                new ColorDrawable(android.graphics.Color.TRANSPARENT));
-                        TextView title = (TextView) dialog.findViewById(R.id.title);
-                        TextView Upgrade_text = (TextView) dialog.findViewById(R.id.Upgrade_text);
-                        TextView tv_ok = (TextView) dialog.findViewById(R.id.tv_ok);
-                        dialog.show();
-                        tv_ok.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                dialog.dismiss();
-                                UtilitySharedPreferences.clearPref1(getApplicationContext(), "MemberId");
-                                UtilitySharedPreferences.clearPref1(getApplicationContext(), "MemberName");
-                                UtilitySharedPreferences.clearPref1(getApplicationContext(), "MemberEmailId");
-                                UtilitySharedPreferences.clearPref1(getApplicationContext(), "MemberMobile");
-                                UtilitySharedPreferences.clearPref1(getApplicationContext(), "MemberUsername");
-                                CommonMethods.deleteCache(getApplicationContext());
-                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
-                                finish();
-                            }
-                        });
-                    }
-                }, SPLASH_TIME_OUT);
-            } else {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Intent i;
-                        if ((StrMemberId != null && !StrMemberId.equalsIgnoreCase("")) || (StrMobileNo != null && !StrMobileNo.equalsIgnoreCase(""))) {
-                            i = new Intent(getApplicationContext(), NewDashboard.class);
-                        } else {
-                            i = new Intent(getApplicationContext(), SignIn_SignUpActivity.class);
+        int v_code = Integer.parseInt(versionCode);
+        if ((YourApkVersionCode < v_code) && Force_Update_flag.equalsIgnoreCase("1")) {
+            Log.d("version code", "" + v_code);
+            Log.d("Your APK CODE ", "" + YourApkVersionCode);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    final Dialog dialog = new Dialog(SplashActivity.this);
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog.setCanceledOnTouchOutside(false);
+                    dialog.setCancelable(false);
+                    dialog.setContentView(R.layout.pop_up_app_update);
+                    dialog.getWindow().setBackgroundDrawable(
+                            new ColorDrawable(Color.TRANSPARENT));
+                    TextView title = (TextView) dialog.findViewById(R.id.title);
+                    TextView Upgrade_text = (TextView) dialog.findViewById(R.id.Upgrade_text);
+                    TextView tv_ok = (TextView) dialog.findViewById(R.id.tv_ok);
+                    dialog.show();
+                    tv_ok.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                            UtilitySharedPreferences.clearPref1(getApplicationContext(), "MemberId");
+                            UtilitySharedPreferences.clearPref1(getApplicationContext(), "MemberName");
+                            UtilitySharedPreferences.clearPref1(getApplicationContext(), "MemberEmailId");
+                            UtilitySharedPreferences.clearPref1(getApplicationContext(), "MemberMobile");
+                            UtilitySharedPreferences.clearPref1(getApplicationContext(), "MemberUsername");
+                            CommonMethods.deleteCache(getApplicationContext());
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
+                            finish();
                         }
-                        startActivity(i);
-                        overridePendingTransition(R.animator.move_left, R.animator.move_right);
-                        finish();
-                    }
-                }, SPLASH_TIME_OUT);
-            }
+                    });
+                }
+            }, SPLASH_TIME_OUT);
         } else {
-            Intent i;
-            if ((StrMemberId != null && !StrMemberId.equalsIgnoreCase("")) || (StrMobileNo != null && !StrMobileNo.equalsIgnoreCase(""))) {
-                i = new Intent(getApplicationContext(), NewDashboard.class);
-            } else {
-                i = new Intent(getApplicationContext(), SignIn_SignUpActivity.class);
-            }
-            startActivity(i);
-            overridePendingTransition(R.animator.move_left, R.animator.move_right);
-            finish();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent i;
+                    if ((StrMemberId != null && !StrMemberId.equalsIgnoreCase("")) || (StrMobileNo != null && !StrMobileNo.equalsIgnoreCase(""))) {
+                        i = new Intent(getApplicationContext(), NewDashboard.class);
+                    } else {
+                        i = new Intent(getApplicationContext(), SignIn_SignUpActivity.class);
+                    }
+                    startActivity(i);
+                    overridePendingTransition(R.animator.move_left, R.animator.move_right);
+                    finish();
+                }
+            }, SPLASH_TIME_OUT);
         }
     }
 

@@ -58,7 +58,6 @@
             android:id="@+id/nav_rate_us"
             android:icon="@drawable/ic_rating"
             android:iconTint="@color/black"
-
             android:title="@string/menu_rate_us" />
 
         <item
@@ -72,7 +71,6 @@
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_logout"
             android:iconTint="@color/black"
-
             android:title="@string/menu_logout" />
     </group>
 

@@ -22,8 +22,8 @@
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:fillViewport="true"
             android:layout_height="match_parent"
+            android:fillViewport="true"
             android:scrollbars="vertical">
 
             <LinearLayout
@@ -33,22 +33,21 @@
 
                 <com.google.android.material.navigation.NavigationView
                     android:id="@+id/nav_view"
-                    app:elevation="0dp"
-                    android:layout_height="wrap_content"
                     android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:elevation="0dp"
                     app:headerLayout="@layout/nav_header_main"
-                    app:menu="@menu/activity_main_drawer"
-                    />
+                    app:menu="@menu/activity_main_drawer" />
 
 
                 <LinearLayout
                     android:id="@+id/spacer_to_bottom"
                     android:layout_width="match_parent"
-                    android:orientation="vertical"
                     android:layout_height="0dp"
-                    android:layout_weight="1">
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-                     <include layout="@layout/nav_footer_main"/>
+                    <include layout="@layout/nav_footer_main" />
                 </LinearLayout>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
