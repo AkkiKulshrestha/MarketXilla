@@ -62,7 +62,7 @@ public class SmartPlanAdapter extends RecyclerView.Adapter<SmartPlanAdapter.Smar
 
         holder.txt_smartplan_name.setText(smartPlanModel.getPlanname());
         holder.txt_smartplan_description.setText(smartPlanModel.getPlanDescription());
-        Picasso.with(context).load(smartPlanModel.getImage()).into(holder.planicons);
+        Picasso.get().load(smartPlanModel.getImage()).into(holder.planicons);
 
         holder.smartplan_card.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -119,39 +119,39 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
         holder.tv_three_month.setText("3 Months\n\u20B9 " + CommonMethods.NumberDisplayFormattingWithComma(smartPlanModel.getAmount3Months()));
 
         if (smartPlanModel.issStock_Future()) {
-            Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_stk_ftr);
+            Picasso.get().load(R.mipmap.ic_check_green).into(holder.iv_stk_ftr);
         } else {
-            Picasso.with(context).load(R.mipmap.ic_red_close).into(holder.iv_stk_ftr);
+            Picasso.get().load(R.mipmap.ic_red_close).into(holder.iv_stk_ftr);
         }
 
         if (smartPlanModel.issStock_Options()) {
-            Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_stk_opt);
+            Picasso.get().load(R.mipmap.ic_check_green).into(holder.iv_stk_opt);
         } else {
-            Picasso.with(context).load(R.mipmap.ic_red_close).into(holder.iv_stk_opt);
+            Picasso.get().load(R.mipmap.ic_red_close).into(holder.iv_stk_opt);
         }
 
         if (smartPlanModel.issIndex_Future()) {
-            Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_index_ftr);
+            Picasso.get().load(R.mipmap.ic_check_green).into(holder.iv_index_ftr);
         } else {
-            Picasso.with(context).load(R.mipmap.ic_red_close).into(holder.iv_index_ftr);
+            Picasso.get().load(R.mipmap.ic_red_close).into(holder.iv_index_ftr);
         }
 
         if (smartPlanModel.issIndex_Options()) {
-            Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_index_opt);
+            Picasso.get().load(R.mipmap.ic_check_green).into(holder.iv_index_opt);
         } else {
-            Picasso.with(context).load(R.mipmap.ic_red_close).into(holder.iv_index_opt);
+            Picasso.get().load(R.mipmap.ic_red_close).into(holder.iv_index_opt);
         }
 
         if (smartPlanModel.issCommodity()) {
-            Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_commodity);
+            Picasso.get().load(R.mipmap.ic_check_green).into(holder.iv_commodity);
         } else {
-            Picasso.with(context).load(R.mipmap.ic_red_close).into(holder.iv_commodity);
+            Picasso.get().load(R.mipmap.ic_red_close).into(holder.iv_commodity);
         }
 
         if (smartPlanModel.issTelegram_Updates()) {
-            Picasso.with(context).load(R.mipmap.ic_check_green).into(holder.iv_telegram_update);
+            Picasso.get().load(R.mipmap.ic_check_green).into(holder.iv_telegram_update);
         } else {
-            Picasso.with(context).load(R.mipmap.ic_red_close).into(holder.iv_telegram_update);
+            Picasso.get().load(R.mipmap.ic_red_close).into(holder.iv_telegram_update);
         }
 
         holder.tv_one_month.setOnClickListener(new View.OnClickListener() {
